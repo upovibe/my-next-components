@@ -19,6 +19,7 @@ To install the library, run the following command:
 npm install my-next-components
 # or
 yarn add my-next-components
+```
 
 ## Usage
 Once installed, you can import and use the components like so:
@@ -34,7 +35,7 @@ export default function Home() {
     </div>
   );
 }
-
+```
 
 ## Available Components
 
@@ -57,7 +58,7 @@ All components are designed to be highly customizable using props. Adding props 
   size="large" 
   onClick={handleSubmit} 
 />
-
+```
 
 ## Contributing
 
