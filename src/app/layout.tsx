@@ -1,22 +1,67 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import './globals.css';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
+// Defining the metadata using the Metadata type
 export const metadata: Metadata = {
-  title: "Lama Dev School Management Dashboard",
-  description: "Next.js School Management System",
+  title: "React components with Typescript",
+  description: "Next.js React components",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        {/* Primary Meta Tags */}
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description ?? ''} />
+
+        {/* Favicon */}
+        <link rel="icon" href="/favicon/favicon.svg" />
+        
+        {/* Favicon for Apple Devices */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+        
+        {/* Favicon for Different Devices */}
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+        
+        {/* Viewport Meta Tag for Responsive Design */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content={metadata.title} />
+        <meta property="og:description" content={metadata.description ?? ''} />
+        <meta property="og:type" content="website" />
+        {/* Uncomment and provide URLs for Open Graph if necessary */}
+        {/* <meta property="og:url" content="https://www.myapp.com/" />
+        <meta property="og:image" content="https://www.myapp.com/og-image.jpg" /> */}
+
+        {/* Twitter Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metadata.title} />
+        <meta name="twitter:description" content={metadata.description ?? ''} />
+        {/* Uncomment and provide image for Twitter if necessary */}
+        {/* <meta name="twitter:image" content="https://www.myapp.com/twitter-image.jpg" /> */}
+
+        {/* Additional Metadata */}
+        <meta charSet="UTF-8" />
+      </head>
+      <body className={inter.className}>
+        <header>
+          <nav>
+            {/* Global navigation components */}
+          </nav>
+        </header>
+        <main>{children}</main>
+        <footer>My Global Footer</footer>
+      </body>
     </html>
   );
 }

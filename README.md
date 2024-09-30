@@ -22,6 +22,7 @@ yarn add my-next-components
 ```
 
 ## Usage
+
 Once installed, you can import and use the components like so:
 
 ```typescript
@@ -74,7 +75,7 @@ Please ensure your code follows the contribution guidelines.
 
 ## Issues
 
-If you find any bugs or have feature requests, feel free to [open an issue](https://github.com/your-username/my-next-components/issues).
+If you find any bugs or have feature requests, feel free to [open an issue](https://github.com/upovibe/my-next-components/issues).
 
 ## License
 
