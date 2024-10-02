@@ -13,7 +13,7 @@ const Nav: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center flex-wrap px-4 py-5">
+    <nav className="flex items-center flex-wrap px-4 py-5 bg- dark:bg-shade shadow-md">
       <div className="mr-auto">
         <Logo />
       </div>
