@@ -1,7 +1,3 @@
-Here’s a detailed guide on how to use the color system in your Tailwind CSS project, covering all the key areas like backgrounds, text, buttons, cards, and hover states. This will help developers know exactly which colors to use and where to apply them, with customization tips for different UI elements.
-
----
-
 # Tailwind CSS Color Usage Guide
 
 This guide outlines how to apply and modify the various colors in your project for different UI components.
