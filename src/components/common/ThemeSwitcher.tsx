@@ -2,8 +2,9 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { FaSun, FaMoon } from 'react-icons/fa';
 
-const ThemeSwitcher = () => {
+const ThemeSwitcher = ({ className }) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -17,10 +18,16 @@ const ThemeSwitcher = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  const iconClass = "text-md hover:scale-110 transition-all duration-200 ease-linear";
+
   return (
-    <div>
-      <button onClick={toggleTheme}>
-        {theme === 'light' ? 'Dark' : 'Light'}
+    <div className={className}>
+      <button onClick={toggleTheme} aria-label="Toggle Theme">
+        {theme === 'light' ? (
+          <FaMoon className={`text-highlight ${iconClass}`} />
+        ) : (
+          <FaSun className={`text-ocean ${iconClass}`} />
+        )}
       </button>
     </div>
   );
