@@ -10,7 +10,7 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({ href, children }) => {
   return (
     <Link
       href={href}
-      className="bg-gold dark:bg-accentgold inline-block px-5 py-2 rounded text-light uppercase font-semibold transition focus:ring-4 focus:ring-gold/50 dark:focus:ring-accentgold/50"
+      className="bg-highlight dark:bg-ocean inline-block px-5 py-2 rounded text-light uppercase font-semibold transition focus:ring-4 focus:ring-highlight/50 dark:focus:ring-ocean/50"
     >
       {children}
     </Link>
