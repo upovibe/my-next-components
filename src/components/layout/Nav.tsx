@@ -13,7 +13,7 @@ const Nav: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center flex-wrap px-4 py-5 bg- dark:bg-shade shadow-md">
+    <nav className="flex items-center flex-wrap p-2 bg-primary dark:bg-shade shadow-md">
       <div className="mr-auto">
         <Logo />
       </div>
@@ -26,12 +26,12 @@ const Nav: React.FC = () => {
       </div>
 
       {/* Main Nav Menu */}
-      <div className={`md:flex md:space-x-4 md:space-y-0 md:w-auto space-y-2 w-full ${isMenuOpen ? 'block' : 'hidden'} md:flex md:items-center`} data-name="nav-menu">
+      <div className={`md:flex md:space-x-4 md:space-y-0 md:w-auto space-y-2 w-full bg-primary dark:bg-shade mt-2 border-t-2 py-4 border-muted/50 md:m-0 md:p-0 md:border-none ${isMenuOpen ? 'block' : 'hidden'} md:flex md:items-center`} data-name="nav-menu">
         <div className="flex flex-col md:flex-row">
           <Link href="#" className="font-light text-deep dark:text-light hover:text-highlight dark:hover:text-ocean md:px-4 uppercase py-2 px-0">Home</Link>
         </div>
         <ThemeSwitcher/>
-        <Link href="#" className="bg-highlight dark:bg-ocean font-light inline-block px-5 py-2 rounded text-white hover:bg-blue-700 dark:hover:bg-ocean-light uppercase">Sign Up</Link>
+        <Link href="#" className="bg-gold dark:bg-accentgold font-light inline-block px-5 py-2 rounded text-light uppercase">Sign Up</Link>
       </div>
     </nav>
   );

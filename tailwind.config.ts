@@ -14,7 +14,7 @@ const config: Config = {
         'primary': '#f9f9f9',         // Primary background
         'secondary': '#f0f0f0',       // Secondary background
         'tertiary': '#e0e0e0',        // Tertiary background (panels, cards)
-        'accent': '#ffd700',          // Accent color (buttons, links)
+        'gold': '#b8860b',            // Dark accent (buttons, links, golden)
         'highlight': '#1e90ff',       // Highlight color (active items)
         'alert': '#ff6347',           // Alert messages, errors
         'border': '#dcdcdc',          // Light border color
@@ -26,7 +26,7 @@ const config: Config = {
         'shade': '#1a1a1a',           // Dark primary background
         'dim': '#2a2a2a',             // Dark secondary background
         'shadow': '#3a3a3a',          // Dark tertiary background
-        'gold': '#b8860b',            // Dark accent (golden)
+        'accent': '#ffd700',          // Accent color (buttons, links, yellow)
         'ocean': '#104e8b',           // Dark highlight color (active items)
         'crimson': '#8b0000',         // Dark alert (error messages)
         'coal': '#4a4a4a',            // Dark border color
