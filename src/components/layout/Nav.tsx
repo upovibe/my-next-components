@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Logo from '@/components/common/Logo';
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
+import ButtonLink from '@/components/common/ButtonLink';
 
 const Nav: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,7 +32,7 @@ const Nav: React.FC = () => {
           <Link href="#" className="text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear md:px-4 uppercase py-2 px-0 font-semibold">Home</Link>
         </div>
         <ThemeSwitcher/>
-        <Link href="#" className="bg-gold dark:bg-accentgold inline-block px-5 py-2 rounded text-light uppercase font-semibold">Sign Up</Link>
+        <ButtonLink href="#">Sign Up</ButtonLink>
       </div>
     </nav>
   );
