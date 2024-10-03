@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="flex flex-row-reverse items-center justify-between p-2 border-t border-muted dark:border-faint">
+    <footer className="flex flex-row-reverse items-center justify-between p-2 border-t border-muted dark:border-faint bg-primary dark:bg-shade">
       <Logo />
       <Link
         href="https://github.com/upovibe/my-next-components.git"
