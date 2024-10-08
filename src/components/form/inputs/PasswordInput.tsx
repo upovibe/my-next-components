@@ -30,20 +30,14 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
 
   return (
     <div className="relative mb-4">
-      {label && (
-        <label className="block mb-1 text-deep dark:text-light text-left">
-          {label}
-        </label>
-      )}
-      <div className="relative flex items-center border-2 border-border dark:border-coal rounded-md bg-primary dark:bg-shade">
+      {label && <label className="block mb-1 text-deep dark:text-light text-left">{label}</label>}
+      <div className="relative flex items-center">
         <input
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className={`w-full pl-10 pr-10 text-deep dark:text-light rounded-md focus:outline-none transition duration-200 ${sizeClass} 
-            border-2 border-border dark:border-coal 
-            focus:border-highlight dark:focus:border-ocean`} // Add focus styles here
+          className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${sizeClass}`}
         />
         <button
           onClick={togglePasswordVisibility}
