@@ -5,6 +5,9 @@ import Notification from "./messages/Notification";
 import Message from "./messages/Message";
 import ButtonLink from "@/components/common/ButtonLink";
 import Image from 'next/image'; 
+import RadioButton from "../form/buttons/RadioButton";
+import Rating from '@/components/form/Rating'
+import { FaStar, FaRegStar, FaTimes } from 'react-icons/fa'; 
 
 const Hero: React.FC = () => {
   const [messageVisible, setMessageVisible] = useState(false);
@@ -12,6 +15,8 @@ const Hero: React.FC = () => {
   const [messageType, setMessageType] = useState<'success' | 'info' | 'warning' | 'error'>('success');
   const [messageText, setMessageText] = useState('This is a success message!');
   const [notificationContent, setNotificationContent] = useState<React.ReactNode>(null);
+  const [selectedOption, setSelectedOption] = useState<string>("");
+  const [rating, setRating] = useState<number>(3);
 
   const showMessage = (type: 'success' | 'info' | 'warning' | 'error', text: string) => {
     setMessageType(type);
@@ -83,6 +88,96 @@ const Hero: React.FC = () => {
                 position="top-left" // Unique position for this notification
               />
             </div>
+            <div>
+      <h1>Custom Rating Component</h1>
+      
+      {/* Basic Example */}
+      <Rating
+        value={rating}
+        onChange={(val) => setRating(val)}
+        stars={5}
+        cancel={true}
+        onIcon="🌟"           // Custom filled icon
+        offIcon="🌑"         // Custom unfilled icon
+      />
+
+      {/* Read-only Example */}
+      <Rating
+        value={rating}
+        stars={5}
+        readonly={true}
+        onIcon="🌟"
+        offIcon="🌑"
+      />
+
+      {/* Disabled Example */}
+      <Rating
+        value={rating}
+        stars={5}
+        disabled={true}
+        onIcon="🌟"
+        offIcon="🌑"
+      />
+      <Rating
+        value={rating}
+        onChange={(val) => setRating(val)}
+        stars={5}
+        cancel={true}
+        onIcon={<FaStar />}              // Custom filled star icon
+        offIcon={<FaRegStar />}          // Custom empty star icon
+        cancelIcon={<FaTimes />}         // Custom cancel icon
+        activeColor="#ffd700"            // Custom active (filled) color
+        inactiveColor="#dcdcdc"          // Custom inactive (unfilled) color
+      />
+
+      {/* Read-only Example */}
+      <Rating
+        value={rating}
+        stars={5}
+        readonly={true}
+        onIcon={<FaStar />}
+        offIcon={<FaRegStar />}
+        activeColor="#ffd700"
+        inactiveColor="#dcdcdc"
+      />
+
+      {/* Disabled Example */}
+      <Rating
+        value={rating}
+        stars={5}
+        onIcon={<FaStar />}
+        offIcon={<FaRegStar />}
+        activeColor="#ffd700"
+      />
+      <Rating
+        value={rating}
+        onChange={(val) => setRating(val)}
+        stars={5}
+        onIcon={<FaStar />}         // Filled icon
+        offIcon={<FaRegStar />}     // Empty icon
+        activeColor="#ffd700"       // Gold color for active stars
+        inactiveColor="#dcdcdc"     // Gray color for inactive stars
+      />
+
+      {/* Rating with 7 stars */}
+      <Rating
+        value={rating}
+        onChange={(val) => setRating(val)}
+        stars={9}                   // Custom number of stars
+        onIcon={<FaStar />}
+        offIcon={<FaRegStar />}
+        activeColor="#ff4500"        // Custom active color
+        inactiveColor="#dcdcdc"
+      />
+      <Rating
+  value={rating}
+  onChange={(val) => setRating(val)}
+  stars={5}                   // Number of stars
+  cancel={false}                // Show the cancel icon before the stars
+  activeColor="text-yellow-400"
+  inactiveColor="text-gray-400"
+/>
+    </div>
 
             <div className="p-4">
               <button
@@ -122,6 +217,7 @@ const Hero: React.FC = () => {
             {/* You can add more unique messages or notifications with different positions here */}
             <div className="p-4">
               <button
+              type="button"
                 className="bg-red-500 text-white p-2 rounded-md"
                 onClick={() => showMessage('error', 'This is another error message!')}
               >
@@ -136,6 +232,19 @@ const Hero: React.FC = () => {
                 position="bottom-left" // Unique position for this message
               />
             </div>
+            <div>
+      <h2 className="mb-4">Select an option:</h2>
+      <RadioButton
+        name="exampleRadio"
+        options={[
+          { value: "option1", label: "Option 1" },
+          { value: "option2", label: "Option 2" },
+          { value: "option3", label: "Option 3" },
+        ]}
+        selectedValue={selectedOption}
+        onChange={setSelectedOption}
+      />
+    </div>
           </div>
         </div>
       </div>
