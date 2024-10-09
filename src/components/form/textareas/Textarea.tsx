@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 type TextareaProps = {
   placeholder: string;
@@ -14,6 +14,9 @@ type TextareaProps = {
   hidePlaceholder?: boolean;
   disabled?: boolean;
   size?: "sm" | "nm" | "lg";
+  className?: string; // Additional custom classes
+  value: string; // Controlled value
+  onChange: (value: string) => void; // Change handler
 };
 
 const Textarea: React.FC<TextareaProps> = ({
@@ -28,9 +31,10 @@ const Textarea: React.FC<TextareaProps> = ({
   hidePlaceholder = false,
   disabled = false,
   size = "nm",
+  className = "", // Default empty string for className
+  value,
+  onChange,
 }) => {
-  const [value, setValue] = useState("");
-
   // Adjust textarea height dynamically based on content
   useEffect(() => {
     const textarea = document.getElementById("custom-textarea") as HTMLTextAreaElement;
@@ -48,7 +52,7 @@ const Textarea: React.FC<TextareaProps> = ({
   }[size];
 
   return (
-    <div className="relative mb-4">
+    <div className={`relative mb-4 ${className}`}>
       {/* Regular label when floatingLabel is false */}
       {!floatingLabel && label && (
         <label className="block mb-1 text-deep dark:text-light text-left">{label}</label>
@@ -57,7 +61,7 @@ const Textarea: React.FC<TextareaProps> = ({
       <textarea
         id="custom-textarea"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={hidePlaceholder ? "" : placeholder}
         disabled={disabled}
         maxLength={maxLength}

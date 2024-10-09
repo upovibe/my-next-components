@@ -34,6 +34,16 @@ const config: Config = {
         'pale': '#cccccc',            // Soft text in dark mode
         'faint': '#666666',           // Muted text in dark mode
       },
+      animation: {
+        shiny: 'shiny 1.5s infinite linear', // Adding shiny animation
+      },
+      keyframes: {
+        shiny: {
+          '0%': { backgroundPosition: '200%' }, // Start position          
+          '50%': {backgroundpostion: '0%'},
+          '100%': { backgroundPosition: '-200%' }, // End position
+        },
+      },
     },
   },
   plugins: [],

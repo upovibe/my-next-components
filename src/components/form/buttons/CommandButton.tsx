@@ -11,12 +11,14 @@ interface CommandButtonProps {
   defaultAction: () => void;
   menuItems: MenuItem[];
   buttonLabel: string;
+  className?: string; // Add className prop for custom styles
 }
 
 const CommandButton: React.FC<CommandButtonProps> = ({
   defaultAction,
   menuItems,
   buttonLabel,
+  className = '', // Default to empty string if not provided
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null); // Ref for the menu
@@ -39,7 +41,7 @@ const CommandButton: React.FC<CommandButtonProps> = ({
   }, []);
 
   return (
-    <div className="relative inline-block text-left">
+    <div className={`relative inline-block text-left ${className}`}>
       {/* Default action button */}
       <div className="flex shadow overflow-hidden rounded-xl border-2 border-border dark:border-coal">
         <button

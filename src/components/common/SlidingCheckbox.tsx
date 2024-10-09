@@ -3,23 +3,25 @@
 import React from 'react';
 
 interface SlidingCheckboxProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  label: string;
+  checked: boolean; // Controls the checked state of the checkbox
+  onChange: (checked: boolean) => void; // Function to handle change events
+  label: string; // Text label for the checkbox
+  className?: string; // Additional custom classes for further styling
 }
 
-const SlidingCheckbox: React.FC<SlidingCheckboxProps> = ({ checked, onChange, label }) => {
+// SlidingCheckbox component definition
+const SlidingCheckbox: React.FC<SlidingCheckboxProps> = ({ checked, onChange, label, className = '' }) => {
   const handleCheckboxChange = () => {
-    onChange(!checked);
+    onChange(!checked); // Toggle checked state
   };
 
   return (
-    <label className="flex items-center cursor-pointer">
+    <label className={`flex items-center cursor-pointer ${className}`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={handleCheckboxChange}
-        className="sr-only"
+        className="sr-only" // Hide the default checkbox
       />
       <div className="relative">
         <div
@@ -28,7 +30,7 @@ const SlidingCheckbox: React.FC<SlidingCheckboxProps> = ({ checked, onChange, la
           }`}
         />
         <div
-          className={`absolute top-[4px] left-[4px] size-4 bg-gold dark:bg-accent rounded-full transition-transform duration-200 ease-in-out ${
+          className={`absolute top-[4px] left-[4px] w-4 h-4 bg-gold dark:bg-accent rounded-full transition-transform duration-200 ease-in-out ${
             checked ? 'translate-x-6' : ''
           }`}
         />

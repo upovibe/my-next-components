@@ -9,13 +9,14 @@ interface BadgeProps {
   color?: string; // Background color of the badge
   size?: BadgeSize; // Size of the badge
   rounded?: boolean; // Whether the badge should have rounded corners
+  className?: string; // Additional custom classes
 }
 
 // Function to set the size styles based on the size prop
 const getSizeStyles = (size: BadgeSize) => {
   switch (size) {
     case 'extra-small':
-      return 'text-xs py-1 px-2'; // Adjusted size for extra-small
+      return 'text-xs py-1 px-2';
     case 'small':
       return 'text-xs py-1 px-2';
     case 'medium':
@@ -32,14 +33,15 @@ const Badge: React.FC<BadgeProps> = ({
   text,
   color = 'bg-blue-500',
   size = 'medium',
-  rounded,
+  rounded = false,
+  className = '',
 }) => {
   const sizeStyles = getSizeStyles(size);
   const roundedStyles = rounded ? 'rounded-full' : 'rounded-md';
 
   return (
     <span
-      className={`inline-flex items-center justify-center ${sizeStyles} ${roundedStyles} ${color} text-white`}
+      className={`inline-flex items-center justify-center ${sizeStyles} ${roundedStyles} ${color} text-white ${className}`}
     >
       {text}
     </span>
