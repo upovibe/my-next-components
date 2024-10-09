@@ -111,7 +111,7 @@ const Hero: React.FC = () => {
       <Badge text="Beta" color="bg-yellow-500" size="small"  />
       <div className="size-5">
         
-      <Badge text="2e4r" color="bg-gray-500" size="extra-small" rounded/></div> {/* Extra small badge for notifications */}
+      <Badge text="" color="bg-gray-500" size="extra-small" rounded/></div> {/* Extra small badge for notifications */}
     </div>
               <button
                 className="bg-green-500 text-white p-2 rounded-md"
