@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Notification from "./messages/Notification";
-import Message from "./messages/Message";
+import Notification from "../messages/Notification";
+import Message from "../messages/Message";
 import ButtonLink from "@/components/common/ButtonLink";
 import Image from 'next/image'; 
 import RadioButton from "../form/buttons/RadioButton";
@@ -10,6 +10,7 @@ import Rating from '@/components/form/Rating';
 import { FaStar, FaRegStar, FaTimes, FaSyncAlt, FaTrashAlt, FaGlobe, FaCloudUploadAlt, FaShare, FaTrash, FaRedo, FaEdit } from 'react-icons/fa';
 import SpeedDial from "../form/buttons/SpeedDial";
 import CommandButton from "../form/buttons/CommandButton";
+import Badge from "./Badge";
 
 const Hero: React.FC = () => {
   const [messageVisible, setMessageVisible] = useState(false);
@@ -102,6 +103,16 @@ const Hero: React.FC = () => {
             <ButtonLink href="#">Get It Now</ButtonLink>
 
             <div className="p-4">
+            <div className="flex space-x-2">
+      {/* Different badges with various props */}
+      <Badge text="New" color="bg-green-500" size="small" />
+      <Badge text="Sale" color="bg-red-500" size="medium" rounded />
+      <Badge text="Updated" color="bg-blue-500" size="large" />
+      <Badge text="Beta" color="bg-yellow-500" size="small"  />
+      <div className="size-5">
+        
+      <Badge text="2e4r" color="bg-gray-500" size="extra-small" rounded/></div> {/* Extra small badge for notifications */}
+    </div>
               <button
                 className="bg-green-500 text-white p-2 rounded-md"
                 onClick={handleShowSuccessMessage}
