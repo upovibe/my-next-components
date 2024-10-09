@@ -6,8 +6,10 @@ import Message from "./messages/Message";
 import ButtonLink from "@/components/common/ButtonLink";
 import Image from 'next/image'; 
 import RadioButton from "../form/buttons/RadioButton";
-import Rating from '@/components/form/Rating'
-import { FaStar, FaRegStar, FaTimes } from 'react-icons/fa'; 
+import Rating from '@/components/form/Rating';
+import { FaStar, FaRegStar, FaTimes, FaSyncAlt, FaTrashAlt, FaGlobe, FaCloudUploadAlt, FaShare, FaTrash, FaRedo, FaEdit } from 'react-icons/fa';
+import SpeedDial from "../form/buttons/SpeedDial";
+import CommandButton from "../form/buttons/CommandButton";
 
 const Hero: React.FC = () => {
   const [messageVisible, setMessageVisible] = useState(false);
@@ -41,13 +43,47 @@ const Hero: React.FC = () => {
           alt="avatar"
           src="/images/avatar.png" 
           className="w-10 h-10 rounded-full"
-          width={40} // Set a width for the Image component
-          height={40} // Set a height for the Image component
+          width={40} 
+          height={40} 
         />
         <div className="ml-2">How may I assist you today?</div>
       </React.Fragment>
     ));
   };
+
+  const defaultAction = () => {
+    alert('Default Action Triggered');
+  };
+
+  const menuItems = [
+    { label: 'Update', icon: <FaSyncAlt />, action: () => alert('Update Action') },
+    { label: 'Delete', icon: <FaTrashAlt />, action: () => alert('Delete Action') },
+    { label: 'React Website', icon: <FaGlobe />, action: () => alert('React Website Action') },
+    { label: 'Upload', icon: <FaCloudUploadAlt />, action: () => alert('Upload Action') }
+  ];
+
+  const Items = [
+    {
+      label: "Share",
+      icon: FaShare,
+      action: () => alert("Share Action"),
+    },
+    {
+      label: "Delete",
+      icon: FaTrash,
+      action: () => alert("Delete Action"),
+    },
+    {
+      label: "Redo",
+      icon: FaRedo,
+      action: () => alert("Redo Action"),
+    },
+    {
+      label: "Edit",
+      icon: FaEdit,
+      action: () => alert("Edit Action"),
+    },
+  ];
 
   return (
     <section className="relative text-soft dark:text-pale">
@@ -61,8 +97,7 @@ const Hero: React.FC = () => {
               The Natural Experience
             </h1>
             <p className="font-light mb-6 text-lg">
-              Our ability to feel, act and communicate is indistinguishable from
-              magic.
+              Our ability to feel, act and communicate is indistinguishable from magic.
             </p>
             <ButtonLink href="#">Get It Now</ButtonLink>
 
@@ -85,99 +120,120 @@ const Hero: React.FC = () => {
                 visible={notificationVisible}
                 onClose={() => setNotificationVisible(false)}
                 content={notificationContent}
-                position="top-left" // Unique position for this notification
+                position="top-left"
               />
             </div>
+
             <div>
-      <h1>Custom Rating Component</h1>
-      
-      {/* Basic Example */}
-      <Rating
-        value={rating}
-        onChange={(val) => setRating(val)}
-        stars={5}
-        cancel={true}
-        onIcon="🌟"           // Custom filled icon
-        offIcon="🌑"         // Custom unfilled icon
-      />
+              <h1>Custom Rating Component</h1>
+              <Rating
+                value={rating}
+                onChange={(val) => setRating(val)}
+                stars={5}
+                cancel={true}
+                onIcon="🌟"
+                offIcon="🌑"
+              />
 
-      {/* Read-only Example */}
-      <Rating
-        value={rating}
-        stars={5}
-        readonly={true}
-        onIcon="🌟"
-        offIcon="🌑"
-      />
+              <Rating
+                value={rating}
+                stars={5}
+                readonly={true}
+                onIcon="🌟"
+                offIcon="🌑"
+              />
 
-      {/* Disabled Example */}
-      <Rating
-        value={rating}
-        stars={5}
-        disabled={true}
-        onIcon="🌟"
-        offIcon="🌑"
-      />
-      <Rating
-        value={rating}
-        onChange={(val) => setRating(val)}
-        stars={5}
-        cancel={true}
-        onIcon={<FaStar />}              // Custom filled star icon
-        offIcon={<FaRegStar />}          // Custom empty star icon
-        cancelIcon={<FaTimes />}         // Custom cancel icon
-        activeColor="#ffd700"            // Custom active (filled) color
-        inactiveColor="#dcdcdc"          // Custom inactive (unfilled) color
-      />
+              <Rating
+                value={rating}
+                stars={5}
+                disabled={true}
+                onIcon="🌟"
+                offIcon="🌑"
+              />
 
-      {/* Read-only Example */}
-      <Rating
-        value={rating}
-        stars={5}
-        readonly={true}
-        onIcon={<FaStar />}
-        offIcon={<FaRegStar />}
-        activeColor="#ffd700"
-        inactiveColor="#dcdcdc"
-      />
+              <Rating
+                value={rating}
+                onChange={(val) => setRating(val)}
+                stars={5}
+                onIcon={<FaStar />}
+                offIcon={<FaRegStar />}
+                cancelIcon={<FaTimes />}
+                activeColor="#ffd700"
+                inactiveColor="#dcdcdc"
+              />
 
-      {/* Disabled Example */}
-      <Rating
-        value={rating}
-        stars={5}
-        onIcon={<FaStar />}
-        offIcon={<FaRegStar />}
-        activeColor="#ffd700"
-      />
-      <Rating
-        value={rating}
-        onChange={(val) => setRating(val)}
-        stars={5}
-        onIcon={<FaStar />}         // Filled icon
-        offIcon={<FaRegStar />}     // Empty icon
-        activeColor="#ffd700"       // Gold color for active stars
-        inactiveColor="#dcdcdc"     // Gray color for inactive stars
-      />
+              <Rating
+                value={rating}
+                stars={5}
+                readonly={true}
+                onIcon={<FaStar />}
+                offIcon={<FaRegStar />}
+                activeColor="#ffd700"
+                inactiveColor="#dcdcdc"
+              />
 
-      {/* Rating with 7 stars */}
-      <Rating
-        value={rating}
-        onChange={(val) => setRating(val)}
-        stars={9}                   // Custom number of stars
-        onIcon={<FaStar />}
-        offIcon={<FaRegStar />}
-        activeColor="#ff4500"        // Custom active color
-        inactiveColor="#dcdcdc"
-      />
-      <Rating
-  value={rating}
-  onChange={(val) => setRating(val)}
-  stars={5}                   // Number of stars
-  cancel={false}                // Show the cancel icon before the stars
-  activeColor="text-yellow-400"
-  inactiveColor="text-gray-400"
-/>
-    </div>
+              <Rating
+                value={rating}
+                stars={5}
+                onIcon={<FaStar />}
+                offIcon={<FaRegStar />}
+                activeColor="#ffd700"
+              />
+
+              <Rating
+                value={rating}
+                onChange={(val) => setRating(val)}
+                stars={5}
+                onIcon={<FaStar />}
+                offIcon={<FaRegStar />}
+                activeColor="#ffd700"
+                inactiveColor="#dcdcdc"
+              />
+
+              <Rating
+                value={rating}
+                onChange={(val) => setRating(val)}
+                stars={9}
+                onIcon={<FaStar />}
+                offIcon={<FaRegStar />}
+                activeColor="#ff4500"
+                inactiveColor="#dcdcdc"
+              />
+
+              <Rating
+                value={rating}
+                onChange={(val) => setRating(val)}
+                stars={5}
+                activeColor="text-yellow-400"
+                inactiveColor="text-gray-400"
+              />
+            </div>
+
+            <div className="space-y-10">
+              <div className="p-10">
+                <CommandButton
+                  defaultAction={defaultAction}
+                  menuItems={menuItems}
+                  buttonLabel="Save"
+                />
+              </div>
+
+              <div className="p-10">
+                <CommandButton
+                  defaultAction={defaultAction}
+                  menuItems={menuItems}
+                  buttonLabel="Save"
+                />
+              </div>
+
+              <section className="relative text-soft dark:text-pale">
+      <div className="container mx-auto px-4 py-48">
+        <div className="flex justify-center">
+          <SpeedDial menuItems={Items} direction="top-to-bottom" />
+        </div>
+      </div>
+    </section>
+            </div>
 
             <div className="p-4">
               <button
@@ -210,14 +266,13 @@ const Hero: React.FC = () => {
                 message={messageText}
                 visible={messageVisible}
                 onClose={() => setMessageVisible(false)}
-                position="bottom-center" // Unique position for this message
+                position="bottom-center"
               />
             </div>
 
-            {/* You can add more unique messages or notifications with different positions here */}
             <div className="p-4">
               <button
-              type="button"
+                type="button"
                 className="bg-red-500 text-white p-2 rounded-md"
                 onClick={() => showMessage('error', 'This is another error message!')}
               >
@@ -229,22 +284,23 @@ const Hero: React.FC = () => {
                 message="Another unique error occurred!"
                 visible={messageVisible}
                 onClose={() => setMessageVisible(false)}
-                position="bottom-left" // Unique position for this message
+                position="bottom-left"
               />
             </div>
+
             <div>
-      <h2 className="mb-4">Select an option:</h2>
-      <RadioButton
-        name="exampleRadio"
-        options={[
-          { value: "option1", label: "Option 1" },
-          { value: "option2", label: "Option 2" },
-          { value: "option3", label: "Option 3" },
-        ]}
-        selectedValue={selectedOption}
-        onChange={setSelectedOption}
-      />
-    </div>
+              <h2 className="mb-4">Select an option:</h2>
+              <RadioButton
+                name="exampleRadio"
+                options={[
+                  { value: "option1", label: "Option 1" },
+                  { value: "option2", label: "Option 2" },
+                  { value: "option3", label: "Option 3" },
+                ]}
+                selectedValue={selectedOption}
+                onChange={setSelectedOption}
+              />
+            </div>
           </div>
         </div>
       </div>
