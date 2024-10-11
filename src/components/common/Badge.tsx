@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Define the possible sizes for the Badge
-type BadgeSize = 'extra-small' | 'small' | 'medium' | 'large';
+type BadgeSize = 'xs' | 'sm' | 'md' | 'lg';
 
 // Define the props for the Badge component
 interface BadgeProps {
@@ -15,13 +15,13 @@ interface BadgeProps {
 // Function to set the size styles based on the size prop
 const getSizeStyles = (size: BadgeSize) => {
   switch (size) {
-    case 'extra-small':
+    case 'xs':
       return 'text-xs py-1 px-2';
-    case 'small':
+    case 'sm':
       return 'text-xs py-1 px-2';
-    case 'medium':
+    case 'md':
       return 'text-sm py-1.5 px-3';
-    case 'large':
+    case 'lg':
       return 'text-base py-2 px-4';
     default:
       return 'text-sm py-1.5 px-3'; // Default to medium
