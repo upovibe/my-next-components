@@ -21,7 +21,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-1',
         left: 'right-full top-1/2 transform -translate-y-1/2 mr-1',
         right: 'left-full top-1/2 transform -translate-y-1/2 ml-1',
-        center: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
+        center: 'top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
     };
 
     const arrowPositions = {
