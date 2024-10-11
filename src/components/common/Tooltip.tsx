@@ -21,7 +21,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-1',
         left: 'right-full top-1/2 transform -translate-y-1/2 mr-1',
         right: 'left-full top-1/2 transform -translate-y-1/2 ml-1',
-        center: 'top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
+        center: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
     };
 
     const arrowPositions = {
@@ -42,18 +42,32 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     const handleMouseMove = useCallback((event: MouseEvent) => {
         if (mouseTrack) {
-            const tooltipWidth = 160; // Adjust as needed for width
-            const tooltipHeight = 40; // Adjust as needed for height
+            const tooltipWidth = 200; // Maximum width for the tooltip
+            const tooltipHeight = 60; // Maximum height for the tooltip
 
             // Calculate position to ensure tooltip remains within bounds
-            const left = Math.min(
-                Math.max(event.clientX - tooltipWidth / 2, 0),
-                window.innerWidth - tooltipWidth
-            );
-            const top = Math.min(
-                Math.max(event.clientY - tooltipHeight - 10, 0),
-                window.innerHeight - tooltipHeight
-            );
+            let left = event.clientX - tooltipWidth / 2;
+            let top = event.clientY - tooltipHeight - 10; // 10px above the mouse
+
+            // Adjust left position if it overflows the left side
+            if (left < 0) {
+                left = 0;
+            }
+
+            // Adjust left position if it overflows the right side
+            if (left + tooltipWidth > window.innerWidth) {
+                left = window.innerWidth - tooltipWidth;
+            }
+
+            // Adjust top position if it overflows the top side
+            if (top < 0) {
+                top = event.clientY + 10; // Place it below the mouse if it goes above
+            }
+
+            // Adjust top position if it overflows the bottom side
+            if (top + tooltipHeight > window.innerHeight) {
+                top = window.innerHeight - tooltipHeight;
+            }
 
             setTooltipStyle({
                 position: 'fixed',
@@ -81,7 +95,7 @@ const Tooltip: React.FC<TooltipProps> = ({
             {children}
             {showTooltip && (
                 <div
-                    className={`w-40 text-sm absolute min-w-full border-2 border-slate-300/50 bg-slate-700 shadow-slate-800/10 text-white shadow-lg text-sm px-2 py-1 rounded-xl cursor-pointer z-50 ${
+                    className={`max-w-xs text-sm absolute border-2 border-slate-300/50 bg-slate-700 shadow-slate-800/10 text-white shadow-lg px-2 py-1 rounded-xl cursor-pointer z-50 overflow-hidden ${
                         mouseTrack ? '' : positions[position]
                     } ${arrowPositions[position]}`}
                     style={mouseTrack ? tooltipStyle : {}}

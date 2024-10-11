@@ -31,7 +31,7 @@ const Hero = () => {
         <p>Your sidebar content goes here!</p>
       </Sidebar>
       <div className="flex justify-center items-center h-screen">
-            <Tooltip position="center" content={
+            <Tooltip mouseTrack position="left" content={
           <span className="flex items-center gap-2 w-full">
             <img src="path-to-image.jpg" alt="Profile" className="w-6 h-6 rounded-full" />
             <span className="font-bold whitespace-nowrap">Ioni Bowcher</span>
@@ -40,6 +40,9 @@ const Hero = () => {
                 <button className="p-4 bg-blue-500 text-white rounded">Hover over me</button>
             </Tooltip>
         </div>
+        <Tooltip position="top" mouseTrack text="This is a tooltip!">
+                <button className="p-4 bg-blue-500 text-white rounded">Hover over me</button>
+            </Tooltip>
     </div>
   );
 };
