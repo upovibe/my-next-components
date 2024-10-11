@@ -17,10 +17,10 @@ const Tooltip: React.FC<TooltipProps> = ({
     const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
 
     const positions = {
-        top: 'bottom-full left-1/2 transform -translate-x-1/2 mb-1',
-        bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-1',
-        left: 'right-full top-1/2 transform -translate-y-1/2 mr-1',
-        right: 'left-full top-1/2 transform -translate-y-1/2 ml-1',
+        top: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
+        bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-2',
+        left: 'right-full top-1/2 transform -translate-y-1/2 mr-2',
+        right: 'left-full top-1/2 transform -translate-y-1/2 ml-2',
         center: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
     };
 
@@ -79,7 +79,7 @@ const Tooltip: React.FC<TooltipProps> = ({
             {children}
             {showTooltip && (
                 <div
-                    className={`max-w-xs text-sm absolute border border-border dark:border-coal bg-deep dark:bg-light text-light dark:text-deep shadow-lg px-2 py-1 rounded-xl cursor-pointer z-50 overflow-hidden ${
+                    className={`max-w-32 text-sm absolute border border-slate-300 dark:border-coal bg-shadow dark:bg-tertiary text-pale dark:text-soft shadow-lg px-2 py-1 rounded-xl cursor-pointer z-50 overflow-hidden ${
                         mouseTrack ? '' : positions[position]
                     } ${arrowStyles[position]}`}
                     style={mouseTrack ? tooltipStyle : {}}

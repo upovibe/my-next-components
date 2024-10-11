@@ -1,18 +1,18 @@
 'use client';
 
 import React from 'react';
-import DocUpload from '../form/upload/DocsUpload';
+import ImageUpload from '../form/upload/ImageUpload';  // Import your ImageUpload component
 
-const handleFileUpload = (files: File[]) => {
-  console.log("Files uploaded:", files.map((file) => file.name));
-  // Handle file upload logic here
+const handleImageUpload = (files: File[]) => {
+  console.log("Images uploaded:", files.map((file) => file.name));
+  // Handle image upload logic here
 };
 
 const Hero = () => {
   return (
     <div>
-      <h1 className="text-xl font-bold mb-4">Upload Doucument</h1>
-      <DocUpload showSubmit onFileUpload={handleFileUpload} maxFiles={3} />
+      <h1 className="text-xl font-bold mb-4">Upload Image</h1>
+      <ImageUpload showSubmit onFileUpload={handleImageUpload} maxFiles={3} />
 
     </div>
   );
