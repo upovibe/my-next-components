@@ -32,19 +32,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 ${position === 'right' ? 'right-0' : 'left-0'} w-screen md:w-[480px] h-full shadow-lg z-50 transform transition-transform duration-300 bg-slate-50 dark:bg-slate-900 ${isOpen ? 'translate-x-0' : position === 'right' ? 'translate-x-full' : '-translate-x-full'} ${className}`}
+        className={`fixed top-0 ${position === 'right' ? 'right-0' : 'left-0'} w-screen md:w-[480px] h-full shadow-lg z-50 transform transition-transform duration-300 bg-primary dark:bg-shade ${isOpen ? 'translate-x-0' : position === 'right' ? 'translate-x-full' : '-translate-x-full'} ${className}`}
       >
-        <div className="p-4 px-6 flex justify-between items-center border-b-2 dark:border-opacity-5 border-opacity-5 border-slate-900 dark:border-slate-50">
+        <div className="p-4 px-6 flex justify-between items-center border-b-2 border-border dark:border-coal">
           {header}
           <button
           type='button'
             onClick={onClose}
-            className="p-2 rounded-md text-slate-800 font-light dark:text-slate-50 hover:bg-slate-300 hover:text-slate-900 transition-colors duration-300"
+            className="p-2 rounded-md text-deep dark:text-light hover:bg-secondary hover:dark:bg-dim transition-colors duration-300"
           >
             <FaTimes className="font-light" />
           </button>
         </div>
-        <div>{children}</div>
+        <div className="text-deep dark:text-light">{children}</div>
       </div>
     </>
   );

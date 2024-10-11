@@ -1,7 +1,6 @@
-// DialogDisplay.jsx
 import React from 'react';
 import { FaTimes } from "react-icons/fa";
-import classNames from 'classnames'; // For conditional class names
+import classNames from 'classnames';
 
 // DialogDisplay Component
 const DialogDisplay = ({
@@ -32,9 +31,10 @@ const DialogDisplay = ({
   };
 
   const dialogClass = classNames(
-    'fixed bg-white rounded-md shadow-lg p-4 z-50',
+    'fixed p-4 z-50 rounded-md shadow-lg', // Basic layout
     getPositionClass(),
-    style // Apply additional styles
+    'bg-primary dark:bg-shade border border-border dark:border-coal', // Background and border
+    style
   );
 
   const handleOverlayClick = (e) => {
@@ -46,24 +46,27 @@ const DialogDisplay = ({
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={handleOverlayClick} // Close when clicking outside
+      onClick={handleOverlayClick}
     >
       <div className={dialogClass}>
         {header && (
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold">{header}</h3>
+            <h3 className="text-xl font-semibold text-deep dark:text-light">{header}</h3>
             {closeButton && (
-              <button type="button" onClick={onHide} className="text-gray-500 hover:text-gray-700">
+              <button
+                type="button"
+                onClick={onHide}
+                className="text-soft dark:text-pale hover:text-muted dark:hover:text-faint"
+              >
                 <FaTimes />
               </button>
             )}
           </div>
         )}
-        <div>{children}</div>
+        <div className="text-deep dark:text-light">{children}</div>
       </div>
     </div>
   );
 };
 
-// Default export
 export default DialogDisplay;

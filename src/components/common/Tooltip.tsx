@@ -24,11 +24,11 @@ const Tooltip: React.FC<TooltipProps> = ({
         center: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
     };
 
-    const arrowPositions = {
-        top: 'after:absolute after:top-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-t-8 after:border-t-slate-700 after:border-r-8 after:border-r-transparent after:border-l-8 after:border-l-transparent',
-        bottom: 'after:absolute after:bottom-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-b-8 after:border-b-slate-700 after:border-r-8 after:border-r-transparent after:border-l-8 after:border-l-transparent',
-        left: 'after:absolute after:left-full after:top-1/2 after:transform after:-translate-y-1/2 after:border-l-8 after:border-l-slate-700 after:border-t-8 after:border-t-transparent after:border-b-8 after:border-b-transparent',
-        right: 'after:absolute after:right-full after:top-1/2 after:transform after:-translate-y-1/2 after:border-r-8 after:border-r-slate-700 after:border-t-8 after:border-t-transparent after:border-b-8 after:border-b-transparent',
+    const arrowStyles = {
+        top: 'after:content-[""] after:absolute after:top-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-8 after:border-t-slate-700 after:border-b-transparent after:border-l-transparent after:border-r-transparent',
+        bottom: 'after:content-[""] after:absolute after:bottom-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-8 after:border-b-slate-700 after:border-t-transparent after:border-l-transparent after:border-r-transparent',
+        left: 'after:content-[""] after:absolute after:left-full after:top-1/2 after:transform after:-translate-y-1/2 after:border-8 after:border-l-slate-700 after:border-t-transparent after:border-b-transparent after:border-r-transparent',
+        right: 'after:content-[""] after:absolute after:right-full after:top-1/2 after:transform after:-translate-y-1/2 after:border-8 after:border-r-slate-700 after:border-t-transparent after:border-b-transparent after:border-l-transparent',
         center: '', // No arrow for center
     };
 
@@ -45,29 +45,13 @@ const Tooltip: React.FC<TooltipProps> = ({
             const tooltipWidth = 200; // Maximum width for the tooltip
             const tooltipHeight = 60; // Maximum height for the tooltip
 
-            // Calculate position to ensure tooltip remains within bounds
             let left = event.clientX - tooltipWidth / 2;
             let top = event.clientY - tooltipHeight - 10; // 10px above the mouse
 
-            // Adjust left position if it overflows the left side
-            if (left < 0) {
-                left = 0;
-            }
-
-            // Adjust left position if it overflows the right side
-            if (left + tooltipWidth > window.innerWidth) {
-                left = window.innerWidth - tooltipWidth;
-            }
-
-            // Adjust top position if it overflows the top side
-            if (top < 0) {
-                top = event.clientY + 10; // Place it below the mouse if it goes above
-            }
-
-            // Adjust top position if it overflows the bottom side
-            if (top + tooltipHeight > window.innerHeight) {
-                top = window.innerHeight - tooltipHeight;
-            }
+            if (left < 0) left = 0;
+            if (left + tooltipWidth > window.innerWidth) left = window.innerWidth - tooltipWidth;
+            if (top < 0) top = event.clientY + 10;
+            if (top + tooltipHeight > window.innerHeight) top = window.innerHeight - tooltipHeight;
 
             setTooltipStyle({
                 position: 'fixed',
@@ -95,9 +79,9 @@ const Tooltip: React.FC<TooltipProps> = ({
             {children}
             {showTooltip && (
                 <div
-                    className={`max-w-xs text-sm absolute border-2 border-slate-300/50 bg-slate-700 shadow-slate-800/10 text-white shadow-lg px-2 py-1 rounded-xl cursor-pointer z-50 overflow-hidden ${
+                    className={`max-w-xs text-sm absolute border border-border dark:border-coal bg-deep dark:bg-light text-light dark:text-deep shadow-lg px-2 py-1 rounded-xl cursor-pointer z-50 overflow-hidden ${
                         mouseTrack ? '' : positions[position]
-                    } ${arrowPositions[position]}`}
+                    } ${arrowStyles[position]}`}
                     style={mouseTrack ? tooltipStyle : {}}
                 >
                     {content}

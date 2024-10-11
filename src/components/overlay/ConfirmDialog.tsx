@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { FaTimes } from "react-icons/fa";
-import classNames from "classnames"; // Assuming you're using classnames package
+import classNames from "classnames";
 
 // ConfirmDialog Props
 type ConfirmDialogProps = {
@@ -15,9 +15,9 @@ type ConfirmDialogProps = {
   onReject?: () => void;
   position?: "top" | "bottom" | "left" | "right" | "center";
   content?: ReactNode;
-  className?: string; // Custom styling via classNames
-  acceptClassName?: string; // Class for accept button
-  rejectClassName?: string; // Class for reject button
+  className?: string;
+  acceptClassName?: string;
+  rejectClassName?: string;
 };
 
 // ConfirmDialog Component
@@ -56,9 +56,10 @@ const ConfirmDialog = ({
   };
 
   const dialogClass = classNames(
-    "fixed bg-white rounded-md shadow-lg p-4 z-50", // Default styling
-    getPositionClass(), // Position styling
-    className // Custom className passed via props
+    "fixed p-4 z-50 rounded-md shadow-lg", // Basic layout
+    getPositionClass(),
+    "bg-primary dark:bg-shade border border-border dark:border-coal", // Background and border
+    className
   );
 
   const handleClose = () => {
@@ -76,38 +77,40 @@ const ConfirmDialog = ({
   };
 
   return (
-    <div  onClick={handleClose} className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div
+      onClick={handleClose}
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    >
       <div className={dialogClass}>
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold">{header}</h3>
+          <h3 className="text-xl font-semibold text-deep dark:text-light">{header}</h3>
           <button type="button" onClick={handleClose}>
-            <FaTimes />
+            <FaTimes className="text-soft dark:text-pale" />
           </button>
         </div>
 
         {content ? (
-          // Headless mode - Custom content
           content
         ) : (
           <>
             {icon && <div className="mb-4">{icon}</div>}
-            <p className="mb-4">{message}</p>
+            <p className="mb-4 text-deep dark:text-light">{message}</p>
             <div className="flex justify-end gap-4">
               <button
-              type="button"
+                type="button"
                 className={classNames(
-                  "px-4 py-2 rounded-md transition-colors duration-200", // Base button styles
-                  rejectClassName // Custom class for reject button
+                  "px-4 py-2 rounded-md transition-colors duration-200 text-soft dark:text-faint bg-secondary dark:bg-dim hover:bg-tertiary dark:hover:bg-shadow",
+                  rejectClassName
                 )}
                 onClick={handleReject}
               >
                 {rejectLabel}
               </button>
               <button
-              type="button"
+                type="button"
                 className={classNames(
-                  "px-4 py-2 rounded-md text-white transition-colors duration-200", // Base button styles
-                  acceptClassName // Custom class for accept button
+                  "px-4 py-2 rounded-md text-white transition-colors duration-200 bg-highlight dark:bg-ocean hover:bg-highlight/80 dark:hover:bg-ocean/80",
+                  acceptClassName
                 )}
                 onClick={handleAccept}
               >
