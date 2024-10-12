@@ -1,18 +1,12 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import {
-  FaCloudUploadAlt,
-  FaFilePdf,
-  FaTimes,
-  FaFileAlt,
-  FaFileUpload,
-} from "react-icons/fa";
+import { FaCloudUploadAlt, FaTimes, FaFileUpload } from "react-icons/fa";
 import Lottie from "lottie-react";
 import uploadingAnimation from "@/assets/animation/uploading.json";
 import Tooltip from "@/components/common/Tooltip";
 
-interface DocUploadProps {
+interface VideoUploadProps {
   onFileUpload: (files: File[]) => void;
   maxFiles?: number;
   showSubmit?: boolean;
@@ -20,15 +14,17 @@ interface DocUploadProps {
   showUpload?: boolean;
 }
 
-const DocUpload: React.FC<DocUploadProps> = ({
+const VideoUpload: React.FC<VideoUploadProps> = ({
   onFileUpload,
-  maxFiles = 10,
+  maxFiles = 5,
   showSubmit = false,
   showClear = true,
   showUpload = true,
 }) => {
   const [uploading, setUploading] = useState(false);
-  const [files, setFiles] = useState<{ file: File; date: string }[]>([]);
+  const [files, setFiles] = useState<
+    { file: File; date: string; preview: string }[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const [totalSize, setTotalSize] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -36,6 +32,10 @@ const DocUpload: React.FC<DocUploadProps> = ({
   useEffect(() => {
     const size = files.reduce((acc, { file }) => acc + file.size, 0);
     setTotalSize(size);
+
+    return () => {
+      files.forEach((f) => URL.revokeObjectURL(f.preview));
+    };
   }, [files]);
 
   const handleClick = () => {
@@ -47,17 +47,12 @@ const DocUpload: React.FC<DocUploadProps> = ({
   const handleFiles = (fileList: FileList | null) => {
     if (fileList) {
       const fileArray = Array.from(fileList);
-      const validFiles = fileArray.filter(
-        (file) =>
-          file.type === "application/pdf" ||
-          file.type === "application/msword" ||
-          file.type ===
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-          file.type === "text/plain"
+      const validFiles = fileArray.filter((file) =>
+        file.type.startsWith("video/")
       );
 
       if (validFiles.length + files.length > maxFiles) {
-        setError(`You can only upload up to ${maxFiles} files.`);
+        setError(`You can only upload up to ${maxFiles} videos.`);
         return;
       }
 
@@ -69,16 +64,14 @@ const DocUpload: React.FC<DocUploadProps> = ({
           const newFiles = validFiles.map((file) => ({
             file,
             date: new Date().toLocaleDateString(),
+            preview: URL.createObjectURL(file),
           }));
           setFiles((prevFiles) => [...prevFiles, ...newFiles]);
           onFileUpload([...files.map((f) => f.file), ...validFiles]);
           setUploading(false);
         }, 2000);
       } else {
-        // Show error only if files are invalid
-        if (fileArray.length > 0) {
-          setError("Only PDF, Word, and text documents are allowed.");
-        }
+        setError("Only video files are allowed.");
       }
     }
   };
@@ -86,12 +79,14 @@ const DocUpload: React.FC<DocUploadProps> = ({
   const cancelFile = (index: number, event: React.MouseEvent) => {
     event.stopPropagation();
     const newFiles = [...files];
+    URL.revokeObjectURL(newFiles[index].preview);
     newFiles.splice(index, 1);
     setFiles(newFiles);
     onFileUpload(newFiles.map((f) => f.file));
   };
 
   const clearAllFiles = () => {
+    files.forEach((file) => URL.revokeObjectURL(file.preview));
     setFiles([]);
     onFileUpload([]);
   };
@@ -117,10 +112,8 @@ const DocUpload: React.FC<DocUploadProps> = ({
       <div className="w-full">
         <div className="flex items-center justify-between gap-2 border-2 rounded-t-md border-b-0 border-border dark:border-coal p-2">
           <div className="flex items-start flex-col gap-1 md:gap-2 md:flex-row-reverse md:items-center">
-            <p className="text-soft dark:text-pale text-sm">
-              {files.length > 0
-                ? `${files.length} document(s) uploaded`
-                : "No documents uploaded"}
+            <p className=" text-sm">
+              {files.length > 0 ? `${files.length} video(s) uploaded` : ""}
             </p>
             <div className="flex items-center gap-1">
               {showUpload && (
@@ -154,6 +147,7 @@ const DocUpload: React.FC<DocUploadProps> = ({
               )}
             </div>
           </div>
+
           <div className="flex items-end flex-col gap-1 md:flex-row-reverse md:gap-2 md:items-center">
             <div className="w-24 bg-tertiary dark:bg-shadow rounded h-2 relative flex-grow overflow-hidden">
               <div
@@ -161,29 +155,31 @@ const DocUpload: React.FC<DocUploadProps> = ({
                 style={{ width: `${totalProgress}%` }}
               />
             </div>
-            <p className="text-soft dark:text-pale text-sm">{formatFileSize(totalSize)}</p>
+            <p className=" text-sm">
+              {formatFileSize(totalSize)}
+            </p>
           </div>
         </div>
       </div>
 
+      {/* Upload Section */}
       <div className="w-full p-4 border-2 border-dashed border-border dark:border-coal text-center relative border-t-0 rounded-b-md">
         <div className="border-t-2 border-solid border-border dark:border-coal absolute top-0 left-0 w-full" />
-
         <input
+        aria-label="video"
           type="file"
-          accept=".pdf,.doc,.docx,.txt"
+          accept="video/*"
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
           ref={fileInputRef}
           multiple={maxFiles > 1}
         />
-
         <div
-          className="flex flex-col items-center justify-center gap-2 cursor-pointer mb-2"
+          className="flex flex-col items-center gap-2 cursor-pointer"
           onClick={handleClick}
         >
-          <FaCloudUploadAlt className="text-soft dark:text-pale" />
-          <p className="text-gray-500">
+          <FaCloudUploadAlt className="text-soft dark:text-faint" />
+          <p className="text-soft dark:text-faint">
             {uploading ? (
               <Lottie
                 className="size-full max-h-20 max-w-20"
@@ -191,13 +187,14 @@ const DocUpload: React.FC<DocUploadProps> = ({
                 loop
               />
             ) : error ? (
-              <span className="text-red-500 text-sm">{error}</span>
+              <span className="text-alert dark:text-crimson">{error}</span>
             ) : (
-              "Drag and drop files or browse your computer"
+              "Drag and drop videos or browse your computer"
             )}
           </p>
         </div>
 
+        {/* Uploaded Files with Previews */}
         {files.length > 0 && (
           <div
             onClick={handleClick}
@@ -206,35 +203,34 @@ const DocUpload: React.FC<DocUploadProps> = ({
             {files.map((item, index) => (
               <div
                 key={index}
-                className="relative z-50 p-2 border border-border dark:border-coal rounded-md flex justify-between items-center bg-tertiary dark:bg-dim cursor-default"
+                className="relative p-2 border border-border dark:border-coal rounded-md flex justify-between items-center bg-tertiary dark:bg-dim cursor-default"
               >
                 <div className="flex items-center flex-col gap-2">
                   <Tooltip
-                    mouseTrack
+                    position="bottom"
                     content={
                       <>
-                      <p className="text-sm">
-                        {item.file.name}
-                      </p>
-                      <p className="text-sm">
-                        {formatFileSize(item.file.size)}
-                      </p>
-                      <p className="text-sm">
-                        Uploaded on: {item.date}
-                      </p>
-                    </>
+                        <p className="text-sm ">{item.file.name}</p>
+                        <p className="text-sm ">{formatFileSize(item.file.size)}</p>
+                        <p className="text-sm ">Uploaded on: {item.date}</p>
+                      </>
                     }
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <FaFileAlt className="text-gray-500 text-6xl" />
-                      <p className="text-xs max-w-20 text-ellipsis overflow-hidden whitespace-nowrap">
+                      {/* Video preview */}
+                      <video
+                        src={item.preview}
+                        controls
+                        className="size-24 object-cover rounded-md"
+                      />
+                      <p className="text-xs text-deep dark:text-light truncate max-w-[80px]">
                         {item.file.name}
                       </p>
                     </div>
                   </Tooltip>
                   <button
                     type="button"
-                    className="text-red-500 hover:text-red-600 absolute top-0 right-0"
+                    className="text-deep absolute top-0 right-0 p-1 rounded-full border-border dark:border-coal border-2 bg-black/10 dark:bg-white/50 backdrop-blur-sm"
                     onClick={(e) => cancelFile(index, e)}
                   >
                     <FaTimes />
@@ -249,4 +245,4 @@ const DocUpload: React.FC<DocUploadProps> = ({
   );
 };
 
-export default DocUpload;
+export default VideoUpload;

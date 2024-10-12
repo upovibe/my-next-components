@@ -3,7 +3,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaCloudUploadAlt, FaTimes, FaFileUpload } from "react-icons/fa";
 import Lottie from "lottie-react";
-import uploadingAnimation from "@animations/uploading.json";
+import Image from "next/image"; // Import the next/image component
+import uploadingAnimation from "@/assets/animation/uploading.json";
 import Tooltip from "@/components/common/Tooltip";
 
 interface ImageUploadProps {
@@ -225,10 +226,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     }
                   >
                     <div className="flex flex-col items-center gap-2">
-                      {/* Image preview */}
-                      <img
+                      {/* Image preview using Next.js Image component */}
+                      <Image
                         src={item.preview}
                         alt={item.file.name}
+                        width={96} // Replace with desired width
+                        height={96} // Replace with desired height
                         className="size-24 object-cover rounded-md"
                       />
                       <p className="text-xs text-deep dark:text-light truncate max-w-[80px]">
@@ -238,7 +241,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   </Tooltip>
                   <button
                     type="button"
-                    className="text-deep absolute top-0 right-0 p-1 rounded-full border-border dark:border-coal border-2 bg-black/10 dark:bg-white/50 backdrop-blur-sm"
+                    className="flex items-center justify-center text-deep absolute top-0 right-0 p-1 rounded-full border-border dark:border-coal border-2 bg-black/10 dark:bg-white/50 backdrop-blur-sm"
                     onClick={(e) => cancelFile(index, e)}
                   >
                     <FaTimes />

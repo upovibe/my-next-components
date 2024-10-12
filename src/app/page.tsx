@@ -1,4 +1,4 @@
-import Hero from '@/components/common/Hero';
+import Hero from '@/components/layout/Hero';
 const Homepage = () => {
 
   return (
