@@ -37,11 +37,12 @@ const Hero: React.FC = () => {
         logo={logo}
         items={menuItems}
         input={searchInput}
-        button={signInButton}
+        actionElement={signInButton}
         container
-        widthClass="max-w-full" // Adjust the width as needed
+        widthClass="max-w-full"
         itemsOnLeft
-        displayType="dropdown" // Place items on the right (next to the button)
+        displayType="dropdown"
+        showIconsOn = "md:block hidden"
       />
     </div>
   );

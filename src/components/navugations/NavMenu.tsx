@@ -19,23 +19,25 @@ interface NavItem {
 interface NavMenuProps {
   logo?: JSX.Element;
   items: NavItem[];
-  button?: JSX.Element;
+  actionElement?: JSX.Element;
   input?: JSX.Element;
-  container?: boolean; // Toggle between container or full width
-  widthClass?: string; // Dynamically set width classes
-  itemsOnLeft?: boolean; // Items close to the logo if true, otherwise to the right
-  displayType?: "dropdown" | "sidebar"; // Type of mobile menu display
+  container?: boolean;
+  widthClass?: string;
+  itemsOnLeft?: boolean;
+  displayType?: "dropdown" | "sidebar";
+  showIcons?: boolean;
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({
   logo,
   items,
-  button,
+  actionElement,
   input,
   container = true,
   widthClass = "max-w-7xl",
   itemsOnLeft = true,
-  displayType = "dropdown", // Default to dropdown
+  displayType = "dropdown",
+  showIcons = true,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSubMenus, setOpenSubMenus] = useState<number[]>([]);
@@ -80,7 +82,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     onClick={() => toggleSubMenu(index)}
                     className="hover:bg-gray-700 p-2 lg:py-1 rounded-md flex items-center space-x-2"
                   >
-                    {item.icon && (
+                    {showIcons && item.icon && (
                       <item.icon className="text-lg lg:text-base" />
                     )}
                     <span className="hidden lg:inline-block">{item.label}</span>
@@ -96,7 +98,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     onClick={item.command}
                     className="hover:bg-gray-700 p-2 lg:py-1 rounded-md flex items-center space-x-2"
                   >
-                    {item.icon && (
+                    {showIcons && item.icon && (
                       <item.icon className="text-lg lg:text-base" />
                     )}
                     <span className="hidden lg:inline-block">{item.label}</span>
@@ -128,10 +130,10 @@ const NavMenu: React.FC<NavMenuProps> = ({
             ))}
           </div>
 
-          {/* Optional Button + Input - Always on the right */}
+          {/* Optional Action Element + Input - Always on the right */}
           <div className="hidden md:flex items-center gap-2 ml-2">
-          {input && <div>{input}</div>}
-            {button && <div>{button}</div>}
+            {input && <div>{input}</div>}
+            {actionElement && <div>{actionElement}</div>}
           </div>
 
           {/* Burger Menu */}
@@ -192,11 +194,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
 
         {/* Input inside sidebar in mobile */}
         <div
-          className={`p-3 ${
-            displayType === "sidebar"
-              ? "w-3/4"
-              : "w-full"
-          }`}
+          className={`p-3 ${displayType === "sidebar" ? "w-3/4" : "w-full"}`}
         >
           {input}
         </div>
@@ -213,7 +211,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                   onClick={() => toggleSubMenu(index)}
                   className="w-full text-left hover:bg-gray-700 px-3 py-2 rounded-md flex items-center space-x-2"
                 >
-                  {item.icon && <item.icon className="text-lg" />}
+                  {showIcons && item.icon && <item.icon className="text-lg" />}
                   <span>{item.label}</span>
                   {openSubMenus.includes(index) ? (
                     <FaChevronDown />
@@ -227,7 +225,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                   onClick={item.command}
                   className="hover:bg-gray-700 px-3 py-2 rounded-md flex items-center space-x-2"
                 >
-                  {item.icon && <item.icon className="text-lg" />}
+                  {showIcons && item.icon && <item.icon className="text-lg" />}
                   <span>{item.label}</span>
                 </Link>
               )}
@@ -248,7 +246,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
               )}
             </div>
           ))}
-          {button && <div className="mt-2">{button}</div>}
+          {actionElement && <div className="mt-2">{actionElement}</div>}
         </div>
       </div>
     </nav>

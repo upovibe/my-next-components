@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/common/Logo";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaSignInAlt } from "react-icons/fa";
 
 const Nav: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -116,6 +116,9 @@ const Nav: React.FC = () => {
                 className="text-2xl text-soft dark:text-pale hover:scale-105 hover:font-bold hover:text-deep transition-all duration-200 ease-linear"
               />
             </Link>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+      <FaSignInAlt className="inline-block mr-1" /> Sign In
+    </button>
           </div>
         </div>
       </div>
