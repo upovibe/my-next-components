@@ -1,55 +1,47 @@
 'use client';
 
 import React from 'react';
-import FileUpload from '../form/upload/FileUpload'; // Import your FileUpload component
-
-// Handler for file upload
-const handleFileUpload = (files: File[]) => {
-  console.log("Files uploaded:", files.map((file) => file.name));
-  // Handle file upload logic here (e.g., send to server, etc.)
-};
+import { FaHome, FaInfo, FaPhone, FaSignInAlt, FaUserAlt } from 'react-icons/fa';
+import NavMenu from '../navugations/NavMenu';
 
 const Hero: React.FC = () => {
+  const menuItems = [
+    { label: 'Home', href: '/', icon: FaHome },
+    { label: 'About', href: '/about', icon: FaInfo },
+    { label: 'Services', icon: FaUserAlt, children: [
+      { label: 'Web Development', href: '/services/web' },
+      { label: 'Mobile Development', href: '/services/mobile' },
+    ]},
+    { label: 'Contact', href: '/contact', icon: FaPhone, command: () => alert('Contact clicked!') }
+  ];
+
+  const logo = <img src="/logo.png" alt="Logo" className="h-8" />;
+
+  const searchInput = (
+    <input
+      type="text"
+      placeholder="Search"
+      className="bg-gray-700 text-white px-4 py-2 rounded-md w-full"
+    />
+  );
+
+  const signInButton = (
+    <button className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+      <FaSignInAlt className="inline-block mr-1" /> Sign In
+    </button>
+  );
+
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Upload Images</h1>
-      <FileUpload
-        onFileUpload={handleFileUpload} // Callback to handle uploaded files
-        maxFiles={3}                    // Maximum number of image files allowed
-        fileType="image"                // Specify the file type for image uploads
-        showSubmit={true}               // Show submit button
-        showClear={true}                // Show clear button to remove all files
-        showUpload={true}               // Show upload button to open file dialog
-      />
-
-      <h1 className="text-xl font-bold mt-8 mb-4">Upload Videos</h1>
-      <FileUpload
-        onFileUpload={handleFileUpload} // Callback to handle uploaded files
-        maxFiles={2}                    // Maximum number of video files allowed
-        fileType="video"                // Specify the file type for video uploads
-        showSubmit={true}               // Show submit button
-        showClear={true}                // Show clear button to remove all files
-        showUpload={true}               // Show upload button to open file dialog
-      />
-
-      <h1 className="text-xl font-bold mt-8 mb-4">Upload Documents</h1>
-      <FileUpload
-        onFileUpload={handleFileUpload} // Callback to handle uploaded files
-        maxFiles={5}                    // Maximum number of document files allowed
-        fileType="doc"                  // Specify the file type for document uploads
-        showSubmit={true}               // Show submit button
-        showClear={true}                // Show clear button to remove all files
-        showUpload={true}               // Show upload button to open file dialog
-      />
-
-      <h1 className="text-xl font-bold mt-8 mb-4">Upload Any File Type</h1>
-      <FileUpload
-        onFileUpload={handleFileUpload}  // Callback to handle uploaded files
-        maxFiles={10}                    // Maximum number of files allowed
-        fileType="all"                   // Allow all file types (image, video, doc)
-        showSubmit={true}                // Show submit button
-        showClear={true}                 // Show clear button to remove all files
-        showUpload={true}                // Show upload button to open file dialog
+      <NavMenu
+        logo={logo}
+        items={menuItems}
+        input={searchInput}
+        button={signInButton}
+        container={true} // Toggle to true for container layout
+        widthClass="max-w-full" // Adjust the width as needed
+        itemsOnLeft={false}
+        displayType="dropdown" // Place items on the right (next to the button)
       />
     </div>
   );
