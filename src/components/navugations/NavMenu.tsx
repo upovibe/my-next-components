@@ -130,6 +130,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
 
           {/* Optional Button + Input - Always on the right */}
           <div className="hidden md:flex items-center gap-2 ml-2">
+          {input && <div>{input}</div>}
             {button && <div>{button}</div>}
           </div>
 

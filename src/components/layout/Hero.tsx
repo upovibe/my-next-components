@@ -38,9 +38,9 @@ const Hero: React.FC = () => {
         items={menuItems}
         input={searchInput}
         button={signInButton}
-        container={true} // Toggle to true for container layout
+        container
         widthClass="max-w-full" // Adjust the width as needed
-        itemsOnLeft={false}
+        itemsOnLeft
         displayType="dropdown" // Place items on the right (next to the button)
       />
     </div>
