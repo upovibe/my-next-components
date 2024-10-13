@@ -3,6 +3,7 @@
 import React from 'react';
 import { FaHome, FaInfo, FaPhone, FaSignInAlt, FaUserAlt } from 'react-icons/fa';
 import NavMenu from '../navugations/NavMenu';
+import SearchInput from '../form/inputs/SearchInput';
 
 const Hero: React.FC = () => {
   const menuItems = [
@@ -18,11 +19,10 @@ const Hero: React.FC = () => {
   const logo = <img src="/logo.png" alt="Logo" className="h-8" />;
 
   const searchInput = (
-    <input
-      type="text"
-      placeholder="Search"
-      className="bg-gray-700 text-white px-4 py-2 rounded-md w-full"
-    />
+<SearchInput
+placeholder='search'
+
+/>
   );
 
   const signInButton = (
@@ -42,7 +42,6 @@ const Hero: React.FC = () => {
         widthClass="max-w-full"
         itemsOnLeft
         displayType="dropdown"
-        showIconsOn = "md:block hidden"
       />
     </div>
   );

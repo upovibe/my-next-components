@@ -7,23 +7,22 @@ type SearchInputProps = {
   placeholder: string; // Placeholder for the input
   label?: string; // Optional label
   size?: "sm" | "nm" | "lg"; // Size of the input
+  showButton?: boolean; // Prop to control whether to show the search button
+  onSearch?: (query: string) => void; // Function to handle search action
 };
 
 const SearchInput: React.FC<SearchInputProps> = ({
   placeholder,
   label,
   size = "nm",
+  showButton = true,
+  onSearch,
 }) => {
   const [query, setQuery] = useState("");
 
-  const handleSearch = () => {
-    console.log("Searching for:", query);
-    // Implement search logic here
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
+    if (e.key === "Enter" && onSearch) {
+      onSearch(query); // Call the onSearch prop when Enter is pressed
     }
   };
 
@@ -39,11 +38,21 @@ const SearchInput: React.FC<SearchInputProps> = ({
   }[size];
 
   return (
-    <div className="relative mb-4">
+    <div className="relative">
       {label && (
         <label className="block mb-1 text-deep dark:text-light">{label}</label>
       )}
-      <div className="flex items-center">
+      {/* Button for small screens */}
+      {showButton && (
+        <button
+          className="flex items-center justify-center p-2 lg:hidden bg-primary dark:bg-shade rounded-md"
+          onClick={() => onSearch && onSearch(query)} // Call onSearch prop
+        >
+          <FaSearch className="text-deep dark:text-light" />
+        </button>
+      )}
+      {/* Input for large screens */}
+      <div className={`flex items-center ${showButton ? 'hidden lg:flex' : 'lg:flex'}`}>
         <FaSearch className="absolute left-3 text-deep dark:text-light" />
         <input
           type="text"

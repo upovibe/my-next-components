@@ -37,7 +37,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
   widthClass = "max-w-7xl",
   itemsOnLeft = true,
   displayType = "dropdown",
-  showIcons = true,
+  showIcons = false,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSubMenus, setOpenSubMenus] = useState<number[]>([]);
@@ -85,7 +85,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     {showIcons && item.icon && (
                       <item.icon className="text-lg lg:text-base" />
                     )}
-                    <span className="hidden lg:inline-block">{item.label}</span>
+                    <span className="inline-flex">{item.label}</span>
                     {openSubMenus.includes(index) ? (
                       <FaChevronDown />
                     ) : (
@@ -101,7 +101,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     {showIcons && item.icon && (
                       <item.icon className="text-lg lg:text-base" />
                     )}
-                    <span className="hidden lg:inline-block">{item.label}</span>
+                    <span className="inline-block">{item.label}</span>
                   </Link>
                 )}
 
