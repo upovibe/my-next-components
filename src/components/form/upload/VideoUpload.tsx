@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaCloudUploadAlt, FaTimes, FaFileUpload } from "react-icons/fa";
 import Lottie from "lottie-react";
-import uploadingAnimation from "@/assets/animation/uploading.json";
+import uploadingAnimation from "@/assets/animation/Loading.json";
 import Tooltip from "@/components/common/Tooltip";
 
 interface VideoUploadProps {

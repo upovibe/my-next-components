@@ -31,7 +31,7 @@ const Divider: React.FC<DividerProps> = ({
       : 'items-center';
 
   return (
-    <div className={`flex ${layout === 'horizontal' ? 'flex-row items-center' : 'flex-col'} ${alignmentClass} ${className}`}>
+    <div className={`flex bg-border dark:bg-coal ${layout === 'horizontal' ? 'flex-row items-center' : 'flex-col'} ${alignmentClass} ${className}`}>
       {layout === 'horizontal' ? (
         <>
           {align === 'left' && children && (

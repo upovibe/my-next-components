@@ -10,8 +10,10 @@ const Footer = () => {
         href="https://github.com/upovibe/my-next-components.git"
         target="_blank"
         rel="noopener noreferrer"
+        className="size-8 bg-secondary dark:bg-dim border border-border dark:border-coal rounded-md flex items-center justify-center"
       >
-        <FaGithub className="text-2xl text-soft dark:text-pale hover:scale-105 hover:font-bold hover:text-deep transition-all duration-200 ease-linear" />
+        <FaGithub
+        />
       </Link>
     </footer>
   );

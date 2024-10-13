@@ -13,19 +13,19 @@ interface NavItem {
   href?: string;
   icon?: IconType;
   command?: () => void;
-  children?: SubItem[]; // Optional sub-items
+  children?: SubItem[];
+  className?: string;
 }
 
 interface NavMenuProps {
-  logo?: JSX.Element;
+  logo?: React.ReactNode;
   items: NavItem[];
   actionElement?: JSX.Element;
   input?: JSX.Element;
-  container?: boolean;
-  widthClass?: string;
-  itemsOnLeft?: boolean;
+  itemsToRight?: boolean;
   displayType?: "dropdown" | "sidebar";
   showIcons?: boolean;
+  className?: string;
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({
@@ -33,11 +33,10 @@ const NavMenu: React.FC<NavMenuProps> = ({
   items,
   actionElement,
   input,
-  container = true,
-  widthClass = "max-w-7xl",
-  itemsOnLeft = true,
+  itemsToRight,
   displayType = "dropdown",
-  showIcons = false,
+  showIcons,
+  className = "",
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSubMenus, setOpenSubMenus] = useState<number[]>([]);
@@ -55,11 +54,11 @@ const NavMenu: React.FC<NavMenuProps> = ({
   };
 
   return (
-    <nav className="bg-gray-800 text-white">
-      <div className={`${container ? "mx-auto" : ""} ${widthClass}`}>
-        <div className="flex items-center justify-between p-2 h-16">
+    <nav className="p-2">
+      <div className={`${className}`}>
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer mr-10">
+          <div className="flex-shrink-0 cursor-pointer mr-2">
             {logo ? (
               <div className="text-2xl font-bold">{logo}</div>
             ) : (
@@ -70,33 +69,34 @@ const NavMenu: React.FC<NavMenuProps> = ({
           {/* Items either after the logo or to the right */}
           <div
             className={`${
-              itemsOnLeft
-                ? "hidden md:flex gap-2 mr-auto"
-                : "hidden md:flex gap-3 ml-auto"
+              itemsToRight
+                ? "hidden md:flex gap-3 ml-auto"
+                : "hidden md:flex gap-2 mr-auto"
             }`}
           >
             {items.map((item, index) => (
               <div key={index} className="relative">
                 {item.children ? (
                   <button
+                    type="button"
                     onClick={() => toggleSubMenu(index)}
-                    className="hover:bg-gray-700 p-2 lg:py-1 rounded-md flex items-center space-x-2"
+                    className="p-2 lg:py-1 rounded-md flex items-center space-x-2 font-semibold text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear"
                   >
                     {showIcons && item.icon && (
                       <item.icon className="text-lg lg:text-base" />
                     )}
                     <span className="inline-flex">{item.label}</span>
                     {openSubMenus.includes(index) ? (
-                      <FaChevronDown />
+                      <FaChevronDown className="text-xs" />
                     ) : (
-                      <FaChevronRight />
+                      <FaChevronRight className="text-xs" />
                     )}
                   </button>
                 ) : (
                   <Link
                     href={item.href || "#"}
                     onClick={item.command}
-                    className="hover:bg-gray-700 p-2 lg:py-1 rounded-md flex items-center space-x-2"
+                    className="p-2 lg:py-1 rounded-md flex items-center space-x-2 font-semibold text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear"
                   >
                     {showIcons && item.icon && (
                       <item.icon className="text-lg lg:text-base" />
@@ -108,20 +108,19 @@ const NavMenu: React.FC<NavMenuProps> = ({
                 {/* Sub-items (children) */}
                 {item.children && (
                   <div
-                    className={`absolute left-0 bg-gray-700 text-white py-2 rounded-md mt-2 transition-all duration-300 ease-in-out ${
+                    className={`absolute left-0 bg-primary dark:bg-shade text-white py-2 rounded-md mt-2 transition-all duration-300 ease-in-out w-max overflow-hidden border-border dark:border-coal border shadow ${
                       openSubMenus.includes(index)
                         ? "max-h-screen opacity-100 visible"
                         : "max-h-0 opacity-0 invisible"
                     }`}
-                    style={{ overflow: "hidden" }}
                   >
                     {item.children.map((subItem, subIndex) => (
                       <Link
                         key={subIndex}
                         href={subItem.href}
-                        className="block px-4 py-2 hover:bg-gray-600"
+                        className=" flex items-center space-x-2 text-sm px-4 py-2 text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear whitespace-normal"
                       >
-                        {subItem.label}
+                        <span className="inline-block">{subItem.label}</span>
                       </Link>
                     ))}
                   </div>
@@ -131,7 +130,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
           </div>
 
           {/* Optional Action Element + Input - Always on the right */}
-          <div className="hidden md:flex items-center gap-2 ml-2">
+          <div className="hidden md:flex items-center ml-2">
             {input && <div>{input}</div>}
             {actionElement && <div>{actionElement}</div>}
           </div>
@@ -163,7 +162,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
       {/* Overlay only for dropdown */}
       {menuOpen && displayType === "dropdown" && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-40"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={handleMenuToggle}
         ></div>
       )}
@@ -172,10 +171,10 @@ const NavMenu: React.FC<NavMenuProps> = ({
       <div
         className={`md:hidden ${
           displayType === "sidebar"
-            ? `fixed top-0 left-0 h-full w-full bg-gray-800 transition-transform duration-300 ease-in-out z-50 ${
+            ? `fixed top-0 left-0 h-full w-full bg-primary dark:bg-shade transition-transform duration-300 ease-in-out z-50 ${
                 menuOpen ? "translate-x-0" : "-translate-x-full"
               }`
-            : `absolute top-16 left-0 w-full bg-gray-800 transition-all duration-300 ease-in-out z-50 ${
+            : `absolute top-16 left-0 w-full bg-primary dark:bg-shade transition-all duration-300 ease-in-out z-50 ${
                 menuOpen
                   ? "max-h-screen opacity-100 visible"
                   : "max-h-0 opacity-0 invisible"
@@ -185,7 +184,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
         {/* Close icon inside sidebar */}
         {displayType === "sidebar" && (
           <div
-            className="absolute top-4 right-4 cursor-pointer z-50 text-white"
+            className="absolute top-4 right-4 cursor-pointer z-50 text-deep dark:text-light"
             onClick={handleMenuToggle}
           >
             <FaTimes className="text-2xl" />
@@ -208,22 +207,23 @@ const NavMenu: React.FC<NavMenuProps> = ({
             <div key={index} className="relative">
               {item.children ? (
                 <button
+                type="button"
                   onClick={() => toggleSubMenu(index)}
-                  className="w-full text-left hover:bg-gray-700 px-3 py-2 rounded-md flex items-center space-x-2"
+                  className="w-full text-left px-3 py-2 rounded-md flex items-center space-x-2 font-semibold text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear"
                 >
                   {showIcons && item.icon && <item.icon className="text-lg" />}
                   <span>{item.label}</span>
                   {openSubMenus.includes(index) ? (
-                    <FaChevronDown />
+                    <FaChevronDown className="text-xs" />
                   ) : (
-                    <FaChevronRight />
+                    <FaChevronRight className="text-xs" />
                   )}
                 </button>
               ) : (
                 <Link
                   href={item.href || "#"}
                   onClick={item.command}
-                  className="hover:bg-gray-700 px-3 py-2 rounded-md flex items-center space-x-2"
+                  className="px-3 py-2 rounded-md flex items-center space-x-2 font-semibold text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear"
                 >
                   {showIcons && item.icon && <item.icon className="text-lg" />}
                   <span>{item.label}</span>
@@ -237,7 +237,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     <Link
                       key={subIndex}
                       href={subItem.href}
-                      className="block px-3 py-2 hover:bg-gray-600 rounded-md"
+                      className="block px-3 py-2 dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear whitespace-normal"
                     >
                       {subItem.label}
                     </Link>
