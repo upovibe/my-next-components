@@ -94,7 +94,7 @@ export default function RootLayout({
           {" "}
           {/* Wrap your layout in UseTheme */}
           {displayLayout === "header" ? <Header /> : <Dashboard />}
-          <main className="min-h-screen py-20 px-2">{children}</main>
+          <main className="min-h-screen py-16 px-2">{children}</main>
           <Footer />
         </UseTheme>
       </body>

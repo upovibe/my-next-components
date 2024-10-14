@@ -5,7 +5,7 @@ import Link from "next/link";
 import {FaHome, FaGithub, FaSignInAlt, FaPhone, FaUserAlt, FaInfo } from "react-icons/fa";
 import Logo from "@/components/common/Logo";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
-import NavMenu from "@/components/navugations/NavMenu";
+import NavMenu from "@/components/navigations/NavMenu";
 import SearchInput from "@/components/form/inputs/SearchInput";
 import Divider from "@/components/common/Divider";
 import ButtonLink from "@/components/form/buttons/ButtonLink";

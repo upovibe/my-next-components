@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
 interface ProgressLoaderProps {
-  isLoading: boolean;  // Controls when the loader should show
-  colors?: string[];   // Array of colors for the gradient
-  height?: string;     // Loader height, default to '4px'
-  className?: string;  // Additional custom classes for styling
+  isLoading: boolean;
+  colors?: string[];
+  height?: string;
+  className?: string;
 }
 
 const ProgressLoader: React.FC<ProgressLoaderProps> = ({
   isLoading,
-  colors = ['#4caf50', '#2196f3', '#ff5722'],  // Default gradient colors
+  colors = ['#4caf50', '#2196f3', '#ff5722'],
   height = '4px',
-  className = '', // Default empty string for className
+  className = '',
 }) => {
   const [progress, setProgress] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -25,11 +25,11 @@ const ProgressLoader: React.FC<ProgressLoaderProps> = ({
 
       interval = setInterval(() => {
         setProgress((prev) => {
-          const newProgress = prev + Math.random() * 30; // Increment progress randomly
+          const newProgress = prev + Math.random() * 30;
           if (newProgress >= 100) {
             clearInterval(interval);
-            setProgress(100); // Ensure it reaches exactly 100%
-            setTimeout(() => setCompleted(true), 500); // Delay hiding to show the complete loader
+            setProgress(100);
+            setTimeout(() => setCompleted(true), 500);
             return 100;
           }
           return newProgress;
@@ -37,10 +37,10 @@ const ProgressLoader: React.FC<ProgressLoaderProps> = ({
       }, 300);
     }
 
-    return () => clearInterval(interval); // Clean up on component unmount or loading state change
+    return () => clearInterval(interval);
   }, [isLoading]);
 
-  if (completed) return null;  // Remove loader from DOM once it completes
+  if (completed) return null;
 
   return (
     <div
