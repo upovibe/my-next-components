@@ -1,59 +1,51 @@
-"use client"; // Ensure this is at the top to indicate this is a client component
+"use client";
 
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import React from "react";
 
-type PasswordInputProps = {
-  placeholder: string; // Placeholder for the input
-  label?: string; // Optional label
-  size?: "sm" | "nm" | "lg"; // Size of the input
+type CheckboxProps = {
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+  size?: "sm" | "nm" | "lg";
+  className?: string;
 };
 
-const PasswordInput: React.FC<PasswordInputProps> = ({
-  placeholder,
-  label,
-  size = "nm",
+const Checkbox: React.FC<CheckboxProps> = ({
+  checked = false,
+  onChange,
+  size = "sm",
+  className = "",
 }) => {
-  const [value, setValue] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
-
-  // Class for size-based styling
+  // Size-based classes
   const sizeClass = {
-    sm: "p-1 text-sm", // Small size
-    nm: "p-2 text-base", // Normal size
-    lg: "p-3 text-lg", // Large size
+    sm: "h-4 w-4 text-sm",
+    nm: "h-5 w-5 text-base",
+    lg: "h-6 w-6 text-lg",
   }[size];
 
+  // Handler for checkbox toggle
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e.target.checked);
+    }
+  };
+
   return (
-    <div className="relative mb-4">
-      {label && (
-        <label className="block mb-1 text-deep dark:text-light text-left">
-          {label}
-        </label>
-      )}
-      <div className="relative flex items-center border-2 border-border dark:border-coal rounded-md bg-primary dark:bg-shade">
-        <input
-          type={showPassword ? "text" : "password"}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
-          className={`w-full pl-10 pr-10 text-deep dark:text-light rounded-md focus:outline-none transition duration-200 ${sizeClass} 
-            border-2 border-border dark:border-coal 
-            focus:border-highlight dark:focus:border-ocean`} // Add focus styles here
-        />
-        <button
-          onClick={togglePasswordVisibility}
-          className="absolute right-3 text-deep dark:text-light"
-        >
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
-        </button>
-      </div>
+    <div className="flex items-center space-x-2">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={handleCheckboxChange} 
+        className={`cursor-pointer rounded border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${sizeClass} ${className}`}
+        aria-label={checked ? "Checked" : "Unchecked"}
+      />
+      <label
+        className="text-deep dark:text-light cursor-pointer hidden"
+        onClick={() => onChange && onChange(!checked)}
+      >
+        {checked ? "Checked" : "Unchecked"}
+      </label>
     </div>
   );
 };
 
-export default PasswordInput;
+export default Checkbox;
