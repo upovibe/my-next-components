@@ -1,94 +1,117 @@
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { ReactNode, useState, useRef, useCallback } from 'react';
 
 interface TooltipProps {
-    children: ReactNode; // Content to be wrapped
-    content: ReactNode; // Tooltip content
-    position?: 'top' | 'bottom' | 'left' | 'right' | 'center'; // Position of the tooltip
-    mouseTrack?: boolean; // Enable mouse tracking
+  children: ReactNode;
+  content: ReactNode;
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  mouseTrack?: boolean;
+  className?: string; // Corrected this line
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
-    children,
-    content,
-    position = 'top',
-    mouseTrack = false,
+  children,
+  content,
+  position = 'top',
+  mouseTrack = false,
+  className,
 }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
-    const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
+  const [visible, setVisible] = useState(false);
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
-    const positions = {
-        top: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
-        bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-2',
-        left: 'right-full top-1/2 transform -translate-y-1/2 mr-2',
-        right: 'left-full top-1/2 transform -translate-y-1/2 ml-2',
-        center: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2', // Center position
-    };
+  const handleMouseEnter = () => {
+    setVisible(true);
+  };
 
-    const arrowStyles = {
-        top: 'after:content-[""] after:absolute after:top-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-8 after:border-t-slate-700 after:border-b-transparent after:border-l-transparent after:border-r-transparent',
-        bottom: 'after:content-[""] after:absolute after:bottom-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-8 after:border-b-slate-700 after:border-t-transparent after:border-l-transparent after:border-r-transparent',
-        left: 'after:content-[""] after:absolute after:left-full after:top-1/2 after:transform after:-translate-y-1/2 after:border-8 after:border-l-slate-700 after:border-t-transparent after:border-b-transparent after:border-r-transparent',
-        right: 'after:content-[""] after:absolute after:right-full after:top-1/2 after:transform after:-translate-y-1/2 after:border-8 after:border-r-slate-700 after:border-t-transparent after:border-b-transparent after:border-l-transparent',
-        center: '', // No arrow for center
-    };
+  const handleMouseLeave = () => {
+    setVisible(false);
+  };
 
-    const handleMouseEnter = () => {
-        setShowTooltip(true);
-    };
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      if (mouseTrack) {
+        const tooltipWidth = 150; // Tooltip width
+        const tooltipHeight = 40; // Tooltip height
 
-    const handleMouseLeave = () => {
-        setShowTooltip(false);
-    };
+        // Center the tooltip horizontally and vertically above the mouse cursor
+        let left = event.clientX - tooltipWidth / 5; // Centered horizontally
+        let top = event.clientY - tooltipHeight - 1; // 1px above the mouse
 
-    const handleMouseMove = useCallback((event: MouseEvent) => {
-        if (mouseTrack) {
-            const tooltipWidth = 200; // Maximum width for the tooltip
-            const tooltipHeight = 60; // Maximum height for the tooltip
-
-            let left = event.clientX - tooltipWidth / 2;
-            let top = event.clientY - tooltipHeight - 10; // 10px above the mouse
-
-            if (left < 0) left = 0;
-            if (left + tooltipWidth > window.innerWidth) left = window.innerWidth - tooltipWidth;
-            if (top < 0) top = event.clientY + 10;
-            if (top + tooltipHeight > window.innerHeight) top = window.innerHeight - tooltipHeight;
-
-            setTooltipStyle({
-                position: 'fixed',
-                left: `${left}px`,
-                top: `${top}px`,
-            });
+        // Adjust to keep within viewport boundaries
+        if (left < 0) left = 0; // Prevent moving out of the left side
+        if (left + tooltipWidth > window.innerWidth) {
+          left = window.innerWidth - tooltipWidth; // Prevent moving out of the right side
         }
-    }, [mouseTrack]);
-
-    useEffect(() => {
-        if (mouseTrack) {
-            document.addEventListener('mousemove', handleMouseMove);
-            return () => {
-                document.removeEventListener('mousemove', handleMouseMove);
-            };
+        if (top < 0) {
+          top = event.clientY + 10; // Move below the mouse if it goes off the top
         }
-    }, [mouseTrack, handleMouseMove]);
+        if (top + tooltipHeight > window.innerHeight) {
+          top = window.innerHeight - tooltipHeight; // Prevent moving out of the bottom
+        }
 
-    return (
+        // Set tooltip style with updated coordinates
+        setTooltipStyle({
+          position: 'fixed',
+          left: `${left}px`,
+          top: `${top}px`,
+        });
+      }
+    },
+    [mouseTrack]
+  );
+
+  const getPositionStyles = () => {
+    if (mouseTrack) return ''; // No position styles for mouse tracking
+
+    const positionStyles: { [key: string]: string } = {
+      top: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
+      bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-2',
+      left: 'right-full top-1/2 transform -translate-y-1/2 mr-2',
+      right: 'left-full top-1/2 transform -translate-y-1/2 ml-2',
+      center: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2',
+    };
+    return positionStyles[position] || positionStyles.top;
+  };
+
+  const getArrowPosition = () => {
+    if (mouseTrack) return ''; // No arrow for mouse tracking
+
+    const arrowPosition: { [key: string]: string } = {
+      top: 'bottom-0 left-1/2 transform -translate-x-1/2',
+      bottom: 'top-0 left-1/2 transform -translate-x-1/2',
+      left: 'right-0 top-1/2 transform -translate-y-1/2',
+      right: 'left-0 top-1/2 transform -translate-y-1/2',
+    };
+    return arrowPosition[position] || arrowPosition.top;
+  };
+
+  return (
+    <div
+      className="relative inline-block"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={(e) => mouseTrack && handleMouseMove(e as unknown as MouseEvent)}
+    >
+      {children}
+      {visible && (
         <div
-            className="relative inline-block w-max"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+          ref={tooltipRef}
+          className={`absolute z-50 p-2 py-1 rounded-md text-sm bg-deep dark:bg-soft text-light shadow-lg
+            ${className ? ` ${className}` : ''} // Corrected space handling
+            ${!mouseTrack && getPositionStyles()} 
+            ${mouseTrack && 'fixed'}`} // Apply separate class for mouse tracking
+          style={mouseTrack ? tooltipStyle : {}} // Apply dynamic tooltip style when mouse tracking
         >
-            {children}
-            {showTooltip && (
-                <div
-                    className={`max-w-32 text-sm absolute border border-slate-300 dark:border-coal bg-shadow dark:bg-tertiary text-pale dark:text-soft shadow-lg px-2 py-1 rounded-xl cursor-pointer z-50 overflow-hidden ${
-                        mouseTrack ? '' : positions[position]
-                    } ${arrowStyles[position]}`}
-                    style={mouseTrack ? tooltipStyle : {}}
-                >
-                    {content}
-                </div>
-            )}
+          {content}
+          {!mouseTrack && (
+            <div
+              className={`absolute w-3 h-3 bg-deep dark:bg-soft transform rotate-45 -z-10 ${getArrowPosition()}`}
+            />
+          )}
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default Tooltip;

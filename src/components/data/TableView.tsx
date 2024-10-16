@@ -11,12 +11,18 @@ import {
   FaPlusSquare,
   FaPrint,
   FaFilter,
+  FaFileAlt,
+  FaFilePdf,
 } from "react-icons/fa";
 import Paginator from "@/components/data/Paginator";
 import Checkbox from "@/components/form/Checkbox";
 import ConfirmDialog from "@/components/overlay/ConfirmDialog";
 import SkeletonLoader from "@/components/loader/SkeletonLoader";
 import Divider from "@/components/common/Divider";
+import Tooltip from "@/components/common/Tooltip";
+import Image from "next/image";
+import { isImage, isFile } from "@/utils/fileHelpers";
+import DialogDisplay from "@/components/overlay/DialogDisplay";
 
 interface ColumnProps {
   field: string;
@@ -126,6 +132,9 @@ export const TableView = <T extends Record<string, any>>({
   const [pendingAction, setPendingAction] = useState<() => void>(
     () => () => {}
   );
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [previewContent, setPreviewContent] = useState<React.ReactNode>(null);
+  const [currentFile, setCurrentFile] = useState<string | null>(null);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -413,7 +422,6 @@ export const TableView = <T extends Record<string, any>>({
     setShowConfirm(false);
   };
 
-  // Render editor based on column type (input, select, file)
   const renderEditor = (col: ColumnProps, item: T, rowIndex: number) => {
     if (
       col.editable &&
@@ -445,7 +453,7 @@ export const TableView = <T extends Record<string, any>>({
       } else if (col.editorType === "input") {
         return (
           <input
-            ref={inputRef} // Use the inputRef here
+            ref={inputRef}
             type="text"
             value={editValue}
             onChange={handleChange}
@@ -454,55 +462,99 @@ export const TableView = <T extends Record<string, any>>({
             className="p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
           />
         );
-      } else if (col.editorType === "file") {
+      }
+    }
+    // Check if the item is a file and render based on its type (image or other)
+    const fileValue = (item as any)[col.field];
+    if (fileValue) {
+      if (isImage(fileValue)) {
         return (
-          <input
-            aria-label="file"
-            ref={inputRef} // Use the inputRef here
-            type="file"
-            onChange={(e) => handleFileChange(e, col.field, rowIndex)}
-            onBlur={handleBlur}
+          <Image
+            src={fileValue}
+            alt="uploaded file"
+            width={32}
+            height={32}
+            className="object-contain rounded-full border-2 border-border dark:border-coal cursor-pointer"
+            onClick={() => handlePreviewFile(item, col.field)}
           />
+        );
+      } else if (isFile(fileValue)) {
+        if (/\.pdf$/i.test(fileValue)) {
+          return (
+            <a
+              aria-label="file"
+              href={fileValue}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer"
+              onClick={() => handlePreviewFile(item, col.field)} // Preview PDF on click
+            >
+              <FaFilePdf className="text-red-500 text-xl" />
+            </a>
+          );
+        }
+        return (
+          <a
+            aria-label="file"
+            href={fileValue}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+            onClick={() => handlePreviewFile(item, col.field)} // Preview other files
+          >
+            <FaFileAlt className="text-gray-500 text-xl" />
+          </a>
         );
       }
     }
     return (item as any)[col.field];
   };
 
-  // New function to handle file input change
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: string,
-    rowIndex: number
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setEditValue(e.target?.result);
-        setHasChanges(true);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // Function to open the dialog with file preview
+  const handlePreviewFile = (item: T, field: string) => {
+    const fileValue = (item as any)[field];
+    setCurrentFile(fileValue);
 
-  // Handler for deleting all selected rows
-  const handleDeleteAll = (rows: T[]) => {
-    confirmAction(() => {
-      if (onDeleteAll) {
-        onDeleteAll(rows);
+    if (isImage(fileValue)) {
+      setPreviewContent(
+        <div className="text-center">
+          <Image
+            src={fileValue}
+            alt="Preview"
+            width={200}
+            height={200}
+            className="object-contain rounded-lg cursor-pointer"
+          />
+        </div>
+      );
+    } else if (isFile(fileValue)) {
+      if (/\.pdf$/i.test(fileValue)) {
+        setPreviewContent(
+          <div className="text-center">
+            <a href={fileValue} target="_blank" rel="noopener noreferrer">
+              <FaFilePdf className="text-red-500 text-6xl" />
+              <p className="mt-2 text-lg">View PDF</p>
+            </a>
+          </div>
+        );
       } else {
-        const newValue = value.filter((item) => !rows.includes(item));
-        onSelectionChange && onSelectionChange([]);
-        setSelectedRows([]);
+        setPreviewContent(
+          <div className="text-center">
+            <a href={fileValue} target="_blank" rel="noopener noreferrer">
+              <FaFileAlt className="text-gray-500 text-6xl" />
+              <p className="mt-2 text-lg">Download File</p>
+            </a>
+          </div>
+        );
       }
-    });
+    }
+    setDialogVisible(true);
   };
 
   return (
     <div className={`${className}`}>
       {/* Global Filter Input */}
-      <div className="flex items-center justify-between gap-5 mb-5 min-w-full overflow-auto p-1">
+      <div className="flex items-center justify-between gap-5 mb-5 min-w-full overflow-auto p-2 bg-tertiary dark:bg-shadow rounded-xl shadow-md">
         <div className="flex items-center justify-between gap-3">
           <div className="flex whitespace-nowrap items-center justify-between gap-2 text-lg md:text-xl font-semibold text-deep dark:text-light">
             {icon && <span>{icon}</span>}
@@ -510,16 +562,16 @@ export const TableView = <T extends Record<string, any>>({
             <Divider layout="vertical" type="solid" className="mx-2" />
           </div>
           {globalFilterFields ? (
-          <div className="relative inline-flex items-center">
-            <FaFilter className="absolute left-3 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Global Search..."
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="pl-10 p-2 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean hidden md:inline-flex"
-            />
-          </div>
+            <div className="relative  hidden md:inline-flex items-center">
+              <FaFilter className="absolute left-3 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Global Search..."
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="pl-10 p-2 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
+              />
+            </div>
           ) : null}
         </div>
 
@@ -528,32 +580,47 @@ export const TableView = <T extends Record<string, any>>({
           {selectionMode === "multiple" && selectedRows.length > 0 && (
             <button
               type="button"
-              className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all ease-linear duration-200 "
+              className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all ease-linear duration-200"
               onClick={() => handleDeleteAll(selectedRows)}
             >
-              <FaTrash className="" />
-              <span className="hidden md:inline-flex">Delete All</span>
+              <Tooltip
+                content="Delete all"
+                position="left"
+                className="block md:hidden"
+              >
+                <FaTrash className="" />
+              </Tooltip>
+              <span className="hidden lg:inline-flex">Delete All</span>
             </button>
           )}
+
           {/* Add New Row Button */}
           <button
             type="button"
-            className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all ease-linear duration-200 "
+            className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-all ease-linear duration-200 "
             onClick={handleAddRow}
           >
-            <FaPlusSquare />
-            <span className="hidden md:inline-flex">Add New Row</span>
+            <Tooltip content="Add" position="left" className="block md:hidden">
+              <FaPlusSquare />
+            </Tooltip>
+            <span className="hidden lg:inline-flex">Add New Row</span>
           </button>
 
           {/* Print Button (Conditionally render when print is true) */}
           {print && (
             <button
               type="button"
-              className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-green-500 hover:bg-green-600 text-white rounded transition-all ease-linear duration-200 "
+              className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition-all ease-linear duration-200 "
               onClick={reactToPrintFn}
             >
-              <FaPrint />
-              <span className="hidden md:inline-flex">Print Table</span>
+              <Tooltip
+                content="Print"
+                position="left"
+                className="block md:hidden"
+              >
+                <FaPrint />
+              </Tooltip>
+              <span className="hidden lg:inline-flex">Print Table</span>
             </button>
           )}
         </div>
@@ -689,7 +756,7 @@ export const TableView = <T extends Record<string, any>>({
                           className=" text-deep dark:text-light"
                         />
                         {dropdownStates[rowIndex] && (
-                          <div className="absolute right-0 top-full z-50 flex flex-col items-start  gap-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded shadow p-2 dropdown-menu">
+                          <div className="absolute right-0 top-full z-50 flex flex-col items-start  gap-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded-xl shadow p-2 dropdown-menu">
                             <button
                               type="button"
                               onClick={() => handleView(item)}
@@ -711,7 +778,6 @@ export const TableView = <T extends Record<string, any>>({
                               onClick={() => handleDelete(item)}
                               className="flex items-center gap-2 w-full p-1 px-2 runded-md whitespace-nowrap hover:bg-tertiary hover:dark:bg-shadow group transition-all ease-linear duration-200 rounded-md text-soft dark:text-pale"
                             >
-                              {" "}
                               <FaTrash className="text-sm text-deep dark:text-light group-hover:text-alert dark:group-hover:text-crimson" />
                               Delete
                             </button>
@@ -735,44 +801,56 @@ export const TableView = <T extends Record<string, any>>({
                       </div>
                     ) : (
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          aria-label="View-Row"
-                          onClick={() => handleView(item)}
-                          className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
-                        >
-                          <FaEye className="text-deep dark:text-light group-hover:text-highlight dark:group-hover:text-ocean" />
-                        </button>
-                        <button
-                          aria-label="Edit-Row"
-                          type="button"
-                          onClick={() => handleEdit(item)}
-                          className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
-                        >
-                          <FaPenSquare className="text-deep dark:text-light group-hover:text-gold dark:group-hover:text-accent" />
-                        </button>
-                        <button
-                          aria-label="Delete-row"
-                          type="button"
-                          onClick={() => handleDelete(item)}
-                          className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
-                        >
-                          <FaTrash className="text-deep dark:text-light group-hover:text-alert dark:group-hover:text-crimson" />
-                        </button>
-                        {customActions?.map((action, index) => (
+                        <Tooltip content="View" position="top" mouseTrack>
                           <button
                             type="button"
-                            key={index}
-                            onClick={() => action.onClick(item)}
+                            aria-label="View-Row"
+                            onClick={() => handleView(item)}
                             className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
                           >
-                            {action.icon && (
-                              <span className="text-deep dark:text-light group-hover:text-black dark:group-hover:text-white">
-                                {action.icon}
-                              </span>
-                            )}
-                            <span className="hidden">{action.label}</span>
+                            <FaEye className="text-deep dark:text-light group-hover:text-highlight dark:group-hover:text-ocean" />
                           </button>
+                        </Tooltip>
+                        <Tooltip content="Edit" position="top" mouseTrack>
+                          <button
+                            aria-label="Edit-Row"
+                            type="button"
+                            onClick={() => handleEdit(item)}
+                            className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                          >
+                            <FaPenSquare className="text-deep dark:text-light group-hover:text-gold dark:group-hover:text-accent" />
+                          </button>
+                        </Tooltip>
+                        <Tooltip content="Delete" position="top" mouseTrack>
+                          <button
+                            aria-label="Delete-row"
+                            type="button"
+                            onClick={() => handleDelete(item)}
+                            className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                          >
+                            <FaTrash className="text-deep dark:text-light group-hover:text-alert dark:group-hover:text-crimson" />
+                          </button>
+                        </Tooltip>
+                        {customActions?.map((action, index) => (
+                          <Tooltip
+                            key={index}
+                            content="Custom Action"
+                            position="top"
+                            mouseTrack
+                          >
+                            <button
+                              type="button"
+                              onClick={() => action.onClick(item)}
+                              className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                            >
+                              {action.icon && (
+                                <span className="text-deep dark:text-light group-hover:text-black dark:group-hover:text-white">
+                                  {action.icon}
+                                </span>
+                              )}
+                              <span className="hidden">{action.label}</span>
+                            </button>
+                          </Tooltip>
                         ))}
                       </div>
                     )}
@@ -795,6 +873,14 @@ export const TableView = <T extends Record<string, any>>({
           rowsPerPageOptions={rowsPerPageOptions}
         />
       )}
+
+      <DialogDisplay
+        visible={dialogVisible}
+        onHide={() => setDialogVisible(false)}
+        header="File Preview"
+      >
+        {previewContent}
+      </DialogDisplay>
 
       {/* Confirmation Dialog */}
       <ConfirmDialog

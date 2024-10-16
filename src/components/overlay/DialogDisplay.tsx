@@ -2,16 +2,26 @@ import React from 'react';
 import { FaTimes } from "react-icons/fa";
 import classNames from 'classnames';
 
+// Define the prop types for the DialogDisplay component
+interface DialogDisplayProps {
+  visible: boolean;
+  onHide: () => void;
+  header: string; 
+  children: React.ReactNode; 
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'center'; 
+  closeButton?: boolean; 
+}
+
 // DialogDisplay Component
-const DialogDisplay = ({
+const DialogDisplay: React.FC<DialogDisplayProps> = ({
   visible,
   onHide,
   header,
   children,
   position = 'center',
-  style,
   closeButton = true,
 }) => {
+  // Return nu
   if (!visible) return null;
 
   const getPositionClass = () => {
@@ -31,10 +41,9 @@ const DialogDisplay = ({
   };
 
   const dialogClass = classNames(
-    'fixed p-4 z-50 rounded-md shadow-lg', // Basic layout
+    'fixed p-4 z-50 rounded-md shadow-lg',
     getPositionClass(),
-    'bg-primary dark:bg-shade border border-border dark:border-coal', // Background and border
-    style
+    'bg-primary dark:bg-shade border border-border dark:border-coal', 
   );
 
   const handleOverlayClick = (e) => {
