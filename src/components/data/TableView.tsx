@@ -1,10 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { FaSort, FaSortUp, FaSortDown, FaEllipsisV } from "react-icons/fa";
+import {
+  FaSort,
+  FaSortUp,
+  FaSortDown,
+  FaEllipsisV,
+  FaEye,
+  FaTrash,
+  FaPenSquare,
+  FaPlusSquare,
+  FaPrint,
+  FaFilter,
+} from "react-icons/fa";
 import Paginator from "@/components/data/Paginator";
 import Checkbox from "@/components/form/Checkbox";
 import ConfirmDialog from "@/components/overlay/ConfirmDialog";
 import SkeletonLoader from "@/components/loader/SkeletonLoader";
+import Divider from "@/components/common/Divider";
 
 interface ColumnProps {
   field: string;
@@ -21,9 +33,10 @@ interface SortMeta {
   order: number;
 }
 
-
 interface TableViewProps<T extends Record<string, any>> {
   value: T[] | null;
+  title: string;
+  icon: React.ReactNode;
   loading?: boolean;
   errorMessage?: string;
   stripedRows?: boolean;
@@ -41,7 +54,11 @@ interface TableViewProps<T extends Record<string, any>> {
   useEllipsis?: boolean;
   editable?: boolean;
   print?: boolean;
-  customActions?: { label: string; onClick: (item: T) => void }[];
+  customActions?: {
+    label: string;
+    icon?: React.ReactNode;
+    onClick: (item: T) => void;
+  }[];
   onRowUpdate?: (updatedRow: T, rowIndex: number) => void;
   onSelectionChange?: (selection: T[]) => void;
   onDelete?: (item: T) => void;
@@ -55,6 +72,8 @@ export const Column: React.FC<ColumnProps> = () => null;
 
 export const TableView = <T extends Record<string, any>>({
   value,
+  title,
+  icon,
   loading,
   errorMessage = "No data available",
   stripedRows,
@@ -101,10 +120,42 @@ export const TableView = <T extends Record<string, any>>({
   const [hasChanges, setHasChanges] = useState(false);
   const editingRef = useRef<HTMLInputElement | HTMLSelectElement | null>(null);
   const [showConfirmAction, setShowConfirmAction] = useState(false);
+  const [dropdownStates, setDropdownStates] = useState<{
+    [key: number]: boolean;
+  }>({});
   const [pendingAction, setPendingAction] = useState<() => void>(
     () => () => {}
   );
-  const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleDropdownToggle = (rowIndex: number) => {
+    setDropdownStates((prevStates) => ({
+      ...prevStates,
+      [rowIndex]: !prevStates[rowIndex], // Toggle the dropdown for the clicked row
+    }));
+  };
+
+  // Handle outside click to close the dropdown
+  const handleClickOutside = (event: MouseEvent) => {
+    const dropdownElements = document.querySelectorAll(".dropdown-menu");
+    let clickedInside = false;
+
+    dropdownElements.forEach((dropdownElement) => {
+      if (dropdownElement.contains(event.target as Node)) {
+        clickedInside = true;
+      }
+    });
+
+    if (!clickedInside) {
+      setDropdownStates({});
+    }
+  };
 
   useEffect(() => {
     if (loading) {
@@ -122,14 +173,19 @@ export const TableView = <T extends Record<string, any>>({
     return (
       <div className={`${className}`}>
         <table
-          className={`w-full border-collapse ${
-            showGridlines ? "table-fixed" : ""
+          className={`w-full border-collapse border-border dark:border-coal ${
+            showGridlines ? "table-fixed border-2" : " border-b border-t"
           }`}
         >
           <thead>
             <tr>
               {columns.map((col: any, colIndex: number) => (
-                <th key={colIndex} className="p-2 border">
+                <th
+                  key={colIndex}
+                  className={`p-2 border-collapse border-border dark:border-coal ${
+                    showGridlines ? "border-2" : "border-b"
+                  }`}
+                >
                   {col.props.header}
                 </th>
               ))}
@@ -140,11 +196,18 @@ export const TableView = <T extends Record<string, any>>({
               <tr
                 key={rowIndex}
                 className={
-                  stripedRows && rowIndex % 2 === 1 ? "bg-gray-100" : ""
+                  stripedRows && rowIndex % 2 === 1
+                    ? "bg-secondary dark:bg-dim"
+                    : ""
                 }
               >
                 {columns.map((col: any, colIndex: number) => (
-                  <td key={colIndex} className="p-2 border">
+                  <td
+                    key={colIndex}
+                    className={`p-2 border-collapse border-border dark:border-coal ${
+                      showGridlines ? "border-2" : "border-b"
+                    }`}
+                  >
                     <div>
                       <SkeletonLoader className="p-5 rounded-2xl" />
                     </div>
@@ -360,15 +423,20 @@ export const TableView = <T extends Record<string, any>>({
       if (col.editorType === "select" && col.options) {
         return (
           <select
-            ref={selectRef} // Use the selectRef here
+            ref={selectRef}
             value={editValue}
             onChange={handleChange}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             aria-label="Choose an option"
+            className="p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
           >
             {col.options.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option
+                className="cursor-pointer w-fit border-border dark:border-coal border-2"
+                key={option.value}
+                value={option.value}
+              >
                 {option.label}
               </option>
             ))}
@@ -383,6 +451,7 @@ export const TableView = <T extends Record<string, any>>({
             onChange={handleChange}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
+            className="p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
           />
         );
       } else if (col.editorType === "file") {
@@ -433,193 +502,287 @@ export const TableView = <T extends Record<string, any>>({
   return (
     <div className={`${className}`}>
       {/* Global Filter Input */}
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Global Search..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="p-2 border rounded"
-        />
-      </div>
-      <div className="flex justify-between mb-4">
-        {/* Add New Row Button */}
-        <button
-          type="button"
-          className="p-2 bg-blue-500 text-white rounded"
-          onClick={handleAddRow}
-        >
-          Add New Row
-        </button>
+      <div className="flex items-center justify-between gap-5 mb-5 min-w-full overflow-auto p-1">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex whitespace-nowrap items-center justify-between gap-2 text-lg md:text-xl font-semibold text-deep dark:text-light">
+            {icon && <span>{icon}</span>}
+            <h2>{title}</h2>
+            <Divider layout="vertical" type="solid" className="mx-2" />
+          </div>
+          {globalFilterFields ? (
+          <div className="relative inline-flex items-center">
+            <FaFilter className="absolute left-3 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Global Search..."
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="pl-10 p-2 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean hidden md:inline-flex"
+            />
+          </div>
+          ) : null}
+        </div>
 
-        {/* Print Button (Conditionally render when print is true) */}
-        {print && (
+        <div className="flex items-center justify-between gap-2 ml-auto">
+          {/* Delete All Selected Rows Button */}
+          {selectionMode === "multiple" && selectedRows.length > 0 && (
+            <button
+              type="button"
+              className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all ease-linear duration-200 "
+              onClick={() => handleDeleteAll(selectedRows)}
+            >
+              <FaTrash className="" />
+              <span className="hidden md:inline-flex">Delete All</span>
+            </button>
+          )}
+          {/* Add New Row Button */}
           <button
             type="button"
-            className="p-2 bg-green-500 text-white rounded"
-            onClick={reactToPrintFn}
+            className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all ease-linear duration-200 "
+            onClick={handleAddRow}
           >
-            Print Table
+            <FaPlusSquare />
+            <span className="hidden md:inline-flex">Add New Row</span>
           </button>
-        )}
 
-        {/* Delete All Selected Rows Button */}
-        {selectionMode === "multiple" && selectedRows.length > 0 && (
-          <button
-            type="button"
-            className="p-2 bg-red-500 text-white rounded"
-            onClick={() => handleDeleteAll(selectedRows)}
-          >
-            Delete All
-          </button>
-        )}
+          {/* Print Button (Conditionally render when print is true) */}
+          {print && (
+            <button
+              type="button"
+              className="p-2 whitespace-nowrap flex items-center justify-between gap-2 bg-green-500 hover:bg-green-600 text-white rounded transition-all ease-linear duration-200 "
+              onClick={reactToPrintFn}
+            >
+              <FaPrint />
+              <span className="hidden md:inline-flex">Print Table</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Table */}
-      <table
-        ref={contentRef}
-        className={`w-full border-collapse ${
-          showGridlines ? "table-fixed" : ""
-        }`}
-      >
-        <thead>
-          <tr>
-            {selectionMode === "multiple" && (
-              <th className="p-2 border" aria-label="Select All">
-                <Checkbox
-                  checked={isAllSelected}
-                  onChange={handleSelectAll}
-                  aria-label="Select all rows"
-                />
-                <span className="sr-only">Select all</span>
-              </th>
-            )}
-            {columns.map((col: any, colIndex: number) => (
-              <th key={colIndex} className="p-2 border">
-                <div className="flex items-center">
-                  {col.props.header}
-                  {col.props.sortable && (
-                    <span onClick={() => handleSort(col.props.field)}>
-                      {renderSortIcon(col.props)}
-                    </span>
-                  )}
-                </div>
-                {col.props.filterable && (
-                  <input
-                    aria-label="text"
-                    type="text"
-                    value={filterValues[col.props.field] || ""}
-                    onChange={(e) =>
-                      handleFilterChange(col.props.field, e.target.value)
-                    }
-                    className="mt-1 p-1 border rounded"
-                  />
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedValue.map((item, rowIndex) => (
-            <tr
-              key={rowIndex}
-              className={stripedRows && rowIndex % 2 === 1 ? "bg-gray-100" : ""}
-            >
+      <div className={`relative overflow-x-auto pb-32`}>
+        <table
+          ref={contentRef}
+          className={`min-w-full table-auto border-collapse border-border dark:border-coal ${
+            showGridlines ? "table-fixed border-2" : "border-b border-t"
+          }`}
+        >
+          <thead>
+            <tr>
               {selectionMode === "multiple" && (
-                <td className="p-2 border">
+                <th
+                  className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                    showGridlines ? "border-2" : "border-b"
+                  }`}
+                  aria-label="Select All"
+                >
                   <Checkbox
-                    checked={selectedRows.some(
-                      (row) => (row as any).code === (item as any).code
-                    )}
-                    onChange={() => toggleRowSelection(item)}
+                    checked={isAllSelected}
+                    onChange={handleSelectAll}
+                    aria-label="Select all rows"
                   />
-                </td>
+                  <span className="sr-only">Select all</span>
+                </th>
               )}
               {columns.map((col: any, colIndex: number) => (
-                <td
+                <th
                   key={colIndex}
-                  className="p-2 border"
-                  onDoubleClick={() =>
-                    col.props.editable &&
-                    handleDoubleClick(
-                      rowIndex,
-                      col.props.field,
-                      item[col.props.field]
-                    )
-                  }
+                  className={`p-2 max-w-fit border-collapse border-border dark:border-coal text-deep dark:text-light ${
+                    showGridlines ? "border-2" : "border-b"
+                  }`}
                 >
-                  {renderEditor(col.props, item, rowIndex)}
-                </td>
-              ))}
-
-              {/* Action Buttons Column */}
-              {showActions && (
-                <td className="p-2 border">
-                  {useEllipsis ? (
-                    <div className="relative">
-                      <FaEllipsisV
-                        onClick={() => setShowDropdown(!showDropdown)}
-                      />
-                      {showDropdown && (
-                        <div className="absolute bg-white border rounded shadow p-2">
-                          <button
-                            type="button"
-                            onClick={() => handleView(item)}
-                          >
-                            View
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleEdit(item)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(item)}
-                          >
-                            Delete
-                          </button>
-                          {customActions?.map((action, index) => (
-                            <button
-                              type="button"
-                              key={index}
-                              onClick={() => action.onClick(item)}
-                            >
-                              {action.label}
-                            </button>
-                          ))}
-                        </div>
+                  <div className="flex tems-center gap-3">
+                    <div className="flex items-center max-w-fit">
+                      {col.props.header}
+                      {col.props.sortable && (
+                        <span
+                          className="cursor-pointer whitespace-nowrap text-deep dark:text-light"
+                          onClick={() => handleSort(col.props.field)}
+                        >
+                          {renderSortIcon(col.props)}
+                        </span>
                       )}
                     </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <button type="button" onClick={() => handleView(item)}>
-                        View
-                      </button>
-                      <button type="button" onClick={() => handleEdit(item)}>
-                        Edit
-                      </button>
-                      <button type="button" onClick={() => handleDelete(item)}>
-                        Delete
-                      </button>
-                      {customActions?.map((action, index) => (
-                        <button
-                          type="button"
-                          key={index}
-                          onClick={() => action.onClick(item)}
-                        >
-                          {action.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </td>
+                    {col.props.filterable && (
+                      <div className="relative inline-flex items-center">
+                        <input
+                          aria-label="text"
+                          type="text"
+                          value={filterValues[col.props.field] || ""}
+                          onChange={(e) =>
+                            handleFilterChange(col.props.field, e.target.value)
+                          }
+                          className="pr-10 p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
+                        />
+                        <FaFilter className="absolute right-3 text-gray-500" />
+                      </div>
+                    )}
+                  </div>
+                </th>
+              ))}
+              {/* New "Action" header */}
+              {showActions && (
+                <th
+                  className={`p-2 text-right min-w-fit border-collapse border-border dark:border-coal text-deep dark:text-light ${
+                    showGridlines ? "border-2" : "border-b"
+                  }`}
+                >
+                  Action
+                </th>
               )}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginatedValue.map((item, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className={
+                  stripedRows && rowIndex % 2 === 1
+                    ? "bg-secondary dark:bg-dim"
+                    : ""
+                }
+              >
+                {selectionMode === "multiple" && (
+                  <td
+                    className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                      showGridlines ? "border-2" : "border-b"
+                    }`}
+                  >
+                    <Checkbox
+                      checked={selectedRows.some(
+                        (row) => (row as any).code === (item as any).code
+                      )}
+                      onChange={() => toggleRowSelection(item)}
+                    />
+                  </td>
+                )}
+                {columns.map((col: any, colIndex: number) => (
+                  <td
+                    key={colIndex}
+                    className={`p-2 min-w-fit whitespace-nowrap border-collapse border-border dark:border-coal text-deep dark:text-light ${
+                      showGridlines ? "border-2" : "border-b"
+                    }`}
+                    onDoubleClick={() =>
+                      col.props.editable &&
+                      handleDoubleClick(
+                        rowIndex,
+                        col.props.field,
+                        item[col.props.field]
+                      )
+                    }
+                  >
+                    {renderEditor(col.props, item, rowIndex)}
+                  </td>
+                ))}
+
+                {/* Action Buttons Column*/}
+                {showActions && (
+                  <td
+                    className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                      showGridlines ? "border-2" : "border-b"
+                    }`}
+                  >
+                    {useEllipsis ? (
+                      <div className="relative cursor-pointer max-w-fit ml-auto">
+                        <FaEllipsisV
+                          onClick={() => handleDropdownToggle(rowIndex)}
+                          className=" text-deep dark:text-light"
+                        />
+                        {dropdownStates[rowIndex] && (
+                          <div className="absolute right-0 top-full z-50 flex flex-col items-start  gap-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded shadow p-2 dropdown-menu">
+                            <button
+                              type="button"
+                              onClick={() => handleView(item)}
+                              className="flex items-center gap-2 w-full p-1 px-2 runded-md whitespace-nowrap hover:bg-tertiary hover:dark:bg-shadow group transition-all ease-linear duration-200 rounded-md text-soft dark:text-pale"
+                            >
+                              <FaEye className="text-sm text-deep dark:text-light group-hover:text-highlight dark:group-hover:text-ocean" />
+                              <span>View</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(item)}
+                              className="flex items-center gap-2 w-full p-1 px-2 runded-md whitespace-nowrap hover:bg-tertiary hover:dark:bg-shadow group transition-all ease-linear duration-200 rounded-md text-soft dark:text-pale"
+                            >
+                              <FaPenSquare className="text-sm text-deep dark:text-light group-hover:text-gold dark:group-hover:text-accent" />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(item)}
+                              className="flex items-center gap-2 w-full p-1 px-2 runded-md whitespace-nowrap hover:bg-tertiary hover:dark:bg-shadow group transition-all ease-linear duration-200 rounded-md text-soft dark:text-pale"
+                            >
+                              {" "}
+                              <FaTrash className="text-sm text-deep dark:text-light group-hover:text-alert dark:group-hover:text-crimson" />
+                              Delete
+                            </button>
+                            {customActions?.map((action, index) => (
+                              <button
+                                type="button"
+                                key={index}
+                                onClick={() => action.onClick(item)}
+                                className="flex items-center gap-2 w-full p-1 px-2 runded-md whitespace-nowrap hover:bg-tertiary hover:dark:bg-shadow group transition-all ease-linear duration-200 rounded-md text-soft dark:text-pale"
+                              >
+                                {action.icon && (
+                                  <span className="text-deep dark:text-light group-hover:text-black dark:group-hover:text-white">
+                                    {action.icon}
+                                  </span>
+                                )}
+                                <span>{action.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          aria-label="View-Row"
+                          onClick={() => handleView(item)}
+                          className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                        >
+                          <FaEye className="text-deep dark:text-light group-hover:text-highlight dark:group-hover:text-ocean" />
+                        </button>
+                        <button
+                          aria-label="Edit-Row"
+                          type="button"
+                          onClick={() => handleEdit(item)}
+                          className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                        >
+                          <FaPenSquare className="text-deep dark:text-light group-hover:text-gold dark:group-hover:text-accent" />
+                        </button>
+                        <button
+                          aria-label="Delete-row"
+                          type="button"
+                          onClick={() => handleDelete(item)}
+                          className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                        >
+                          <FaTrash className="text-deep dark:text-light group-hover:text-alert dark:group-hover:text-crimson" />
+                        </button>
+                        {customActions?.map((action, index) => (
+                          <button
+                            type="button"
+                            key={index}
+                            onClick={() => action.onClick(item)}
+                            className="size-8 justify-center bg-secondary hover:bg-tertiary dark:bg-shade dark:hover:bg-shadow rounded-md group transition-all ease-linear duration-200 whitespace-nowrap flex items-center gap-2"
+                          >
+                            {action.icon && (
+                              <span className="text-deep dark:text-light group-hover:text-black dark:group-hover:text-white">
+                                {action.icon}
+                              </span>
+                            )}
+                            <span className="hidden">{action.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Paginator */}
       {paginator && (
@@ -637,6 +800,7 @@ export const TableView = <T extends Record<string, any>>({
       <ConfirmDialog
         visible={showConfirmAction}
         message="Are you sure you want to proceed?"
+        position="top"
         onAccept={handleConfirm}
         onReject={() => setShowConfirmAction(false)}
         onHide={() => setShowConfirmAction(false)}

@@ -30,7 +30,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center justify-center">
       <input
         type="checkbox"
         checked={checked}

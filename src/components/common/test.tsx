@@ -1,45 +1,47 @@
-const renderEditor = (col: ColumnProps, item: T, rowIndex: number) => {
-  // Check if the column is editable and if it matches the current editing cell
-  if (col.editable && editingCell?.row === rowIndex && editingCell.field === col.field) {
-    if (col.editorType === "select" && col.options) {
-      return (
-        <select
-          ref={editingRef} // Use the editingRef here
-          value={editValue}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          aria-label="Choose an option" // Provide an accessible name
+<div className={`relative overflow-x-auto z-30`}>
+  <table
+    ref={contentRef}
+    className={`min-w-full border-collapse border-border dark:border-coal ${
+      showGridlines ? "table-fixed border-2" : "border-b border-t"
+    }`}
+  >
+    <thead>
+      {/* ... */}
+    </thead>
+    <tbody>
+      {paginatedValue.map((item, rowIndex) => (
+        <tr
+          key={rowIndex}
+          className={
+            stripedRows && rowIndex % 2 === 1
+              ? "bg-secondary dark:bg-dim"
+              : ""
+          }
         >
-          {col.options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      );
-    } else if (col.editorType === "input") {
-      return (
-        <input
-          ref={editingRef} // Use the editingRef here
-          type="text"
-          value={editValue}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-        />
-      );
-    } else if (col.editorType === "file") {
-      return (
-        <input
-          aria-label="file"
-          ref={editingRef} // Use the editingRef here
-          type="file"
-          onChange={(e) => handleFileChange(e, col.field, rowIndex)}
-          onBlur={handleBlur}
-        />
-      );
-    }
-  }
-  return (item as any)[col.field]; // Default to displaying the field value if not editing
-};
+          {/* Other cells */}
+
+          {/* Action Buttons Column */}
+          {showActions && (
+            <td
+              className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                showGridlines ? "border-2" : "border-b"
+              }`}
+            >
+              <div className="relative cursor-pointer text-right">
+                <FaEllipsisV
+                  onClick={() => handleDropdownToggle(rowIndex)}
+                  className="text-deep dark:text-light"
+                />
+                {dropdownStates[rowIndex] && (
+                  <div className="absolute right-0 z-50 flex flex-col items-start gap-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded shadow p-2 dropdown-menu">
+                    {/* Dropdown items */}
+                  </div>
+                )}
+              </div>
+            </td>
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

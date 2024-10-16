@@ -54,9 +54,9 @@ const Input: React.FC<InputProps> = ({
 
       <input
         type={type}
-        value={inputValue} // Use the correct value (external or internal)
-        onChange={handleChange} // Use the correct onChange handler
-        placeholder={hidePlaceholder ? "" : placeholder} // Control placeholder visibility
+        value={inputValue}
+        onChange={handleChange}
+        placeholder={hidePlaceholder ? "" : placeholder}
         disabled={disabled}
         className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
           hidePlaceholder || floatingLabel ? "placeholder-transparent" : "placeholder-soft dark:placeholder-pale"

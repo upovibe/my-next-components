@@ -42,13 +42,13 @@ const ConfirmDialog = ({
   const getPositionClass = () => {
     switch (position) {
       case "top":
-        return "top-0 left-1/2 transform -translate-x-1/2";
+        return "top-10 left-1/2 transform -translate-x-1/2";
       case "bottom":
-        return "bottom-0 left-1/2 transform -translate-x-1/2";
+        return "bottom-10 left-1/2 transform -translate-x-1/2";
       case "left":
-        return "left-0 top-1/2 transform -translate-y-1/2";
+        return "left-10 top-1/2 transform -translate-y-1/2";
       case "right":
-        return "right-0 top-1/2 transform -translate-y-1/2";
+        return "right-10 top-1/2 transform -translate-y-1/2";
       case "center":
       default:
         return "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2";
