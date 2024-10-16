@@ -5,7 +5,7 @@ interface TooltipProps {
   content: ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right' | 'center';
   mouseTrack?: boolean;
-  className?: string; // Corrected this line
+  className?: string;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -30,26 +30,25 @@ const Tooltip: React.FC<TooltipProps> = ({
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
       if (mouseTrack) {
-        const tooltipWidth = 150; // Tooltip width
-        const tooltipHeight = 40; // Tooltip height
+        const tooltipWidth = 150;
+        const tooltipHeight = 40;
 
         // Center the tooltip horizontally and vertically above the mouse cursor
-        let left = event.clientX - tooltipWidth / 5; // Centered horizontally
-        let top = event.clientY - tooltipHeight - 1; // 1px above the mouse
+        let left = event.clientX - tooltipWidth / 5;
+        let top = event.clientY - tooltipHeight - 1;
 
         // Adjust to keep within viewport boundaries
-        if (left < 0) left = 0; // Prevent moving out of the left side
+        if (left < 0) left = 0;
         if (left + tooltipWidth > window.innerWidth) {
-          left = window.innerWidth - tooltipWidth; // Prevent moving out of the right side
+          left = window.innerWidth - tooltipWidth;
         }
         if (top < 0) {
-          top = event.clientY + 10; // Move below the mouse if it goes off the top
+          top = event.clientY + 10;
         }
         if (top + tooltipHeight > window.innerHeight) {
-          top = window.innerHeight - tooltipHeight; // Prevent moving out of the bottom
+          top = window.innerHeight - tooltipHeight;
         }
 
-        // Set tooltip style with updated coordinates
         setTooltipStyle({
           position: 'fixed',
           left: `${left}px`,
@@ -99,8 +98,8 @@ const Tooltip: React.FC<TooltipProps> = ({
           className={`absolute z-50 p-2 py-1 rounded-md text-sm bg-deep dark:bg-soft text-light shadow-lg
             ${className ? ` ${className}` : ''} // Corrected space handling
             ${!mouseTrack && getPositionStyles()} 
-            ${mouseTrack && 'fixed'}`} // Apply separate class for mouse tracking
-          style={mouseTrack ? tooltipStyle : {}} // Apply dynamic tooltip style when mouse tracking
+            ${mouseTrack && 'fixed'}`}
+          style={mouseTrack ? tooltipStyle : {}}
         >
           {content}
           {!mouseTrack && (

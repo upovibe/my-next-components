@@ -14,7 +14,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className={`relative overflow-hidden bg-gray-200 dark:bg-gray-700 animate-pulse ${className}`}
+          className={`relative overflow-hidden bg-gray-200 dark:bg-gray-700 animate-pulse m-1 ${className}`}
         >
           <div
             className=" rounded-lg absolute inset-0 bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-500 animate-shiny"
