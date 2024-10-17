@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Paginator from '@/components/data/Paginator';
-import SelectButton from '@/components/form/buttons/SelectButton';
-import { FaThLarge, FaList } from 'react-icons/fa';
-import SkeletonLoader from '@/components/loader/SkeletonLoader'; // Import the SkeletonLoader component
+import React, { useState, useEffect } from "react";
+import Paginator from "@/components/data/Paginator";
+import SelectButton from "@/components/form/buttons/SelectButton";
+import InputSelect from "@/components/form/inputs/InputSelect";
+import { FaThLarge, FaList } from "react-icons/fa";
+import SkeletonLoader from "@/components/loader/SkeletonLoader";
+import SelectDropdown from "@/components/form/inputs/SelectDropdown";
 
 interface DataViewProps<T> {
   value: T[];
@@ -11,12 +13,14 @@ interface DataViewProps<T> {
   paginator?: boolean;
   rowsPerPageOptions?: number[];
   sortField?: keyof T;
-  sortOrder?: 'asc' | 'desc';
-  layout?: 'list' | 'grid';
-  searchField?: keyof T;
+  sortOrder?: "asc" | "desc";
+  layout?: "list" | "grid";
+  filterField?: keyof T;
+  filterOptions?: { label: string; value: any }[];
   showLayoutSwitcher?: boolean;
+  showSorting?: boolean;
   loading?: boolean;
-  className?: string; // Add className as a string prop
+  className?: string;
 }
 
 const DataView = <T extends object>({
@@ -25,22 +29,24 @@ const DataView = <T extends object>({
   paginator,
   rowsPerPageOptions = [5, 10, 20],
   sortField: initialSortField,
-  sortOrder: initialSortOrder = 'asc',
-  layout: initialLayout = 'list',
-  searchField,
+  sortOrder: initialSortOrder = "asc",
+  layout: initialLayout = "list",
+  filterField,
+  filterOptions = [],
   showLayoutSwitcher,
-  className = '', // Default to an empty string if no className is provided
+  showSorting,
+  className = "",
   listTemplate,
 }: DataViewProps<T>) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rows);
   const [sortField, setSortField] = useState(initialSortField);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(initialSortOrder);
-  const [layout, setLayout] = useState<'list' | 'grid'>(initialLayout);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [loading, setLoading] = useState(true); // Initialize loading state
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
+  const [layout, setLayout] = useState<"list" | "grid">(initialLayout);
+  const [selectedFilter, setSelectedFilter] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Simulate loading for 3 seconds
+  // Simulate loading for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -49,11 +55,11 @@ const DataView = <T extends object>({
     return () => clearTimeout(timer);
   }, []);
 
-  // Filter the data based on the search term if searchField is provided
-  const filteredData = value.filter(item => {
-    if (!searchField || !searchTerm) return true;
-    const fieldValue = item[searchField] as unknown as string;
-    return fieldValue?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Filter the data based on the selected filter option
+  const filteredData = value.filter((item) => {
+    if (!filterField || selectedFilter === null) return true;
+    const fieldValue = item[filterField];
+    return fieldValue === selectedFilter;
   });
 
   // Pagination logic
@@ -65,81 +71,104 @@ const DataView = <T extends object>({
   // Sorting logic
   const sortedData = sortField
     ? [...paginatedData].sort((a, b) => {
-        if (a[sortField] < b[sortField]) return sortOrder === 'asc' ? -1 : 1;
-        if (a[sortField] > b[sortField]) return sortOrder === 'asc' ? 1 : -1;
+        if (a[sortField] < b[sortField]) return sortOrder === "asc" ? -1 : 1;
+        if (a[sortField] > b[sortField]) return sortOrder === "asc" ? 1 : -1;
         return 0;
       })
     : paginatedData;
 
   // Layout logic
   const renderData = sortedData.map((item, index) => (
-    <div key={index} className={`item-${layout} ${layout === 'grid' ? 'p-2' : 'py-5 border-b border-border dark:border-coal'}`}>
+    <div
+      key={index}
+      className={`item-${layout} ${
+        layout === "grid" ? "border border-border dark:border-coal rounded-md m-2" : "py-2 md:py-4 md:border-b border-border dark:border-coal"
+      }`}
+    >
       {listTemplate(item)}
     </div>
   ));
 
   // Sorting options
   const sortOptions = [
-    { label: 'Ascending', value: 'asc' },
-    { label: 'Descending', value: 'desc' },
+    { label: "Ascending", value: "asc" },
+    { label: "Descending", value: "desc" },
   ];
 
   // Layout options for SelectButton with react-icons
   const layoutOptions = [
-    { label: <FaList />, value: 'list' },
-    { label: <FaThLarge />, value: 'grid' },
+    { label: <FaList />, value: "list" },
+    { label: <FaThLarge />, value: "grid" },
   ];
 
+  // Extracting filter values for InputSelect
+  const filterValues = filterOptions.map((option) => option.label);
+
   return (
-    <div className={`data-view-component ${layout} ${className}`}> {/* Apply className prop here */}
-      {/* Sorting, Search, and Layout selection */}
-      <div className="controls mb-4 flex gap-4 items-center">
-        {/* Search Input */}
-        <div className="search-input w-full">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border rounded px-3 py-2 w-full"
-          />
+    <div className={`data-view-component ${layout} ${className}`}>
+      {/* Sorting, Filter, and Layout selection */}
+      <div className="controls flex md:gap-3 justify-between items-center border-b border-t bg-primary dark:bg-shade border-border dark:border-coal border-1 p-3 mb-10">
+        <div className="flex items-center gap-3 justify-between w-full md:w-fit">
+          {/* Sorting Dropdown */}
+          {showSorting && (
+            <div className="sort-dropdown">
+              <SelectDropdown
+                options={sortOptions}
+                floatingLabel
+                placeholder="Sort Order"
+                value={sortOrder}
+                onChange={(value) => setSortOrder(value as "asc" | "desc")}
+                className="w-32"
+              />
+            </div>
+          )}
+          {/* Filter Dropdown */}
+          {filterOptions.length > 0 && (
+            <div className="filter-dropdown">
+              <InputSelect
+                placeholder="Select filter..."
+                floatingLabel
+                options={filterValues}
+                value={selectedFilter || ""}
+                onChange={(value) => {
+                  const selectedOption = filterOptions.find(
+                    (option) => option.label === value
+                  );
+                  setSelectedFilter(
+                    selectedOption ? selectedOption.value : null
+                  );
+                }}
+              />
+            </div>
+          )}
         </div>
-
-        {/* Sorting Dropdown */}
-        <div className="sort-dropdown">
-          <label htmlFor="sortField" className="mr-2">Sort By:</label>
-          <select
-            id="sortField"
-            className="border rounded px-2 py-1"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-          >
-            {sortOptions.map((option, idx) => (
-              <option key={idx} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        <div className="w-fit">
+          {/* Conditionally render Layout selection using SelectButton */}
+          {showLayoutSwitcher && (
+            <div className="layout-selection p-1 border border-border dark:border-coal rounded-md hidden md:inline-flex">
+              <SelectButton
+                options={layoutOptions}
+                value={layout}
+                onChange={(value) => setLayout(value)}
+                className="size-8 flex items-center justify-center"
+              />
+            </div>
+          )}
         </div>
-
-        {/* Conditionally render Layout selection using SelectButton */}
-        {showLayoutSwitcher && (
-          <div className="layout-selection">
-            <SelectButton
-              options={layoutOptions}
-              value={layout}
-              onChange={(value) => setLayout(value)}
-            />
-          </div>
-        )}
       </div>
 
       {/* Data rendering */}
-      <div className={`data-view-content grid grid-cols-1 ${layout === 'grid' ? 'md:grid-cols-3' : ''}`}>
+      <div
+        className={`data-view-content grid grid-cols-1 mb-10 ${
+          layout === "grid"
+            ? " sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            : ""
+        }`}
+      >
         {loading ? (
-          <SkeletonLoader 
-            className={`p-10 ${layout === 'grid' ? 'h-48' : 'h-12'} w-full`} 
-            count={layout === 'grid' ? 9 : 5} 
+          <SkeletonLoader
+            className={`p-10 shadow-lg ${layout === "grid" ? "h-48 rounded-md m-2 " : "h-12 mb-5 rounded-md"} w-full`}
+            count={layout === "grid" ? 9 : 5}
           />
         ) : (
           renderData

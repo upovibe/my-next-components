@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-type InputProps = {
+type InputSelectProps = {
   placeholder: string;
+  options: string[];
   label?: string;
   floatingLabel?: boolean;
   hidePlaceholder?: boolean;
@@ -12,26 +13,44 @@ type InputProps = {
   size?: "sm" | "nm" | "lg";
   className?: string;
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (value: string) => void;
 };
 
-const Input: React.FC<InputProps> = ({
+const InputSelect: React.FC<InputSelectProps> = ({
   placeholder,
+  options,
   label,
-  floatingLabel,
-  hidePlaceholder,
+  floatingLabel = false,
+  hidePlaceholder = false,
   type = "text",
-  disabled,
+  disabled = false,
   size = "nm",
   className = "",
   value,
   onChange,
 }) => {
   const [internalValue, setInternalValue] = useState("");
+  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInternalValue(e.target.value);
-    if (onChange) onChange(e);
+    const inputValue = e.target.value;
+    setInternalValue(inputValue);
+
+    // Filter the dropdown options based on input value
+    const filtered = options.filter((option) =>
+      option.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    setFilteredOptions(filtered);
+    setIsDropdownVisible(true);
+
+    if (onChange) onChange(inputValue);
+  };
+
+  const handleOptionClick = (option: string) => {
+    setInternalValue(option);
+    setIsDropdownVisible(false);
+    if (onChange) onChange(option);
   };
 
   const inputValue = value !== undefined ? value : internalValue;
@@ -43,8 +62,22 @@ const Input: React.FC<InputProps> = ({
     lg: "p-3 text-lg",
   }[size];
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!(event.target as HTMLElement).closest(".input-select-container")) {
+        setIsDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative input-select-container">
       {/* If a label is provided and floating label is disabled, show a regular label */}
       {!floatingLabel && label && (
         <label className="block mb-1 text-deep dark:text-light text-left">
@@ -75,8 +108,23 @@ const Input: React.FC<InputProps> = ({
           {placeholder}
         </label>
       )}
+
+      {/* Dropdown for filtered options */}
+      {isDropdownVisible && filteredOptions.length > 0 && (
+        <ul className="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md max-h-60 overflow-y-auto mt-1">
+          {filteredOptions.map((option, index) => (
+            <li
+              key={index}
+              onClick={() => handleOptionClick(option)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-export default Input;
+export default InputSelect;

@@ -63,15 +63,18 @@ const SelectButton: React.FC<SelectButtonProps> = ({
 
       return (
         <button
-          key={selectedValue}
-          onClick={() => handleSelect(option)}
-          disabled={isDisabled || disabled}
-          className={`${className} ${isSelected ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'} 
-                      ${isDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-blue-100'} 
-                      rounded-md transition-all ease-linear duration-200`}
-        >
-          {itemTemplate ? itemTemplate(option as Option) : selectedLabel}
-        </button>
+        type="button"
+        key={selectedValue}
+        onClick={() => handleSelect(option)}
+        disabled={isDisabled || disabled}
+        className={`rounded-md transition-all ease-linear duration-200 ${className} 
+                    ${isSelected ? 'bg-highlight dark:bg-ocean text-light' : 'bg-muted text-light'} 
+                    ${isDisabled ? 'cursor-not-allowed opacity-50' : 'dark:text-light hover:bg-highlight/50'} 
+                     dark:text-light dark:hover:bg-ocean/50`}
+      >
+        {itemTemplate ? itemTemplate(option as Option) : selectedLabel}
+      </button>
+      
       );
     });
   };
