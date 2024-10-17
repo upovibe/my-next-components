@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaChevronDown, FaChevronUp, FaCheck } from "react-icons/fa";
 
 type Option = {
@@ -19,6 +17,7 @@ type SelectDropdownProps = {
   className?: string;
   value?: string[] | string;
   onChange?: (selected: string[] | string) => void;
+  onBlur?: () => void; // Added onBlur prop
 };
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -32,11 +31,21 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   className = "",
   value,
   onChange,
+  onBlur, // Added onBlur destructuring
 }) => {
   const [internalValue, setInternalValue] = useState<string[] | string>(
-    multiple ? (Array.isArray(value) ? value : []) : (typeof value === "string" ? value : "")
+    multiple ? (Array.isArray(value) ? value : []) : typeof value === "string" ? value : ""
   );
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null); // To reference the dropdown
+
+  // Memoize handleClickOutside using useCallback
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+      if (onBlur) onBlur(); // Call onBlur when clicked outside
+    }
+  }, [onBlur]);
 
   const handleSelect = (optionValue: string) => {
     if (multiple) {
@@ -44,7 +53,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
         ? internalValue.includes(optionValue)
           ? internalValue.filter((v) => v !== optionValue)
           : [...internalValue, optionValue]
-        : optionValue; 
+        : optionValue;
       setInternalValue(updatedValue);
       if (onChange) onChange(updatedValue);
     } else {
@@ -60,12 +69,23 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, handleClickOutside]); // Added handleClickOutside to dependencies
+
   const isSelected = (optionValue: string) =>
     multiple
       ? Array.isArray(internalValue) && internalValue.includes(optionValue)
       : internalValue === optionValue;
 
-  // Class for size-based styling
   const sizeClass = {
     sm: "p-1 text-sm",
     nm: "p-2 text-base",
@@ -73,19 +93,19 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   }[size];
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Floating Label */}
+    <div className={`relative ${className}`} ref={dropdownRef}>
       {floatingLabel && (
         <label
           className={`absolute left-2 transition-all duration-200 text-soft dark:text-pale cursor-text ${
-            internalValue ? "-top-2 text-xs bg-primary dark:bg-shade px-2 rounded" : "top-2 text-base"
+            internalValue
+              ? "-top-2 text-xs bg-primary dark:bg-shade px-2 rounded"
+              : "top-2 text-base"
           }`}
         >
           {label}
         </label>
       )}
 
-      {/* Dropdown button */}
       <div
         onClick={handleToggleDropdown}
         className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus:border-highlight dark:focus:border-ocean ${sizeClass} ${
@@ -94,18 +114,18 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
       >
         <span className={`block truncate ${internalValue ? "" : "text-soft dark:text-pale"}`}>
           {multiple
-            ? (Array.isArray(internalValue) && internalValue.length > 0
-                ? internalValue.map((v) => options.find((o) => o.value === v)?.label).join(", ")
-                : placeholder)
+            ? Array.isArray(internalValue) && internalValue.length > 0
+              ? internalValue
+                  .map((v) => options.find((o) => o.value === v)?.label)
+                  .join(", ")
+              : placeholder
             : options.find((o) => o.value === internalValue)?.label || placeholder}
         </span>
-        {/* Dropdown arrow icon */}
         <span className={`absolute right-2 top-1/2 transform -translate-y-1/2 transition-transform duration-200`}>
           {isOpen ? <FaChevronUp /> : <FaChevronDown />}
         </span>
       </div>
 
-      {/* Options dropdown */}
       {isOpen && (
         <ul
           className={`absolute w-full max-h-60 overflow-y-auto mt-2 bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg z-10`}

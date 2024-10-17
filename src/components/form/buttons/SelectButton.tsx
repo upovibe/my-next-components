@@ -67,7 +67,7 @@ const SelectButton: React.FC<SelectButtonProps> = ({
         key={selectedValue}
         onClick={() => handleSelect(option)}
         disabled={isDisabled || disabled}
-        className={`rounded-md transition-all ease-linear duration-200 ${className} 
+        className={`rounded-md transition-all ease-linear duration-200 m-1 ${className} 
                     ${isSelected ? 'bg-highlight dark:bg-ocean text-light' : 'bg-muted text-light'} 
                     ${isDisabled ? 'cursor-not-allowed opacity-50' : 'dark:text-light hover:bg-highlight/50'} 
                      dark:text-light dark:hover:bg-ocean/50`}

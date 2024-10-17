@@ -1,5 +1,7 @@
 import React from 'react';
 import { FaChevronLeft, FaChevronRight, FaFastBackward, FaFastForward } from 'react-icons/fa';
+import SelectDropdown from '@/components/form/inputs/SelectDropdown';
+import Tooltip from "@/components/common/Tooltip"
 
 interface PaginatorProps {
   rowsPerPage: number;
@@ -60,29 +62,21 @@ const Paginator: React.FC<PaginatorProps> = ({
 
   return (
     <div className="flex items-center justify-center flex-col gap-3 md:flex-row md:justify-between p-2">
-      <div className="flex items-center gap-2">
-        <label
-          htmlFor="rowsPerPage"
-          className="text-soft dark:text-pale font-semibold"
-        >
-          Rows per page:
-        </label>
-        <select
-          id="rowsPerPage"
-          value={rowsPerPage}
-          onChange={(e) => {
-            onRowsPerPageChange(Number(e.target.value));
-            onPageChange(0); // Reset to first page
+        <Tooltip content="Select row number">
+        <SelectDropdown
+          options={rowsPerPageOptions.map((option) => ({
+            label: option.toString(),
+            value: option,
+          }))}
+          value={rowsPerPage.toString()}
+          onChange={(selected) => {
+            onRowsPerPageChange(Number(selected));
+            onPageChange(0);
           }}
-          className="p-1 px-2 rounded-md border-2 text-soft dark:text-pale border-border dark:border-coal focus:outline-none focus:border-highlight cursor-pointer"
-        >
-          {rowsPerPageOptions.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
+          size="sm"
+          className="w-20"
+        />
+        </Tooltip>
       <div className="flex items-center justify-center gap-2">
         <button
           aria-label="first-page-button"
@@ -97,21 +91,21 @@ const Paginator: React.FC<PaginatorProps> = ({
           aria-label="previous-button"
           type="button"
           onClick={handlePrevPage}
-          className="flex items-center rounded-full justify-center size-8 rounded-fullfont-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow  transition-all duration-200 ease-linear cursor-pointer"
+          className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
           disabled={currentPage === 0}
         >
           <FaChevronLeft />
         </button>
-        
+
         {/* Page number buttons */}
         <div className="flex items-center justify-center gap-2 flex-wrap">
           {startPage > 0 && (
             <>
               <button
-              type='button'
-              aria-label='1'
+                type="button"
+                aria-label="1"
                 onClick={() => onPageChange(0)} // Jump to the first page
-                className={`flex items-center justify-center size-8 rounded  hover:bg-tertiary dark:hover:bg-shadow  transition-all duration-200 ease-linear ${currentPage === 0 ? 'bg-highlight text-light ' : 'text-soft dark:text-pale'}`}
+                className={`flex items-center justify-center size-8 rounded hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear ${currentPage === 0 ? 'bg-highlight text-light ' : 'text-soft dark:text-pale'}`}
               >
                 1
               </button>
@@ -120,11 +114,11 @@ const Paginator: React.FC<PaginatorProps> = ({
           )}
           {pageNumbers.map((number) => (
             <button
-            type='button'
-            aria-label='number'
+              type="button"
+              aria-label={`page-${number}`}
               key={number}
               onClick={() => onPageChange(number - 1)} // Change to zero-based index
-              className={`flex items-center justify-center size-8 rounded hover:bg-tertiary dark:hover:bg-shadow  transition-all duration-200 ease-linear ${currentPage === number - 1 ? 'bg-highlight text-white' : 'text-soft dark:text-pale'}`}
+              className={`flex items-center justify-center size-8 rounded hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear ${currentPage === number - 1 ? 'bg-highlight text-white' : 'text-soft dark:text-pale'}`}
             >
               {number}
             </button>
@@ -133,8 +127,8 @@ const Paginator: React.FC<PaginatorProps> = ({
             <>
               {endPage < totalPages - 2 && <span className="flex items-center text-soft dark:text-pale">...</span>} {/* Ellipsis */}
               <button
-              aria-label='total-page'
-              type='button'
+                aria-label="total-pages"
+                type="button"
                 onClick={() => onPageChange(totalPages - 1)} // Jump to the last page
                 className={`flex items-center justify-center size-8 rounded hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear ${currentPage === totalPages - 1 ? 'bg-highlight text-white' : 'text-soft dark:text-pale'}`}
               >

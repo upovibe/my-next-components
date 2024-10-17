@@ -97,7 +97,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
             <div className="fixed inset-0 flex items-start justify-center z-50 bg-black/50">
               <div
                 ref={modalRef}
-                className="bg-white dark:bg-black p-4 mt-20 rounded-lg relative w-full max-w-md mx-auto"
+                className="bg-white dark:bg-black/80 p-4 mt-16 rounded-lg relative w-full max-w-md mx-auto border border-border dark:border-coal animate-slideInDown"
               >
                 <div className={`flex items-center relative`}>
                   <FaSearch className="absolute left-3 text-soft dark:text-pale" />

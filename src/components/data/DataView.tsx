@@ -5,6 +5,7 @@ import InputSelect from "@/components/form/inputs/InputSelect";
 import { FaThLarge, FaList } from "react-icons/fa";
 import SkeletonLoader from "@/components/loader/SkeletonLoader";
 import SelectDropdown from "@/components/form/inputs/SelectDropdown";
+import Tooltip from "@/components/common/Tooltip"
 
 interface DataViewProps<T> {
   value: T[];
@@ -105,7 +106,7 @@ const DataView = <T extends object>({
   const filterValues = filterOptions.map((option) => option.label);
 
   return (
-    <div className={`data-view-component ${layout} ${className}`}>
+    <div className={`data-view-component p-7 bg-prmary dark:bg-shade border border-border dark:border-coal rounded-xl ${layout} ${className}`}>
       {/* Sorting, Filter, and Layout selection */}
       <div className="controls flex md:gap-3 justify-between items-center border-b border-t bg-primary dark:bg-shade border-border dark:border-coal border-1 p-3 mb-10">
         <div className="flex items-center gap-3 justify-between w-full md:w-fit">
@@ -145,7 +146,8 @@ const DataView = <T extends object>({
         <div className="w-fit">
           {/* Conditionally render Layout selection using SelectButton */}
           {showLayoutSwitcher && (
-            <div className="layout-selection p-1 border border-border dark:border-coal rounded-md hidden md:inline-flex">
+            <Tooltip content="Select layout">
+            <div className="layout-selection border border-border dark:border-coal rounded-lg hidden md:inline-flex">
               <SelectButton
                 options={layoutOptions}
                 value={layout}
@@ -153,21 +155,22 @@ const DataView = <T extends object>({
                 className="size-8 flex items-center justify-center"
               />
             </div>
+            </Tooltip>
           )}
         </div>
       </div>
 
       {/* Data rendering */}
       <div
-        className={`data-view-content grid grid-cols-1 mb-10 ${
+        className={`data-view-content grid grid-cols-1 mb-16 ${
           layout === "grid"
             ? " sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
             : ""
         }`}
       >
-        {loading ? (
+        {loading ? ( 
           <SkeletonLoader
-            className={`p-10 shadow-lg ${layout === "grid" ? "h-48 rounded-md m-2 " : "h-12 mb-5 rounded-md"} w-full`}
+            className={`grid grid-cols-1 shadow-md ${layout === "grid" ? "h-48 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-3" : "h-24 rounded-md my-3"}`}
             count={layout === "grid" ? 9 : 5}
           />
         ) : (

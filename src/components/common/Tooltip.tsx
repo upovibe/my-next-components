@@ -95,8 +95,8 @@ const Tooltip: React.FC<TooltipProps> = ({
       {visible && (
         <div
           ref={tooltipRef}
-          className={`absolute z-50 p-2 py-1 rounded-md text-sm bg-deep dark:bg-soft text-light shadow-lg
-            ${className ? ` ${className}` : ''} // Corrected space handling
+          className={`absolute whitespace-nowrap z-50 p-2 py-1 rounded-md text-sm bg-deep dark:bg-soft text-light shadow-lg
+            ${className ? ` ${className}` : ''}
             ${!mouseTrack && getPositionStyles()} 
             ${mouseTrack && 'fixed'}`}
           style={mouseTrack ? tooltipStyle : {}}

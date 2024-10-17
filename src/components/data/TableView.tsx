@@ -437,11 +437,11 @@ export const TableView = <T extends Record<string, any>>({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             aria-label="Choose an option"
-            className="p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
+            className="w-80 p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
           >
             {col.options.map((option) => (
               <option
-                className="cursor-pointer w-fit border-border dark:border-coal border-2"
+                className="cursor-pointer w-80 border-border dark:border-coal border-2"
                 key={option.value}
                 value={option.value}
               >
@@ -459,7 +459,7 @@ export const TableView = <T extends Record<string, any>>({
             onChange={handleChange}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
+            className="p-1 border-2 w-80 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean max-w-fit"
           />
         );
       }
@@ -474,7 +474,7 @@ export const TableView = <T extends Record<string, any>>({
             alt="uploaded file"
             width={32}
             height={32}
-            className="object-contain rounded-full border-2 border-border dark:border-coal cursor-pointer"
+            className="object-contain rounded-full border-2 border-border dark:border-coal cursor-pointer mx-auto"
             onClick={() => handlePreviewFile(item, col.field)}
           />
         );
@@ -569,7 +569,7 @@ export const TableView = <T extends Record<string, any>>({
                 placeholder="Global Search..."
                 value={globalFilter}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-10 p-2 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
+                className="pl-10 p-2 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-lg cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
               />
             </div>
           ) : null}
@@ -638,7 +638,7 @@ export const TableView = <T extends Record<string, any>>({
             <tr>
               {selectionMode === "multiple" && (
                 <th
-                  className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                  className={`p-2 w-10 border-collapse border-border dark:border-coal ${
                     showGridlines ? "border-2" : "border-b"
                   }`}
                   aria-label="Select All"
@@ -654,12 +654,12 @@ export const TableView = <T extends Record<string, any>>({
               {columns.map((col: any, colIndex: number) => (
                 <th
                   key={colIndex}
-                  className={`p-2 max-w-fit border-collapse border-border dark:border-coal text-deep dark:text-light ${
+                  className={`p-2 min-w-fit max-w-fit border-collapse border-border dark:border-coal text-deep dark:text-light ${
                     showGridlines ? "border-2" : "border-b"
                   }`}
                 >
-                  <div className="flex tems-center gap-3">
-                    <div className="flex items-center max-w-fit">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center">
                       {col.props.header}
                       {col.props.sortable && (
                         <span
@@ -679,7 +679,7 @@ export const TableView = <T extends Record<string, any>>({
                           onChange={(e) =>
                             handleFilterChange(col.props.field, e.target.value)
                           }
-                          className="pr-10 p-1 border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
+                          className="pr-5 p-1 border-2 max-w-52 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
                         />
                         <FaFilter className="absolute right-3 text-gray-500" />
                       </div>
@@ -687,10 +687,11 @@ export const TableView = <T extends Record<string, any>>({
                   </div>
                 </th>
               ))}
+
               {/* New "Action" header */}
               {showActions && (
                 <th
-                  className={`p-2 text-right min-w-fit border-collapse border-border dark:border-coal text-deep dark:text-light ${
+                  className={`p-2 text-right min-w-[100px] max-w-[100px] w-[100px] border-collapse border-border dark:border-coal text-deep dark:text-light ${
                     showGridlines ? "border-2" : "border-b"
                   }`}
                 >
@@ -711,7 +712,7 @@ export const TableView = <T extends Record<string, any>>({
               >
                 {selectionMode === "multiple" && (
                   <td
-                    className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                    className={`p-2 w-10 border-collapse border-border dark:border-coal ${
                       showGridlines ? "border-2" : "border-b"
                     }`}
                   >
@@ -726,7 +727,7 @@ export const TableView = <T extends Record<string, any>>({
                 {columns.map((col: any, colIndex: number) => (
                   <td
                     key={colIndex}
-                    className={`p-2 min-w-fit whitespace-nowrap border-collapse border-border dark:border-coal text-deep dark:text-light ${
+                    className={`p-2 w-80 whitespace-nowrap border-collapse border-border dark:border-coal text-deep dark:text-light ${
                       showGridlines ? "border-2" : "border-b"
                     }`}
                     onDoubleClick={() =>
@@ -745,7 +746,7 @@ export const TableView = <T extends Record<string, any>>({
                 {/* Action Buttons Column*/}
                 {showActions && (
                   <td
-                    className={`p-2 min-w-fit border-collapse border-border dark:border-coal ${
+                    className={`p-2 border-collapse border-border dark:border-coal w-fit ${
                       showGridlines ? "border-2" : "border-b"
                     }`}
                   >

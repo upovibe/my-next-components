@@ -70,8 +70,8 @@ const NavMenu: React.FC<NavMenuProps> = ({
           <div
             className={`${
               itemsToRight
-                ? "hidden md:flex gap-3 ml-auto"
-                : "hidden md:flex gap-2 mr-auto"
+                ? "hidden lg:flex gap-3 ml-auto"
+                : "hidden lg:flex gap-2 mr-auto"
             }`}
           >
             {items.map((item, index) => (
@@ -130,14 +130,14 @@ const NavMenu: React.FC<NavMenuProps> = ({
           </div>
 
           {/* Optional Action Element + Input - Always on the right */}
-          <div className="hidden md:flex items-center ml-2">
+          <div className="hidden lg:flex items-center ml-2">
             {input && <div>{input}</div>}
             {actionElement && <div>{actionElement}</div>}
           </div>
 
           {/* Burger Menu */}
           <div
-            className="burger-menu flex md:hidden cursor-pointer flex-col space-y-1 ml-3 z-50"
+            className="burger-menu flex lg:hidden cursor-pointer flex-col space-y-1 ml-3 z-50"
             onClick={handleMenuToggle}
           >
             <div
@@ -167,9 +167,17 @@ const NavMenu: React.FC<NavMenuProps> = ({
         ></div>
       )}
 
+      {/* Overlay for the sidebar */}
+      {menuOpen && displayType === "sidebar" && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={handleMenuToggle}
+        ></div>
+      )}
+
       {/* Mobile menu with full-screen width for sidebar */}
       <div
-        className={`md:hidden ${
+        className={`lg:hidden ${
           displayType === "sidebar"
             ? `fixed top-0 left-0 h-full w-full bg-primary dark:bg-shade transition-transform duration-300 ease-in-out z-50 ${
                 menuOpen ? "translate-x-0" : "-translate-x-full"
@@ -184,10 +192,25 @@ const NavMenu: React.FC<NavMenuProps> = ({
         {/* Close icon inside sidebar */}
         {displayType === "sidebar" && (
           <div
-            className="absolute top-4 right-4 cursor-pointer z-50 text-deep dark:text-light"
+            className="absolute top-6 right-4 cursor-pointer z-50 text-deep dark:text-light flex flex-col space-y-1"
             onClick={handleMenuToggle}
           >
-            <FaTimes className="text-2xl" />
+            {/* <FaTimes className="text-2xl" /> */}
+            <div
+              className={`w-6 h-[2px] bg-deep dark:bg-light transition-transform duration-300 ${
+                menuOpen ? "rotate-45 translate-y-1" : ""
+              }`}
+            ></div>
+            <div
+              className={`w-6 h-[2px] bg-deep dark:bg-light transition-opacity duration-300 ${
+                menuOpen ? "opacity-0" : ""
+              }`}
+            ></div>
+            <div
+              className={`w-6 h-[2px] bg-deep dark:bg-light transition-transform duration-300 ${
+                menuOpen ? "-rotate-45 -translate-y-2" : ""
+              }`}
+            ></div>
           </div>
         )}
 
@@ -207,7 +230,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
             <div key={index} className="relative">
               {item.children ? (
                 <button
-                type="button"
+                  type="button"
                   onClick={() => toggleSubMenu(index)}
                   className="w-full text-left px-3 py-2 rounded-md flex items-center space-x-2 font-semibold text-deep dark:text-light hover:text-highlight dark:hover:text-ocean transition-all duration-200 ease-linear"
                 >
