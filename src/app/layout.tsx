@@ -17,12 +17,10 @@ export const metadata: Metadata = {
 
 type RootLayoutProps = {
   children: React.ReactNode;
-  displayLayout?: "header" | "dashboard";
 };
 
 export default function RootLayout({
   children,
-  displayLayout = "header",
 }: RootLayoutProps) {
   return (
     <html lang="en">
@@ -106,9 +104,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <UseTheme>
-          {" "}
-          {/* Wrap your layout in UseTheme */}
-          {displayLayout === "header" ? <Header /> : <Dashboard />}
+          <Header />
           <main className="min-h-screen py-20 px-2">{children}</main>
           <Footer />
         </UseTheme>

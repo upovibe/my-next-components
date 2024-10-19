@@ -13,7 +13,7 @@ import ButtonLink from "@/components/form/buttons/ButtonLink";
 const Nav: React.FC = () => {
   const menuItems = [
     { label: "Home", href: "/", icon: FaHome },
-    { label: "About", href: "/about", icon: FaInfo },
+    { label: "Signin", href: "/auth/signin", icon: FaInfo },
     {
       label: "Services",
       icon: FaUserAlt,
