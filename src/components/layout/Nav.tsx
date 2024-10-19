@@ -13,20 +13,23 @@ import ButtonLink from "@/components/form/buttons/ButtonLink";
 const Nav: React.FC = () => {
   const menuItems = [
     { label: "Home", href: "/", icon: FaHome },
-    { label: "Signin", href: "/auth/signin", icon: FaInfo },
+    { label: "About", href: "/about", icon: FaInfo },
+    { label: "Services", href: "/services", icon: FaInfo },
     {
-      label: "Services",
+      label: "Help",
       icon: FaUserAlt,
       children: [
-        { label: "Web Development", href: "/services/web" },
-        { label: "Mobile Development", href: "/services/mobile" },
+        { label: "Contact", href: "/help/contact" },
+        { label: "Faq", href: "/help/faq" },
       ],
     },
     {
-      label: "Contact",
-      href: "/contact",
-      icon: FaPhone,
-      command: () => alert("Contact clicked!"),
+      label: "Policies",
+      icon: FaUserAlt,
+      children: [
+        { label: "Privacy", href: "/policies/privacy" },
+        { label: "Terms", href: "/policies/terms" },
+      ],
     },
   ];
 
@@ -45,9 +48,8 @@ const Nav: React.FC = () => {
         />
       </Link>
       <Divider layout="vertical" type="solid" className="mx-2" />
-      <ButtonLink href="#" icon={FaSignInAlt} iconPosition="right" className="">
+      <ButtonLink href="/signin" icon={FaSignInAlt} iconPosition="right" className="">
         Sign Up
-
       </ButtonLink>
     </div>
   );
