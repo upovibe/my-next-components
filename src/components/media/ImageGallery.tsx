@@ -119,7 +119,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   return (
     <div className={`${className}`}>
-      <div className="relative group">
+      <div className="relative group transition-all ease-linear duration-200">
         {/* Display Active Image */}
         <div
           className={`relative ${sizeClass} w-full min-w-full max-w-full overflow-hidden`}
@@ -148,7 +148,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               aria-label="left-navigation"
               type="button"
               className={`absolute top-1/2 transform -translate-y-1/2 left-4 size-8 text-light flex items-center justify-center bg-black/20 rounded-md hover:bg-black/40 transition-all ease-linear duration-200 ${
-                showItemNavigatorsOnHover ? "hidden group-hover:block" : ""
+                showItemNavigatorsOnHover ? "hidden group-hover:flex" : ""
               }`}
               onClick={prevImage}
             >
@@ -158,7 +158,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               type="button"
               aria-label="right-navigation"
               className={`absolute top-1/2 transform -translate-y-1/2 right-4 size-8 text-light flex items-center justify-center bg-black/20 rounded-md hover:bg-black/40 transition-all ease-linear duration-200 ${
-                showItemNavigatorsOnHover ? "hidden group-hover:block" : ""
+                showItemNavigatorsOnHover ? "hidden group-hover:flex" : ""
               }`}
               onClick={nextImage}
             >

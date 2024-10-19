@@ -4,3 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* .icon-animation {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+  }
+  
+  .icon-animation-enter {
+    transform: scale(1.2);
+  }
+  
+  .icon-animation-exit {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+   */
