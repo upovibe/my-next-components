@@ -1,34 +1,104 @@
 "use client";
 
-import React, { useState } from 'react';
-import SwitchButton from '../form/buttons/SwitchButton';
-import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import React  from 'react';
+import { FaHome, FaUser, FaCog, FaBell, FaUserCircle } from 'react-icons/fa';
+import SideMenu from '../navigations/SideMenu';
 
 const Hero = () => {
-  const [isLiked, setIsLiked] = useState(false);
 
-  const handleLikeToggle = () => {
-    // Toggle the like state
-    setIsLiked(!isLiked);
-  };
+  const menuItems = [
+    { icon: <FaHome />, label: 'Home', link: '/' },
+    // <hr key="divider" className="border-gray-500" />, // Divider as an HTML element
+    // <div key="custom-text" className="text-gray-300">Custom Text</div>, // Custom text
+    { icon: <FaUser />, label: 'Profile', link: '/profile' },
+    { icon: <FaCog />, label: 'Settings', link: '/settings' },
+  ];
+
+  const actions = (
+    <>
+      <FaBell className="text-2xl" />
+      <FaUserCircle className="text-3xl" />
+      <span>Username</span>
+    </>
+  );
 
   return (
-    <div className="hero-container">
-      <h1>Hero Section</h1>
-
-      {/* SwitchButton Example */}
-      <SwitchButton
-        onClick={handleLikeToggle}        // Toggle function
-        isToggled={isLiked}               // Current state
-        iconTrue={FaThumbsUp}             // Icon for liked state
-        iconFalse={FaThumbsDown}          // Icon for unliked state
-        textTrue="Liked"                  // Text for liked state
-        textFalse="Like"                  // Text for unliked state
-        showIconOnly             // Set to true if you want to show only icons
-        iconClass='text-2xl'
-        className="bg-blue-500 text-white py-2 px-4 rounded"
-      />
-    </div>
+    <>
+     <SideMenu  items={menuItems} actions={actions}>
+      <h1 className="text-2xl font-bold">Main Content</h1>
+      <p>This is the main content area of the page.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio in ut ullam a. Id omnis ab fugit repudiandae rerum, ipsum recusandae harum, necessitatibus, qui cum totam dignissimos ipsam similique asperiores.</p>
+    </SideMenu>
+    </>
   );
 };
 

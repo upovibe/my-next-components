@@ -10,6 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        dark: "#121212", //dark
+
         // Light theme colors (default)
         primary: "#f9f9f9", // Primary background
         secondary: "#f0f0f0", // Secondary background
