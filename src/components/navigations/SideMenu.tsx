@@ -4,7 +4,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Logo from "@/components/common/Logo";
 
-// Your existing code continues below...
+
 type MenuItem = { icon: JSX.Element; label: string; link?: string };
 type SideMenuProps = {
   children: ReactNode;
@@ -105,7 +105,7 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
             <div className="flex space-x-4 items-center">{actions}</div>
           </div>
         </div>
-        <div className="p-4">
+        <div className="p-3">
           {children}
         </div>
       </div>

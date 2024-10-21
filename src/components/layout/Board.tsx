@@ -27,12 +27,7 @@ const Board = ({ children }: BoardProps) => {
   ];
 
   return (
-    <SideMenu items={menuItems} actions={actions}>
-      <div className="p-4">
-        <h1 className="text-xl font-bold">Board Content</h1>
-        {children}
-      </div>
-    </SideMenu>
+    <SideMenu items={menuItems} actions={actions}>{children}</SideMenu>
   );
 };
 
