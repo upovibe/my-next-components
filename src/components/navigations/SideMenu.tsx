@@ -1,7 +1,10 @@
+"use client";
+
 import { ReactNode, useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Logo from "@/components/common/Logo";
 
+// Your existing code continues below...
 type MenuItem = { icon: JSX.Element; label: string; link?: string };
 type SideMenuProps = {
   children: ReactNode;
@@ -39,9 +42,7 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
       <div
         className={`sticky top-0 h-screen p-3 space-y-3 transition-all duration-300 bg-primary dark:bg-shade ${
           isSidebarOpen ? "fixed inset-0 z-20" : isIconOnly ? "w-fit" : "hidden"
-        } lg:${
-          isIconOnly ? "w-fit" : " w-[250px]"
-        } lg:block lg:relative lg:h-auto`}
+        } lg:${isIconOnly ? "w-fit" : " w-[250px]"} lg:block lg:relative lg:h-auto`}
       >
         {/* Sidebar Logo - Visible only in overlay mode (small screens) */}
         {isSidebarOpen && window.innerWidth < 1024 && (
@@ -105,7 +106,7 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
           </div>
         </div>
         <div className="p-4">
-        {children}
+          {children}
         </div>
       </div>
 

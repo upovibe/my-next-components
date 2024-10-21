@@ -40,7 +40,7 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 'medium',
   color = 'bg-gray-500',
   shape = 'circle',
-  onClick, // Add the onClick prop
+  onClick, 
   className = '',
 }) => {
   const sizeStyles = getSizeStyles(size);
@@ -50,20 +50,20 @@ const Avatar: React.FC<AvatarProps> = ({
   return (
     <div
       className={`inline-flex items-center justify-center ${sizeStyles} ${shapeStyles} ${color} text-white font-bold ${cursorStyles} ${className}`}
-      onClick={onClick} // Attach the onClick event handler
+      onClick={onClick}
     >
       {src ? (
         <Image
           src={src}
           alt={alt || 'Avatar'}
-          width={100} // Adjust width dynamically
-          height={100} // Adjust height dynamically
+          width={100}
+          height={100}
           className={`object-cover ${shapeStyles}`}
         />
       ) : initials ? (
         initials
       ) : (
-        <span className="material-icons">person</span> // Fallback icon (using Material Icons)
+        <span className="material-icons">person</span>
       )}
     </div>
   );
