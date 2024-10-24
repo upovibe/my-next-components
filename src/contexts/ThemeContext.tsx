@@ -1,21 +1,28 @@
-import { ReactNode } from 'react';
-import { ThemeProvider } from 'next-themes';  // Import ThemeProvider from your theme library
+"use client";
+
+import { ReactNode, useEffect, useState } from 'react';
+import { ThemeProvider } from 'next-themes';
 
 interface UseThemeProps {
-  children?: ReactNode; // Allow children to be optional
+  children: ReactNode; 
 }
 
-export function UseTheme({ children }: UseThemeProps = {}) {  
-  // console.log('Children passed to UseTheme:', children);
+const UseTheme = ({ children }: UseThemeProps) => {
+  const [mounted, setMounted] = useState(false);
 
-  if (!children) {
-    console.error('No children provided to UseTheme component.');
-    return null;  // Return null if no children are passed
-  }
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      {children} {/* Safely render children */}
+      {children}
     </ThemeProvider>
   );
-}
+};
+
+export default UseTheme;
+
+

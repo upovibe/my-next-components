@@ -1,76 +1,95 @@
-import React, { useEffect } from 'react';
-
-type MessageType = 'success' | 'info' | 'warning' | 'error';
-type Position = 'top-left' | 'top-right' | 'top-center' | 'bottom-left' | 'bottom-right' | 'bottom-center';
+import React, { ReactNode, useEffect, useState } from "react";
+import { truncateText } from "@/utils/truncateText";
+import { getRandomColor, getRandomLightColor } from "@/utils/colorUtils";
 
 interface MessageProps {
-  type: MessageType;
-  message: string; // Message text to display
-  visible: boolean; // Control visibility
-  onClose: () => void; // Function to call when closing
-  position?: Position; // Added position prop
+  title: string;
+  content: string;
+  timer?: string;
+  template?: ReactNode;
+  className?: string;
+  borderColor?: boolean;
+  bgColor?: boolean;
 }
 
-const Message: React.FC<MessageProps> = ({ type, message, visible, onClose, position = 'top-right' }) => {
+const Message: React.FC<MessageProps> = ({
+  title,
+  content,
+  timer,
+  template,
+  className,
+  borderColor = true,
+  bgColor,
+}) => {
+  const [truncatedTitle, setTruncatedTitle] = useState(title);
+  const [truncatedContent, setTruncatedContent] = useState(content);
+  const [borderClr, setBorderClr] = useState<string>('');
+  const [backgroundClr, setBackgroundClr] = useState<string>('');
+
+  // Generate random colors on mount
   useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(() => onClose(), 3000); // Auto-close after 3 seconds
-      return () => clearTimeout(timer);
+    if (borderColor) {
+      setBorderClr(getRandomColor());
     }
-  }, [visible, onClose]);
+    if (bgColor) {
+      setBackgroundClr(getRandomLightColor());
+    }
+  }, [borderColor, bgColor]);
 
-  const getBgColor = () => {
-    switch (type) {
-      case 'success':
-        return 'bg-green-500 text-white shadow-l shadow-green-500/20'; // Success (green)
-      case 'info':
-        return 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'; // Info (blue)
-      case 'warning':
-        return 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/20'; // Warning (yellow)
-      case 'error':
-        return 'bg-red-500 text-white shadow-lg shadow-red-500/20'; // Error (red)
-      default:
-        return 'bg-gray-500 text-white shadow-lg shadow-gray-500/20'; // Default (gray)
-    }
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      const maxWidth = window.innerWidth > 768 ? 400 : 200;
+      const fontSize = 16;
 
-  const getPositionStyles = () => {
-    switch (position) {
-      case 'top-left':
-        return 'top-4 left-4';
-      case 'top-right':
-        return 'top-4 right-4';
-      case 'top-center':
-        return 'top-4 left-1/2 transform -translate-x-1/2';
-      case 'bottom-left':
-        return 'bottom-4 left-4';
-      case 'bottom-right':
-        return 'bottom-4 right-4';
-      case 'bottom-center':
-        return 'bottom-4 left-1/2 transform -translate-x-1/2';
-      default:
-        return 'top-4 right-4'; // Default position
-    }
-  };
+      setTruncatedTitle(truncateText(title, maxWidth, fontSize));
+      setTruncatedContent(truncateText(content, maxWidth, fontSize));
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [title, content]);
 
   return (
     <div
-      className={`fixed ${getPositionStyles()} transform transition-transform z-50 ${
-        visible ? 'translate-y-0 opacity-100' : '-translate-y-16 opacity-0'
-      } ${getBgColor()} px-4 py-2 rounded-lg shadow-lg`}
+      className={`flex items-center gap-3 w-full p-3 px-4 rounded-md border-l-4 bg-secondary dark:bg-dim ${className}`}
       style={{
-        transition: 'transform 0.5s ease, opacity 0.5s ease',
+        borderColor: borderColor ? borderClr : undefined,
+        backgroundColor: bgColor ? backgroundClr : undefined,
       }}
     >
-      <div className="flex items-center">
-        <span>{message}</span>
-        <button
-          type='button'
-          className="ml-4 text-light hover:text-white"
-          onClick={onClose}
-        >
-          &#10005; {/* Close button */}
-        </button>
+      {template && <div className="flex-shrink-0">{template}</div>}
+      <div className="flex flex-col gap-2 w-full">
+        <div className="flex items-center justify-between">
+          <h1
+            className={`dark:text-light text-deep ${
+              bgColor ? "text-deep dark:text-deep" : ""
+            } font-bold text-lg`}
+          >
+            {truncatedTitle}
+          </h1>
+          {timer && (
+            <span
+              className={`text-sm dark:text-muted text-faint ${
+                bgColor ? "text-faint dark:text-faint" : ""
+              }`}
+            >
+              {timer}
+            </span>
+          )}
+        </div>
+        <div>
+          <p
+            className={`dark:text-light text-deep font ${
+              bgColor ? "text-deep/70 dark:text-deep/70" : ""
+            }`}
+          >
+            {truncatedContent}
+          </p>
+        </div>
       </div>
     </div>
   );

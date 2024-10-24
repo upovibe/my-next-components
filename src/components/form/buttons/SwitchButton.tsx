@@ -46,19 +46,19 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
     return (
       <span className="flex items-center justify-center gap-2">
         {iconPosition === 'left' && isToggled && IconTrue && (
-          <IconTrue className={`mr-2 ${iconClass} ${animationClass}`} />
+          <IconTrue className={`mr-1 ${iconClass} ${animationClass}`} />
         )}
         {iconPosition === 'left' && !isToggled && IconFalse && (
-          <IconFalse className={`mr-2 ${iconClass} ${animationClass}`} />
+          <IconFalse className={`mr-1 ${iconClass} ${animationClass}`} />
         )}
 
         <span>{isToggled ? textTrue : textFalse}</span>
 
         {iconPosition === 'right' && isToggled && IconTrue && (
-          <IconTrue className={`ml-2 ${iconClass} ${animationClass}`} />
+          <IconTrue className={`ml-1 ${iconClass} ${animationClass}`} />
         )}
         {iconPosition === 'right' && !isToggled && IconFalse && (
-          <IconFalse className={`ml-2 ${iconClass} ${animationClass}`} />
+          <IconFalse className={`ml-1 ${iconClass} ${animationClass}`} />
         )}
       </span>
     );
@@ -68,7 +68,7 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-block px-3 py-2 rounded uppercase font-semibold transition-all duration-200 ease-linear ${className}`}
+      className={`inline-block px-3 py-2 rounded transition-all duration-200 ease-linear w-full ${className}`}
     >
       {renderContent()}
     </button>

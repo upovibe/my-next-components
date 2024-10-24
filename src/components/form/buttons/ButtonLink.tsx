@@ -20,7 +20,7 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
   return (
     <Link
       href={href}
-      className={`inline-block bg-highlight hover:bg-highlight/80 dark:bg-ocean dark:hover:bg-ocean/80 px-3 py-2 rounded text-light uppercase font-semibold transition focus:ring-4 focus:ring-highlight/50 dark:focus:ring-ocean/50 ${className}`}
+      className={`inline-block bg-highlight hover:bg-highlight/80 dark:bg-ocean dark:hover:bg-ocean/80  text-light font-semibold transition focus:ring-4 focus:ring-highlight/50 dark:focus:ring-ocean/50 ${className}`}
     >
       <span className="flex items-center justify-center gap-2">
         {Icon && iconPosition === 'left' && (

@@ -1,82 +1,36 @@
-# My Next Components
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**My Next Components** is a library of reusable UI components built with TypeScript, designed for seamless integration with **Next.js** applications. The goal of this library is to provide highly modular, customizable, and maintainable components that can be easily reused across different projects. This repository is actively maintained, and contributions are welcome.
+## Getting Started
 
-## Features
-
-- **Reusable Components**: Pre-built, modular components that are easy to drop into any project.
-- **TypeScript Support**: All components are written in TypeScript for static typing and better development experience.
-- **Next.js Optimized**: Specifically designed for Next.js, with server-side rendering and static generation in mind.
-- **Customizable**: High flexibility with props and configuration to suit various design needs.
-- **Documentation & Examples**: Every component comes with detailed documentation and usage examples.
-- **Responsive Design**: Fully responsive components, built to look great on any device.
-
-## Installation
-
-To install the library, run the following command:
+First, run the development server:
 
 ```bash
-npm install my-next-components
+npm run dev
 # or
-yarn add my-next-components
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Usage
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Once installed, you can import and use the components like so:
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-```typescript
-import { MyButton, MyCard } from 'my-next-components';
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-export default function Home() {
-  return (
-    <div>
-      <MyButton label="Click Me" onClick={() => alert('Button clicked!')} />
-      <MyCard title="Card Title" description="This is a sample card." />
-    </div>
-  );
-}
-```
+## Learn More
 
-## Available Components
+To learn more about Next.js, take a look at the following resources:
 
-- **Button**: A fully customizable button with various styling options.
-- **Card**: A responsive card component that supports images, titles, and descriptions.
-- **Modal**: A modal component with flexible content and animation options.
-- **Form**: Reusable form components with input validation and error handling.
-- **Navbar**: A navigation bar optimized for responsive web apps.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## Component Customization
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-All components are designed to be highly customizable using props. Adding props to each element can change styles, content, and behavior.
+## Deploy on Vercel
 
-### Example:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-```typescript
-<MyButton 
-  label="Submit" 
-  color="primary" 
-  size="large" 
-  onClick={handleSubmit} 
-/>
-```
-
-## Contributing
-
-Contributions are welcome! If you’d like to contribute to this project, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/your-feature-name`.
-3. Commit your changes: `git commit -m 'Add some feature'`.
-4. Push to the branch: `git push origin feature/your-feature-name`.
-5. Open a pull request.
-
-Please ensure your code follows the contribution guidelines.
-
-## Issues
-
-If you find any bugs or have feature requests, feel free to [open an issue](https://github.com/upovibe/my-next-components/issues).
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

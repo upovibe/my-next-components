@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-// Utility function for month days and localized week days
 const getMonthDays = (
   year: number,
   month: number,
@@ -44,13 +44,15 @@ interface CalendarInputProps {
   timeOnly?: boolean;
   hourFormat?: "12" | "24";
   showButtonBar?: boolean;
-  placeholder: string; // Placeholder text
-  label?: string; // Label for non-floating label mode
-  floatingLabel?: boolean; // Flag to enable floating label
-  hidePlaceholder?: boolean; // Option to hide the placeholder
-  disabled?: boolean; // Option to disable the input
-  size?: "sm" | "nm" | "lg"; // Size of the input (small, normal, large)
-  className?: string; // Additional classes for customization
+  placeholder: string;
+  label?: string;
+  floatingLabel?: boolean;
+  hidePlaceholder?: boolean;
+  disabled?: boolean;
+  size?: "sm" | "nm" | "lg";
+  showCalendarByDefault?: boolean;
+  className?: string;
+  onDateChange?: (date: Date | Date[] | null) => void; 
 }
 
 const CalendarInput: React.FC<CalendarInputProps> = ({
@@ -59,17 +61,19 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
   minDate,
   maxDate,
   selectionMode = "single",
-  showTime = false,
-  timeOnly = false,
+  showTime,
+  timeOnly,
   hourFormat = "24",
-  showButtonBar = false,
+  showButtonBar,
   placeholder,
   label,
-  floatingLabel = false,
-  hidePlaceholder = false,
-  disabled = false,
+  floatingLabel,
+  hidePlaceholder,
+  disabled,
   size = "nm",
+  showCalendarByDefault,
   className = "",
+  onDateChange,
 }) => {
   const [selectedDates, setSelectedDates] = useState<Date | Date[] | null>(
     null
@@ -80,7 +84,7 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
   const [currentYear, setCurrentYear] = useState<number>(
     new Date().getFullYear()
   );
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(showCalendarByDefault);
   const [time, setTime] = useState({ hours: 0, minutes: 0, ampm: "AM" });
 
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -88,9 +92,14 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target as Node)
+        !calendarRef.current ||
+        calendarRef.current.contains(event.target as Node)
       ) {
+        return;
+      }
+
+      // Close calendar only if it's not shown by default and it's open
+      if (!showCalendarByDefault && showCalendar) {
         setShowCalendar(false);
       }
     };
@@ -99,23 +108,54 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [showCalendar, showCalendarByDefault]);
 
-  const localizedDaysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
-    .slice(firstDayOfWeek)
-    .concat(
-      ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].slice(0, firstDayOfWeek)
-    );
+  const localizedDaysOfWeek = Array.from({ length: 7 }, (_, i) =>
+    new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
+      new Date(Date.UTC(2021, 5, i + firstDayOfWeek))
+    )
+  );
+
   const monthDays = getMonthDays(currentYear, currentMonth, firstDayOfWeek);
 
   const handleDateClick = (date: Date) => {
     if ((minDate && date < minDate) || (maxDate && date > maxDate)) return;
-
     if (selectionMode === "single") {
       setSelectedDates(date);
-      setShowCalendar(false);
+      onDateChange?.(date); // Call onDateChange if it exists
+      if (!showCalendar) setShowCalendar(false);
+    } else if (selectionMode === "multiple") {
+      setSelectedDates((prevDates) => {
+        const newDates = Array.isArray(prevDates) ? [...prevDates] : [];
+        const index = newDates.findIndex(
+          (d) => d.toDateString() === date.toDateString()
+        );
+        if (index === -1) {
+          newDates.push(date);
+        } else {
+          newDates.splice(index, 1);
+        }
+        onDateChange?.(newDates); // Call onDateChange with updated dates
+        return newDates;
+      });
+    } else if (selectionMode === "range") {
+      setSelectedDates((prevDates) => {
+        if (!Array.isArray(prevDates) || prevDates.length === 0) {
+          onDateChange?.([date]);
+          return [date];
+        } else if (prevDates.length === 1) {
+          const sortedDates = [prevDates[0], date].sort(
+            (a, b) => a.getTime() - b.getTime()
+          );
+          onDateChange?.(sortedDates);
+          return sortedDates;
+        }
+        onDateChange?.([date]);
+        return [date];
+      });
     }
   };
+  
 
   const handleMonthChange = (newMonth: number) => setCurrentMonth(newMonth);
   const handleYearChange = (newYear: number) => setCurrentYear(newYear);
@@ -145,7 +185,6 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
     setShowCalendar(false);
   };
 
-  // Function to format date and time for display in the input field
   const formatDateTime = () => {
     if (!selectedDates) return "";
 
@@ -179,7 +218,6 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
     return `${datePart} ${timePart}`;
   };
 
-  // Function to format only time for display in the input field
   const formatTime = () => {
     if (!showTime) return "";
 
@@ -194,16 +232,14 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
     return timePart;
   };
 
-  // Class for size-based styling
   const sizeClass = {
-    sm: "p-1 text-sm", // Small size
-    nm: "p-2 text-base", // Normal size
-    lg: "p-3 text-lg", // Large size
+    sm: "p-1 text-sm",
+    nm: "p-2 text-base",
+    lg: "p-3 text-lg",
   }[size];
 
   return (
     <div className="relative" ref={calendarRef}>
-      {/* If a label is provided and floating label is disabled, show a regular label */}
       {!floatingLabel && label && (
         <label className="block mb-1 text-deep dark:text-light text-left">
           {label}
@@ -211,11 +247,15 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
       )}
       <input
         type="text"
-        value={timeOnly ? formatTime() : formatDateTime()} // Show time or date-time based on the 'timeOnly' prop
+        value={timeOnly ? formatTime() : formatDateTime()}
         placeholder={timeOnly ? "Select Time" : "Select Date"}
         readOnly
         disabled={disabled}
-        onClick={() => setShowCalendar(!showCalendar)}
+        onClick={() => {
+          if (!showCalendarByDefault) {
+            setShowCalendar((prev) => !prev);
+          }
+        }}
         className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
           hidePlaceholder || floatingLabel
             ? "placeholder-transparent"
@@ -225,7 +265,6 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
         }`}
       />
 
-      {/* If floatingLabel is true, display the floating label */}
       {floatingLabel && (
         <label
           className={`absolute left-[1rem] transition-all duration-200 text-soft dark:text-pale cursor-text ${
@@ -245,21 +284,25 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
       />
 
       {showCalendar && (
-        <div className="absolute top-full left-0 mt-2 bg-primary dark:bg-shade shadow-lg rounded p-4 z-10">
+        <div className={`absolute top-full left-0 mt-2 bg-primary dark:bg-shade rounded-lg p-4 z-5 w-full animate-bounceInDown ${showCalendarByDefault ? "relative" : ""}`}>
           {!timeOnly && selectionMode === "year" && (
             <div className="flex justify-between mb-2 border-border dark:border-coal border-b-2 p-2">
               <button
-                className="px-2"
+                type="button"
+                aria-label="Previous Year"
+                className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
                 onClick={() => setCurrentYear(currentYear - 1)}
               >
-                &lt;
+                <FaChevronLeft />
               </button>
               <span>{currentYear}</span>
               <button
-                className="px-2"
+                type="button"
+                aria-label="Next Year"
+                className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
                 onClick={() => setCurrentYear(currentYear + 1)}
               >
-                &gt;
+                <FaChevronRight />
               </button>
             </div>
           )}
@@ -269,9 +312,10 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
               {[...Array(12)].map((_, i) => (
                 <button
                   key={i}
+                  type="button"
                   className={`p-2 rounded ${
                     currentYear - 5 + i === currentYear
-                      ? "bg-highlight dark:bg-ocean text-light"
+                      ? "bg-highlight dark:bg-ocean text-blue-600 font-extrabold"
                       : "hover:bg-highlight/50 dark:hover:bg-ocean/50"
                   }`}
                   onClick={() => {
@@ -290,17 +334,21 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
             <div>
               <div className="flex justify-between mb-2 border-border dark:border-coal border-b-2 pb-2">
                 <button
-                  className="px-2"
+                  type="button"
+                  aria-label="Previous Year"
+                  className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
                   onClick={() => setCurrentYear(currentYear - 1)}
                 >
-                  &lt;
+                  <FaChevronLeft />
                 </button>
                 <span>{currentYear}</span>
                 <button
-                  className="px-2"
+                  type="button"
+                  aria-label="Next Year"
+                  className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
                   onClick={() => setCurrentYear(currentYear + 1)}
                 >
-                  &gt;
+                  <FaChevronRight />
                 </button>
               </div>
 
@@ -308,9 +356,10 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
                 {Array.from({ length: 12 }).map((_, i) => (
                   <button
                     key={i}
+                    type="button"
                     className={`p-2 rounded ${
                       i === currentMonth
-                        ? "bg-highlight dark:bg-ocean text-light"
+                        ? "bg-highlight dark:bg-ocean text-blue-600 font-extrabold"
                         : "hover:bg-highlight/50 hover:dark:bg-ocean/50"
                     }`}
                     onClick={() => {
@@ -333,8 +382,13 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
             selectionMode !== "month" && (
               <div>
                 <div className="flex justify-between mb-2 border-border dark:border-coal border-b-2 pb-3">
-                  <button onClick={() => handleMonthChange(currentMonth - 1)}>
-                    &lt;
+                  <button
+                    type="button"
+                    aria-label="Previous Month"
+                    className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
+                    onClick={() => handleMonthChange(currentMonth - 1)}
+                  >
+                    <FaChevronLeft />
                   </button>
                   <span>
                     {new Date(currentYear, currentMonth).toLocaleString(
@@ -345,8 +399,13 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
                       }
                     )}
                   </span>
-                  <button onClick={() => handleMonthChange(currentMonth + 1)}>
-                    &gt;
+                  <button
+                    type="button"
+                    aria-label="Next Month"
+                    className="flex items-center rounded-full justify-center size-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
+                    onClick={() => handleMonthChange(currentMonth + 1)}
+                  >
+                    <FaChevronRight />
                   </button>
                 </div>
 
@@ -358,6 +417,7 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
                 <div className="grid grid-cols-7 gap-1 text-center">
                   {monthDays.map(({ date, currentMonth }, index) => (
                     <button
+                      type="button"
                       key={index}
                       onClick={() => handleDateClick(date)}
                       className={`p-2 rounded ${
@@ -373,7 +433,7 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
                           (!Array.isArray(selectedDates) &&
                             selectedDates.toDateString() ===
                               date.toDateString()))
-                          ? "bg-blue-500 dark:bg-blue-900 text-light"
+                          ? "bg-blue-500 dark:bg-blue-900 text-blue-600 font-extrabold"
                           : "hover:bg-highlight/50 hover:dark:bg-ocean/50"
                       }`}
                     >
@@ -385,50 +445,60 @@ const CalendarInput: React.FC<CalendarInputProps> = ({
             )}
 
           {showTime && (
-            <div className="mt-4 flex items-center w-full gap-3 justify-center border-t-2 border-border dark:border-coal pt-4 ">
-              <input
-                type="number"
-                name="hours"
-                value={time.hours}
-                onChange={handleTimeChange}
-                className="w-12 text-center border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
-                min="0"
-                max={hourFormat === "24" ? "23" : "12"}
-              />
-              :
-              <input
-                type="number"
-                name="minutes"
-                value={time.minutes}
-                onChange={handleTimeChange}
-                className="w-12 text-center border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
-                min="0"
-                max="59"
-              />
-              {hourFormat === "12" && (
-                <button
-                  onClick={handleToggleAMPM}
-                  className="ml-2 rounded px-2 bg-highlight text-light"
-                >
-                  {time.ampm}
-                </button>
-              )}
+            <div className="mt-2">
+              <div className="flex justify-between items-center mb-2">
+                <input
+                  type="number"
+                  name="hours"
+                  aria-label="Hours"
+                  className="w-16 py-2 px-3 text-center rounded-md border-2 border-border dark:border-coal bg-primary dark:bg-shade cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
+                  value={time.hours}
+                  onChange={handleTimeChange}
+                  min={hourFormat === "24" ? 0 : 1}
+                  max={hourFormat === "24" ? 23 : 12}
+                />
+                <span>:</span>
+                <input
+                  type="number"
+                  name="minutes"
+                  aria-label="Minutes"
+                  className="w-16 py-2 px-3 text-center rounded-md border-2 border-border dark:border-coal bg-primary dark:bg-shade cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean"
+                  value={time.minutes}
+                  onChange={handleTimeChange}
+                  min={0}
+                  max={59}
+                />
+                {hourFormat === "12" && (
+                  <button
+                    type="button"
+                    aria-label={`Switch to ${time.ampm === "AM" ? "PM" : "AM"}`}
+                    className="px-3 py-2 border-2 border-border dark:border-coal bg-primary dark:bg-shade rounded"
+                    onClick={handleToggleAMPM}
+                  >
+                    {time.ampm}
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
           {showButtonBar && (
-            <div className="mt-4 flex justify-end space-x-2 border-t-2 border-border dark:border-coal pt-4">
+            <div className="flex justify-between mt-4">
               <button
-                onClick={handleClear}
-                className="px-4 py-2 bg-tertiary hover:bg-tertiary/90 dark:bg-dim hover:dark:bg-dim/90 transition-all duration-200 ease-linear rounded"
-              >
-                Clear
-              </button>
-              <button
+                type="button"
+                aria-label="Today"
+                className="px-4 py-2 bg-highlight dark:bg-ocean text-white rounded"
                 onClick={handleToday}
-                className="px-4 py-2 bg-highlight dark:bg-ocean transition-all duration-200 ease-linear hover:bg-highlight/90 dark:hover:bg-ocean/90 text-light rounded"
               >
                 Today
+              </button>
+              <button
+                type="button"
+                aria-label="Clear Selection"
+                className="px-4 py-2 bg-soft dark:bg-gray-700 rounded"
+                onClick={handleClear}
+              >
+                Clear
               </button>
             </div>
           )}

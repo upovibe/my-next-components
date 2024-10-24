@@ -1,30 +1,24 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { UseTheme } from "@/contexts/ThemeContext";
-
+import "@/css/globals.css";
+import UseTheme from "@/contexts/ThemeContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import Dashboard from "@/components/layout/Dashboard";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
-// Defining the metadata using the Metadata type
 export const metadata: Metadata = {
   title: "React components with Typescript",
   description: "Next.js React components",
 };
-
-type RootLayoutProps = {
-  children: React.ReactNode;
-};
-
 export default function RootLayout({
   children,
-}: RootLayoutProps) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <head>
+            <head>
         {/* Primary Meta Tags */}
         <title>{String(metadata.title ?? "Fallback Title")}</title>
         <meta
@@ -102,10 +96,10 @@ export default function RootLayout({
         </script> 
         */}
       </head>
-      <body className={inter.className}>
+      <body className="">
         <UseTheme>
           <Header />
-          <main className="min-h-screen py-20 px-2">{children}</main>
+          <main className="p-3 py-20 min-h-screen">{children}</main>
           <Footer />
         </UseTheme>
       </body>

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import Lottie from "lottie-react";
-import loadingAnimation from "@/assets/animation/Loading.json";
+import loadingAnimation from "@/assets/animations/Loading.json";
 
 type SearchInputProps = {
   placeholder: string;
@@ -89,15 +89,15 @@ const SearchInput: React.FC<SearchInputProps> = ({
             className="flex items-center justify-center p-2 bg-secondary dark:bg-dim border border-border dark:border-coal rounded-md"
             onClick={openModal}
           >
-            <FaSearch className="text-soft dark:text-pale" />
+            <FaSearch className="text-soft dark:text-pale text-sm" />
           </button>
 
           {/* Modal with input field */}
           {isModalOpen && (
-            <div className="fixed inset-0 flex items-start justify-center z-50 bg-black/50">
+            <div className="fixed inset-0 flex items-start justify-center z-50 bg-black/50 p-2">
               <div
                 ref={modalRef}
-                className="bg-white dark:bg-black/80 p-4 mt-16 rounded-lg relative w-full max-w-md mx-auto border border-border dark:border-coal animate-slideInDown"
+                className="bg-white dark:bg-dark p-4 mt-16 rounded-lg relative w-full max-w-md mx-auto border border-border dark:border-coal animate-slideInDown"
               >
                 <div className={`flex items-center relative`}>
                   <FaSearch className="absolute left-3 text-soft dark:text-pale" />

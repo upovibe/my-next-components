@@ -1,11 +1,9 @@
-import Hero from '@/components/layout/Hero';
-const Homepage = () => {
+import React from 'react'
 
+const page = () => {
   return (
-    <div>
-      <Hero/>
-    </div>
-  );
-};
+    <div>page</div>
+  )
+}
 
-export default Homepage;
+export default page

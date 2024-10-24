@@ -48,7 +48,7 @@ const Nav: React.FC = () => {
         />
       </Link>
       <Divider layout="vertical" type="solid" className="mx-2" />
-      <ButtonLink href="/signin" icon={FaSignInAlt} iconPosition="right" className="">
+      <ButtonLink href="/signin" icon={FaSignInAlt} iconPosition="right" className="p-1 px-3 rounded-full">
         Sign Up
       </ButtonLink>
     </div>

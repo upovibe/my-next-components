@@ -2,8 +2,8 @@
 
 import { ReactNode, useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import Tooltip from "@/components/common/Tooltip";
 import Logo from "@/components/common/Logo";
-
 
 type MenuItem = { icon: JSX.Element; label: string; link?: string };
 type SideMenuProps = {
@@ -42,7 +42,9 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
       <div
         className={`sticky top-0 h-screen p-3 space-y-3 transition-all duration-300 bg-primary dark:bg-shade ${
           isSidebarOpen ? "fixed inset-0 z-20" : isIconOnly ? "w-fit" : "hidden"
-        } lg:${isIconOnly ? "w-fit" : " w-[250px]"} lg:block lg:relative lg:h-auto`}
+        } lg:${
+          isIconOnly ? "w-fit" : " w-[250px]"
+        } lg:block lg:relative lg:h-auto`}
       >
         {/* Sidebar Logo - Visible only in overlay mode (small screens) */}
         {isSidebarOpen && window.innerWidth < 1024 && (
@@ -62,7 +64,7 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
         </button>
 
         {/* Sidebar Navigation */}
-        <nav className="space-y-4">
+        <nav className="space-y-2">
           {items.map((item, index) => {
             if (typeof item === "object" && "icon" in item) {
               return (
@@ -71,12 +73,18 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
                   href={item.link || "#"}
                   className="flex items-center gap-3 p-2 rounded-md text-soft dark:text-pale hover:bg-secondary dark:hover:bg-dim transition-all duration-200 ease-linear"
                 >
-                  {item.icon}
+                  <Tooltip content={item.label} position="right">
+                    {item.icon}
+                  </Tooltip>
                   {!isIconOnly && <span>{item.label}</span>}
                 </a>
               );
             } else {
-              return <div key={index}>{item}</div>;
+              return (
+                <div key={index} className={isIconOnly ? "hidden" : ""}>
+                  {item}
+                </div>
+              );
             }
           })}
         </nav>
@@ -85,7 +93,7 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
       {/* Main content */}
       <div className="flex-1 text-deep dark:text-light relative overflow-auto h-screen">
         {/* Sticky Header */}
-        <div className="sticky -top-2 z-10 bg-white dark:bg-dark p-2">
+        <div className="sticky top-0 z-10 py-4 px-3 md:p-3 bg-white/30 dark:bg-dark/30 backdrop-blur-lg backdrop-saturate-150 border-b border-border dark:border-coal">
           <div className="flex items-center justify-between">
             <div className="z-20 hidden lg:block">
               <Logo />
@@ -102,12 +110,10 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
             </button>
 
             {/* Actions */}
-            <div className="flex space-x-4 items-center">{actions}</div>
+            <div>{actions}</div>
           </div>
         </div>
-        <div className="p-3">
-          {children}
-        </div>
+        <div>{children}</div>
       </div>
 
       {/* Overlay for small screen when the menu is open */}
