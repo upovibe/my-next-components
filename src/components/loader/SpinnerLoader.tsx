@@ -1,10 +1,10 @@
 import React from 'react';
 import Lottie from 'lottie-react';
-import spinnerAnimation from '@/assets/animation/SpinnerLoader.json'; // Renamed the imported animation to avoid conflict
+import spinnerAnimation from '@/assets/animations/SpinnerLoader.json'; // Renamed the imported animation to avoid conflict
 
 interface SpinnerLoaderProps {
-  show: boolean; // Controls whether the spinner should be shown
-  className?: string; // Additional custom classes for styling
+  show: boolean; 
+  className?: string;
 }
 
 const SpinnerLoader: React.FC<SpinnerLoaderProps> = ({ show, className = '' }) => {

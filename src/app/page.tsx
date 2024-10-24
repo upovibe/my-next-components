@@ -3,7 +3,9 @@ import MegaCalender from '@/components/form/calender/MegaCalender'
 
 const page = () => {
   return (
-    <div>page</div>
+    <>
+    <MegaCalender/>
+    </>
   )
 }
 

@@ -3,12 +3,12 @@
 import React from "react";
 
 type RadioButtonProps = {
-  options: { value: string; label: string }[]; // Array of options with value and label
-  name: string; // Name attribute for grouping radio buttons
-  selectedValue?: string; // Currently selected value
-  onChange: (value: string) => void; // Callback when a radio button is selected
-  disabled?: boolean; // Option to disable all radio buttons
-  className?: string; // Additional classes for customization
+  options: { value: string; label: string }[];
+  name: string;
+  selectedValue?: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
 };
 
 const RadioButton: React.FC<RadioButtonProps> = ({

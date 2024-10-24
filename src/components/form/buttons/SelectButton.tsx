@@ -2,7 +2,7 @@ import React from 'react';
 
 // Update the Option interface to allow for ReactNode as label
 interface Option {
-  label: React.ReactNode; // Allow for any React node
+  label: React.ReactNode;
   value?: any;
   disabled?: boolean;
 }

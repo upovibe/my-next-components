@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IconType } from 'react-icons';
 import Lottie from "lottie-react";
-import uploadingAnimation from "@/assets/animation/Loading.json";
+import uploadingAnimation from "@/assets/animations/Loading.json";
 
 interface ButtonActionProps {
   onClick: () => void;

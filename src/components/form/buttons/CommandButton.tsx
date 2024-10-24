@@ -11,31 +11,29 @@ interface CommandButtonProps {
   defaultAction: () => void;
   menuItems: MenuItem[];
   buttonLabel: string;
-  className?: string; // Add className prop for custom styles
+  className?: string;
 }
 
 const CommandButton: React.FC<CommandButtonProps> = ({
   defaultAction,
   menuItems,
   buttonLabel,
-  className = '', // Default to empty string if not provided
+  className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null); // Ref for the menu
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      setIsOpen(false); // Close the menu if clicking outside
+      setIsOpen(false);
     }
   };
 
   useEffect(() => {
-    // Add event listener for clicks outside
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // Cleanup the event listener on unmount
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
@@ -65,7 +63,7 @@ const CommandButton: React.FC<CommandButtonProps> = ({
       {/* Dropdown menu */}
       {isOpen && (
         <div
-          ref={menuRef} // Attach ref to the menu
+          ref={menuRef}
           className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-primary border border-border z-10 dark:bg-shade dark:border-coal p-2"
         >
           <div className="py-1">

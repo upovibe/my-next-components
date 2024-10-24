@@ -9,7 +9,7 @@ import {
   FaFileUpload,
 } from "react-icons/fa";
 import Lottie from "lottie-react";
-import uploadingAnimation from "@/assets/animation/Loading.json";
+import uploadingAnimation from "@/assets/animations/Loading.json";
 import Tooltip from "@/components/common/Tooltip";
 
 interface DocUploadProps {

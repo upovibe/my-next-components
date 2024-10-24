@@ -3,8 +3,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaCloudUploadAlt, FaTimes, FaFileUpload } from "react-icons/fa";
 import Lottie from "lottie-react";
-import Image from "next/image"; // Import the next/image component
-import uploadingAnimation from "@/assets/animation/Loading.json";
+import Image from "next/image";
+import uploadingAnimation from "@/assets/animations/Loading.json";
 import Tooltip from "@/components/common/Tooltip";
 
 interface ImageUploadProps {
