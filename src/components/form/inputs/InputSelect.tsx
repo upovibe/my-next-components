@@ -37,7 +37,6 @@ const InputSelect: React.FC<InputSelectProps> = ({
     const inputValue = e.target.value;
     setInternalValue(inputValue);
 
-    // Filter the dropdown options based on input value
     const filtered = options.filter((option) =>
       option.toLowerCase().includes(inputValue.toLowerCase())
     );
@@ -78,7 +77,6 @@ const InputSelect: React.FC<InputSelectProps> = ({
 
   return (
     <div className="relative input-select-container">
-      {/* If a label is provided and floating label is disabled, show a regular label */}
       {!floatingLabel && label && (
         <label className="block mb-1 text-deep dark:text-light text-left">
           {label}

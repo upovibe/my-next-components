@@ -3,7 +3,7 @@ import { IconType } from 'react-icons';
 import Lottie from "lottie-react";
 import uploadingAnimation from "@/assets/animations/Loading.json";
 
-interface ButtonActionProps {
+interface ActionButtonProps {
   onClick: () => void;
   children: React.ReactNode;
   icon?: IconType;
@@ -14,7 +14,7 @@ interface ButtonActionProps {
   loadingPosition?: 'left' | 'right';
 }
 
-const ButtonAction: React.FC<ButtonActionProps> = ({
+const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,
   children,
   icon: Icon,
@@ -28,7 +28,7 @@ const ButtonAction: React.FC<ButtonActionProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className={`bg-gold dark:bg-accent inline-block px-5 py-2 rounded text-light uppercase font-semibold transition-all duration-300 ease-linear focus:ring-4 focus:ring-gold/50 dark:focus:ring-accent/50 ${className}`}
+      className={`inline-block px-5 py-1 rounded text-light font-semibold transition-all duration-300 ease-linear ${className}`}
       disabled={isLoading} // Disable button during loading
     >
       <span className="flex items-center justify-center gap-2">
@@ -68,4 +68,4 @@ const ButtonAction: React.FC<ButtonActionProps> = ({
   );
 };
 
-export default ButtonAction;
+export default ActionButton;

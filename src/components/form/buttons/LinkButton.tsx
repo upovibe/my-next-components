@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { IconType } from 'react-icons';
 
-interface ButtonLinkProps {
+interface LinkButtonProps {
   href: string;
   children: React.ReactNode;
   icon?: IconType;
@@ -10,7 +10,7 @@ interface ButtonLinkProps {
   className?: string;
 }
 
-const ButtonLink: React.FC<ButtonLinkProps> = ({
+const LinkButton: React.FC<LinkButtonProps> = ({
   href,
   children,
   icon: Icon,
@@ -35,4 +35,4 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
   );
 };
 
-export default ButtonLink;
+export default LinkButton;

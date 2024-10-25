@@ -12,7 +12,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   children,
   content,
   position = 'top',
-  mouseTrack = false,
+  mouseTrack,
   className,
 }) => {
   const [visible, setVisible] = useState(false);
