@@ -8,7 +8,7 @@ import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import NavMenu from "@/components/navigations/NavMenu";
 import SearchInput from "@/components/form/inputs/SearchInput";
 import Divider from "@/components/common/Divider";
-import ButtonLink from "@/components/form/buttons/LinkButton";
+import LinkButton from "@/components/form/buttons/LinkButton";
 
 const Nav: React.FC = () => {
   const menuItems = [
@@ -48,9 +48,9 @@ const Nav: React.FC = () => {
         />
       </Link>
       <Divider layout="vertical" type="solid" className="mx-2" />
-      <ButtonLink href="/signin" icon={FaSignInAlt} iconPosition="right" className="p-1 px-3 rounded-full">
+      <LinkButton href="/signin" icon={FaSignInAlt} iconPosition="right" className="">
         Sign Up
-      </ButtonLink>
+      </LinkButton>
     </div>
   );
 

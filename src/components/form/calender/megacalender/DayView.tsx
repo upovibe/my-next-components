@@ -115,7 +115,7 @@ const DayView: React.FC<DayViewProps> = ({
   }
 
   return (
-    <div className="flex w-full min-w-[59rem] ">
+    <div className="flex w-full min-w-[59rem]">
       <div className="flex-1 relative">
         {timeSlots}
         <div

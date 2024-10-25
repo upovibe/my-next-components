@@ -3,6 +3,7 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
+import SwitchButton from '@/components/form/buttons/SwitchButton';
 
 const ThemeSwitcher = ({ className }) => {
   const { theme, setTheme } = useTheme();
@@ -18,17 +19,21 @@ const ThemeSwitcher = ({ className }) => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const iconClass = "text-md hover:scale-110 transition-all duration-200 ease-linear";
+  const iconClass = "hover:scale-110 transition-all duration-200 ease-linear";
 
   return (
     <div className={className}>
-      <button onClick={toggleTheme} aria-label="Toggle Theme">
-        {theme === 'light' ? (
-          <FaMoon className={`text-highlight ${iconClass}`} />
-        ) : (
-          <FaSun className={`text-ocean ${iconClass}`} />
-        )}
-      </button>
+      <SwitchButton
+        onClick={toggleTheme}
+        isToggled={theme === 'dark'}
+        iconTrue={FaSun}
+        iconFalse={FaMoon}
+        textTrue="Light"
+        textFalse="Dark"
+        iconPosition="left"
+        iconClass={iconClass}
+        className='flex'
+      />
     </div>
   );
 };

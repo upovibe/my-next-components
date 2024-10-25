@@ -201,7 +201,7 @@ const WeekView: React.FC<WeekViewProps> = ({
   const numDays = endDay - startDay + 1;
 
   return (
-    <div className="grid grid-cols-8 gap-2 w-full min-w-[59rem] overflow-x-auto">
+    <div className="grid grid-cols-8 gap-2 w-full min-w-[59rem]">
       <div className="col-span-1">
         <div className="font-bold text-soft dark:text-pale text-left border border-border dark:border-coal p-2">
           Time

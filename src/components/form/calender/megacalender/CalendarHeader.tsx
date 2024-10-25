@@ -79,7 +79,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             isToggled={is24HourFormat}
             textTrue="12-hour"
             textFalse="24-hour"
-            className="flex items-center rounded-full justify-center size-8 font-semibold text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
+            className="flex items-center rounded-full whitespace-nowrap justify-center size-8 font-semibold text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
             showTextOnly
           />
         )}

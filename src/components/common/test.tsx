@@ -490,804 +490,595 @@ export default SideMenu;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  format,
-  addMonths,
-  subMonths,
-  startOfWeek,
-  endOfWeek,
-  isSameMonth,
-  isSameDay,
-  startOfMonth,
-  endOfMonth,
-  toDate,
-  isValid,
-  parseISO,
-  startOfHour,
-  endOfHour,
-  addWeeks,
-  subWeeks,
-  addYears,
-  subYears,
-  addDays,
-  subDays,
-  getHours,
-  getMinutes,
-} from "date-fns";
-import SelectButton from "@/components/form/buttons/SelectButton";
-import InputSelect from "@/components/form/inputs/InputSelect";
+import React, { useState, useRef, useEffect } from "react";
 
-interface Event {
-  id: number;
-  title: string;
-  start: Date;
-  end: Date;
-  description: string;
-  color: string;
-}
+// Utility function for month days and localized week days
+const getMonthDays = (
+  year: number,
+  month: number,
+  firstDayOfWeek: number = 0
+) => {
+  const days = [];
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const adjustedStartDay = (firstDayOfMonth - firstDayOfWeek + 7) % 7;
+  const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+  const prevMonthDays = adjustedStartDay;
+  const lastDateOfPrevMonth = new Date(year, month, 0).getDate();
 
-interface MegaCalendarProps {
-  events: Event[];
-  onEventClick: (event: Event) => void;
-  onDateClick: (date: Date) => void;
-  selectedDate: Date;
-  viewType: "month" | "week" | "day" | "agenda" | "year";
-  onViewChange: (view: "month" | "week" | "day" | "agenda" | "year") => void;
-  theme?: object;
+  for (let i = prevMonthDays; i > 0; i--) {
+    days.push({
+      date: new Date(year, month - 1, lastDateOfPrevMonth - i + 1),
+      currentMonth: false,
+    });
+  }
+
+  for (let i = 1; i <= lastDateOfMonth; i++) {
+    days.push({ date: new Date(year, month, i), currentMonth: true });
+  }
+
+  const remainingDays = (7 - (days.length % 7)) % 7;
+  for (let i = 1; i <= remainingDays; i++) {
+    days.push({ date: new Date(year, month + 1, i), currentMonth: false });
+  }
+
+  return days;
+};
+
+interface CalendarInputProps {
   locale?: string;
-  minTime?: number;
-  maxTime?: number;
+  firstDayOfWeek?: number;
+  minDate?: Date;
+  maxDate?: Date;
+  selectionMode?: "single" | "range" | "multiple" | "year" | "month";
+  showTime?: boolean;
+  timeOnly?: boolean;
+  hourFormat?: "12" | "24";
+  showButtonBar?: boolean;
+  placeholder: string;
+  label?: string;
+  floatingLabel?: boolean;
+  hidePlaceholder?: boolean;
+  disabled?: boolean;
+  size?: "sm" | "nm" | "lg";
+  className?: string;
 }
 
-const MegaCalendar: React.FC<MegaCalendarProps> = ({
-  events,
-  onEventClick,
-  onDateClick,
-  selectedDate,
-  viewType,
-  onViewChange,
-  theme,
-  locale,
-  minTime = 0,
-  maxTime = 24,
+const CalendarInput: React.FC<CalendarInputProps> = ({
+  locale = "en-US",
+  firstDayOfWeek = 0,
+  minDate,
+  maxDate,
+  selectionMode = "single",
+  showTime,
+  timeOnly,
+  hourFormat = "24",
+  showButtonBar,
+  placeholder,
+  label,
+  floatingLabel,
+  hidePlaceholder,
+  disabled,
+  size = "nm",
+  className = "",
 }) => {
-  const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
-  const [is24HourFormat, setIs24HourFormat] = useState(true);
-  const [searchValue, setSearchValue] = useState("");
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedDates, setSelectedDates] = useState<Date | Date[] | null>(
+    null
+  );
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth()
+  );
+  const [currentYear, setCurrentYear] = useState<number>(
+    new Date().getFullYear()
+  );
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [time, setTime] = useState({ hours: 0, minutes: 0, ampm: "AM" });
+
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Toggle between 24-hour and 12-hour formats
-  const toggleTimeFormat = () => {
-    setIs24HourFormat(!is24HourFormat);
-  };
-
-  // Helper to format the time slot labels
-  const formatHourLabel = (hour: number) => {
-    const date = new Date(2020, 0, 1, hour);
-    return is24HourFormat ? format(date, "HH:mm") : format(date, "h:mm a");
-  };
-
-    // Update the current date to today's date
-    const handleTodayClick = () => {
-      setCurrentDate(new Date()); // Set currentDate to today's date
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
+        setShowCalendar(false);
+      }
     };
 
-  const nextPeriod = () => {
-    switch (viewType) {
-      case "day":
-        setCurrentDate(addDays(currentDate, 1));
-        break;
-      case "week":
-        setCurrentDate(addWeeks(currentDate, 1));
-        break;
-      case "month":
-        setCurrentDate(addMonths(currentDate, 1));
-        break;
-      case "year":
-        setCurrentDate(addYears(currentDate, 1));
-        break;
-      case "agenda":
-        setCurrentDate(addWeeks(currentDate, 1));
-        break;
-      default:
-        break;
-    }
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-  const prevPeriod = () => {
-    switch (viewType) {
-      case "day":
-        setCurrentDate(subDays(currentDate, 1));
-        break;
-      case "week":
-        setCurrentDate(subWeeks(currentDate, 1));
-        break;
-      case "month":
-        setCurrentDate(subMonths(currentDate, 1));
-        break;
-      case "year":
-        setCurrentDate(subYears(currentDate, 1));
-        break;
-      case "agenda":
-        setCurrentDate(subWeeks(currentDate, 1));
-        break;
-      default:
-        break;
-    }
-  };
+  // Dynamic generation of day names based on locale
+  const localizedDaysOfWeek = Array.from({ length: 7 }, (_, i) =>
+    new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
+      new Date(Date.UTC(2021, 5, i + firstDayOfWeek))
+    )
+  );
 
+  const monthDays = getMonthDays(currentYear, currentMonth, firstDayOfWeek);
+
+  // Enhanced handleDateClick to support range and multiple selections
   const handleDateClick = (date: Date) => {
-    onDateClick(date);
-    setSearchValue(""); // Clear the search input
-  };
+    if ((minDate && date < minDate) || (maxDate && date > maxDate)) return;
 
-  const renderHeader = () => {
-    const startOfWeekDate = startOfWeek(currentDate);
-    const endOfWeekDate = endOfWeek(currentDate);
-  
-    // Format the header based on view type
-    const headerTitle = (() => {
-      switch (viewType) {
-        case "day":
-          return format(currentDate, "EEE MMM d"); // Thu Oct 24
-        case "week":
-          return `${format(startOfWeekDate, "MMM d")} - ${format(endOfWeekDate, "d")}`; // Oct 20 - 26
-        case "month":
-          return format(currentDate, "MMM yyyy"); // Oct 2024
-        case "year":
-          return format(currentDate, "yyyy"); // 2024
-        case "agenda":
-          return `${format(startOfWeekDate, "MMM d")} - ${format(endOfWeekDate, "d")}`; // Oct 20 - 26
-        default:
-          return ""; // Fallback case
-      }
-    })();
-  
-    return (
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={prevPeriod} className="text-gray-500">
-          Previous
-        </button>
-  
-        <h2 className="text-xl font-bold">{headerTitle}</h2>
-  
-        <button onClick={nextPeriod} className="text-gray-500">
-          Next
-        </button>
-  
-        {/* Call the new handleTodayClick function */}
-        <button onClick={handleTodayClick} className="ml-2 text-gray-500">
-          Today
-        </button>
-  
-        <div className="ml-4">
-          <SelectButton
-            options={["day", "week", "month", "year", "agenda"]}
-            value={viewType}
-            onChange={(value) =>
-              onViewChange(value as "day" | "week" | "month" | "year" | "agenda")
-            }
-          />
-        </div>
-  
-        <div className="ml-4">
-          <InputSelect
-            placeholder="Search Date (YYYY-MM-DD)"
-            options={[]} // Add your filter logic back if needed
-            value={searchValue}
-            onChange={(value) => {
-              setSearchValue(value);
-              const parsedDate = parseISO(value);
-              if (isValid(parsedDate)) {
-                handleDateClick(parsedDate);
-              }
-            }}
-          />
-        </div>
-  
-        {/* Button to toggle time format */}
-        <button onClick={toggleTimeFormat} className="ml-4 text-gray-500">
-          {is24HourFormat ? "Switch to 12-hour" : "Switch to 24-hour"}
-        </button>
-      </div>
-    );
-  };
-
-  const renderYearView = () => {
-    const months = [];
-    const currentYear = currentDate.getFullYear();
-  
-    for (let month = 0; month < 12; month++) {
-      const monthStart = startOfMonth(new Date(currentYear, month, 1));
-      const monthEnd = endOfMonth(monthStart);
-      const startDate = startOfWeek(monthStart);
-      const endDate = endOfWeek(monthEnd);
-  
-      let day = startDate;
-      const weeks = [];
-      const days = [];
-  
-      // Create day elements for each month
-      while (day <= endDate) {
-        for (let i = 0; i < 7; i++) {
-          const eventForDay = events.find((event) => isSameDay(event.start, day));
-          const eventColor = eventForDay ? eventForDay.color : "";
-  
-          days.push(
-            <div
-              key={day.toString()}
-              className={`p-1 text-sm border border-gray-200 cursor-pointer 
-                          ${!isSameMonth(day, monthStart) ? "bg-gray-100" : ""} 
-                          ${isSameDay(day, new Date()) ? "bg-blue-200" : ""}`}
-              style={{ backgroundColor: eventColor }}
-              onClick={() => handleDateClick(day)}
-            >
-              {format(day, "d")}
-            </div>
-          );
-          day = addDays(day, 1);
-        }
-  
-        weeks.push(
-          <div key={day.toString()} className="grid grid-cols-7 gap-1">
-            {days.splice(0)}
-          </div>
+    if (selectionMode === "single") {
+      setSelectedDates(date);
+      setShowCalendar(false);
+    } else if (selectionMode === "multiple") {
+      setSelectedDates((prevDates) => {
+        const newDates = Array.isArray(prevDates) ? [...prevDates] : [];
+        const index = newDates.findIndex(
+          (d) => d.toDateString() === date.toDateString()
         );
-      }
-  
-      // Display the month grid with a title
-      months.push(
-        <div key={month} className="p-4 border border-gray-300 rounded-lg">
-          <h3 className="text-center font-bold mb-2">{format(monthStart, "MMMM")}</h3>
-          <div className="grid grid-cols-7 gap-1">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center font-semibold text-xs">
+        if (index === -1) {
+          newDates.push(date);
+        } else {
+          newDates.splice(index, 1);
+        }
+        return newDates;
+      });
+    } else if (selectionMode === "range") {
+      setSelectedDates((prevDates) => {
+        if (!Array.isArray(prevDates) || prevDates.length !== 2) {
+          return [date];
+        } else if (prevDates.length === 1) {
+          return [prevDates[0], date].sort(
+            (a, b) => a.getTime() - b.getTime()
+          );
+        }
+        return [date];
+      });
+    }
+  };
+
+  const handleMonthChange = (newMonth: number) => setCurrentMonth(newMonth);
+  const handleYearChange = (newYear: number) => setCurrentYear(newYear);
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setTime({ ...time, [name]: parseInt(value) });
+  };
+
+  const handleToggleAMPM = () => {
+    setTime((prevTime) => ({
+      ...prevTime,
+      ampm: prevTime.ampm === "AM" ? "PM" : "AM",
+    }));
+  };
+
+  const handleToday = () => {
+    const today = new Date();
+    setSelectedDates(today);
+    setCurrentYear(today.getFullYear());
+    setCurrentMonth(today.getMonth());
+    setShowCalendar(false);
+  };
+
+  const handleClear = () => {
+    setSelectedDates(null);
+    setShowCalendar(false);
+  };
+
+  const formatDateTime = () => {
+    if (!selectedDates) return "";
+
+    if (selectionMode === "year") {
+      return `${(selectedDates as Date).getFullYear()}`;
+    }
+
+    if (selectionMode === "month") {
+      return `${(selectedDates as Date).getMonth() + 1}/${(
+        selectedDates as Date
+      ).getFullYear()}`;
+    }
+
+    const datePart = Array.isArray(selectedDates)
+      ? selectedDates.map((d) => d.toLocaleDateString(locale)).join(", ")
+      : selectedDates?.toLocaleDateString(locale);
+
+    if (!showTime) {
+      return datePart;
+    }
+
+    // Formatting time if showTime is enabled
+    const timePart = `${time.hours.toString().padStart(2, "0")}:${time.minutes
+      .toString()
+      .padStart(2, "0")}`;
+
+    if (hourFormat === "12") {
+      return `${datePart} ${timePart} ${time.ampm}`;
+    }
+
+    return `${datePart} ${timePart}`;
+  };
+
+  // Function to format only time for display in the input field
+  const formatTime = () => {
+    if (!showTime) return "";
+
+    const timePart = `${time.hours.toString().padStart(2, "0")}:${time.minutes
+      .toString()
+      .padStart(2, "0")}`;
+
+    if (hourFormat === "12") {
+      return `${timePart} ${time.ampm}`;
+    }
+
+    return timePart;
+  };
+
+  const sizeClass = {
+    sm: "p-1 text-sm",
+    nm: "p-2 text-base",
+    lg: "p-3 text-lg",
+  }[size];
+
+  return (
+    <div className="relative" ref={calendarRef}>
+      {!floatingLabel && label && (
+        <label className="block mb-1 text-deep dark:text-light text-left">
+          {label}
+        </label>
+      )}
+      <input
+        type="text"
+        value={timeOnly ? formatTime() : formatDateTime()}
+        placeholder={timeOnly ? "Select Time" : "Select Date"}
+        readOnly
+        disabled={disabled}
+        onClick={() => setShowCalendar(!showCalendar)}
+        className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
+          hidePlaceholder || floatingLabel
+            ? "placeholder-transparent"
+            : "placeholder-soft dark:placeholder-pale"
+        } ${sizeClass} ${className} ${
+          disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
+        }`}
+      />
+      {showCalendar && (
+        <div className="absolute mt-1 bg-primary dark:bg-shade border-2 border-border dark:border-coal rounded-md shadow-lg z-10">
+          <div className="flex justify-between p-2">
+            <button
+              onClick={() =>
+                setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1))
+              }
+              className="text-xl"
+            >
+              &lt;
+            </button>
+            <div>
+              <select
+                value={currentMonth}
+                onChange={(e) => handleMonthChange(parseInt(e.target.value))}
+              >
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <option key={i} value={i}>
+                    {new Intl.DateTimeFormat(locale, { month: "long" }).format(
+                      new Date(currentYear, i)
+                    )}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={currentYear}
+                onChange={(e) => handleYearChange(parseInt(e.target.value))}
+                className="w-16 text-center border ml-2"
+              />
+            </div>
+            <button
+              onClick={() =>
+                setCurrentMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1))
+              }
+              className="text-xl"
+            >
+              &gt;
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-2 text-center">
+            {localizedDaysOfWeek.map((day, index) => (
+              <div key={index} className="font-bold">
                 {day}
               </div>
             ))}
-          </div>
-          {weeks}
-        </div>
-      );
-    }
-  
-    return <div className="grid grid-cols-3 gap-4">{months}</div>;
-  };
-  
-  
-  const renderMonthView = () => {
-    const monthStart = startOfMonth(currentDate);
-    const monthEnd = endOfMonth(monthStart);
-    const startDate = startOfWeek(monthStart);
-    const endDate = endOfWeek(monthEnd);
-
-    const rows = [];
-    let days = [];
-    let day = startDate;
-
-    while (day <= endDate) {
-      for (let i = 0; i < 7; i++) {
-        days.push(
-          <div
-            className={`p-4 border border-gray-200 cursor-pointer ${!isSameMonth(day, monthStart) ? "bg-gray-100" : ""
-              } ${isSameDay(day, new Date()) ? "bg-blue-200" : ""}`}
-            key={day.toString()}
-            onClick={() => handleDateClick(toDate(day))}
-          >
-            <span>{format(day, "d")}</span>
-            <div className="mt-2">
-              {events
-                .filter((event) => isSameDay(event.start, day))
-                .map((event) => (
-                  <div
-                    key={event.id}
-                    onClick={() => onEventClick(event)}
-                    className="text-sm text-gray-600 cursor-pointer hover:text-blue-500"
-                  >
-                    {event.title}
-                  </div>
-                ))}
-            </div>
-          </div>
-        );
-        day = addDays(day, 1);
-      }
-      rows.push(
-        <div className="grid grid-cols-7 gap-2" key={day.toString()}>
-          {days}
-        </div>
-      );
-      days = [];
-    }
-    return <div>{rows}</div>;
-  };
-
-const renderWeekView = () => {
-  const startDate = startOfWeek(currentDate);
-  const endDate = endOfWeek(currentDate);
-  const today = new Date();
-  const currentTime = new Date();
-
-  // Time slot labels for hours of the day
-  const timeSlots = [];
-  for (let hour = minTime; hour < maxTime; hour++) {
-    timeSlots.push(
-      <div className="border border-gray-200 h-16 relative cursor-pointer" key={hour}>
-        <div className="w-16 text-right pr-2 text-gray-500">
-          {formatHourLabel(hour)}
-        </div>
-      </div>
-    );
-  }
-
-  const days = [];
-  let day = startDate;
-
-  // Loop through each day in the week
-  while (day <= endDate) {
-    const isToday = day.toDateString() === today.toDateString();
-    
-    days.push(
-      <div key={day.toString()} className={`flex flex-col relative ${isToday ? 'bg-blue-50' : ''}`}>
-        <div className="font-medium text-gray-700 text-center">
-          {`${format(day, "d")} ${format(day, "EEE")}`}
-        </div>
-        {timeSlots.map((slot, index) => {
-          const slotTime = new Date(day.getFullYear(), day.getMonth(), day.getDate(), minTime + index);
-          const slotEndTime = endOfHour(slotTime);
-
-          return (
-            <div
-              key={index}
-              className="border border-gray-200 p-2 h-16 relative cursor-pointer"
-              onClick={() => handleDateClick(slotTime)}
-            >
-              {events
-                .filter(
-                  (event) =>
-                    event.start <= slotEndTime && event.end >= slotTime
-                )
-                .map((event, eventIndex) => {
-                  const isFirstSlot = event.start <= slotTime && event.start >= startOfHour(slotTime);
-                  const eventStartMinutes = event.start.getMinutes();
-                  const eventEndMinutes = event.end.getMinutes();
-
-                  const eventStartHour = event.start.getHours();
-                  const eventEndHour = event.end.getHours();
-
-                  // Calculate top offset (start time within the hour)
-                  const topOffset = eventStartHour === slotTime.getHours() ? (eventStartMinutes / 60) * 64 : 0;
-
-                  // Calculate height (based on how long the event lasts in this slot)
-                  const endOffset = eventEndHour === slotTime.getHours() ? (eventEndMinutes / 60) * 64 : 64;
-                  const height = endOffset - topOffset;
-
-                  return (
-                    <div
-                      key={event.id}
-                      className={`absolute inset-x-0 ${isFirstSlot ? "bg-blue-100 text-sm p-1" : "bg-blue-100"}`}
-                      style={{
-                        height: `${height}px`,      // Adjusted height based on time fraction within the hour
-                        top: `${topOffset}px`,       // Adjusted top to place event correctly within the hour
-                        zIndex: 1,
-                      }}
-                      onClick={() => onEventClick(event)}
-                    >
-                      {isFirstSlot && event.title}
-                    </div>
-                  );
-                })}
-            </div>
-          );
-        })}
-
-        {isToday && (
-          <div
-            className="absolute w-full h-0.5 bg-green-500"
-            style={{
-              top: `${(getHours(currentTime) - minTime) * 64 +
-                (getMinutes(currentTime) / 60) * 64}px`,
-              zIndex: 10,
-            }}
-          />
-        )}
-      </div>
-    );
-
-    day = addDays(day, 1);
-  }
-
-  return (
-    <div className="grid grid-cols-8 gap-2">
-      <div className="col-span-1">
-        <div className="font-bold text-gray-700 text-center">Time</div>
-        {timeSlots}
-      </div>
-      <div className="col-span-7 grid grid-cols-7">
-        {days}
-      </div>
-    </div>
-  );
-};
-
-
-const renderDayView = () => {
-  const timeSlots = [];
-
-  for (let hour = minTime; hour < maxTime; hour++) {
-    timeSlots.push(
-      <div className="border border-gray-200 h-16 relative cursor-pointer" key={hour}>
-        {/* Hour label with white background */}
-        <div className="absolute z-20 w-16 text-right pr-2 text-gray-500 bg-white">
-          {formatHourLabel(hour)}
-        </div>
-
-        {events
-          .filter(
-            (event) =>
-              event.start <= endOfHour(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hour)) &&
-              event.end >= startOfHour(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hour))
-          )
-          .map((event) => {
-            const isFirstSlot = event.start.getHours() === hour;
-            const eventStartMinutes = event.start.getMinutes();
-            const eventEndMinutes = event.end.getMinutes();
-            
-            const eventStartHour = event.start.getHours();
-            const eventEndHour = event.end.getHours();
-
-            // Calculate the top offset (start time within the hour, i.e., 12:30)
-            const topOffset = eventStartHour === hour ? (eventStartMinutes / 60) * 64 : 0;
-            
-            // Calculate height based on how long the event lasts in this slot (end time within the hour, i.e., 15:49)
-            const endOffset = eventEndHour === hour ? (eventEndMinutes / 60) * 64 : 64;
-            const height = endOffset - topOffset;
-
-            return (
-              <div
-                key={event.id}
-                className={`absolute inset-x-0 text-center ${isFirstSlot ? "bg-blue-100 text-sm p-1" : "bg-blue-100"}`}
-                style={{
-                  height: `${height}px`,      // Adjusted height based on time fraction within the hour
-                  top: `${topOffset}px`,       // Adjusted top to place event correctly within the hour
-                  zIndex: 1,
-                }}
-                onClick={() => onEventClick(event)}
+            {monthDays.map(({ date, currentMonth }, index) => (
+              <button
+                key={index}
+                onClick={() => handleDateClick(date)}
+                className={`${
+                  currentMonth
+                    ? "text-deep dark:text-light"
+                    : "text-gray-400 dark:text-gray-600"
+                } ${
+                  Array.isArray(selectedDates) &&
+                  selectedDates.some(
+                    (d) => d.toDateString() === date.toDateString()
+                  )
+                    ? "bg-highlight text-light"
+                    : ""
+                } p-1 rounded-md hover:bg-hover dark:hover:bg-coal`}
               >
-                {/* Only show the event title on the first slot */}
-                {isFirstSlot && event.title}
-              </div>
-            );
-          })}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex">
-      <div className="flex-1 relative">
-        {timeSlots}
-        {/* Green line for current time */}
-        <div
-          className="absolute top-0 left-0 w-full h-0.5 bg-green-500"
-          style={{
-            top: `${(getHours(currentTime) - minTime) * 64 +
-              (getMinutes(currentTime) / 60) * 64}px`,
-          }}
-        />
-      </div>
-    </div>
-  );
-};
-
-  const renderAgendaView = () => {
-    const startDate = startOfWeek(currentDate);
-    const endDate = endOfWeek(currentDate);
-    const days = [];
-    let day = startDate;
-
-    while (day <= endDate) {
-      const dayEvents = events.filter((event) => isSameDay(event.start, day));
-      days.push(
-        <div key={day.toString()} className="p-4 border-b border-gray-200">
-          <div className="font-bold">{format(day, "EEEE, MMMM d")}</div>
-          <ul className="list-disc list-inside">
-            {dayEvents.length > 0 ? (
-              dayEvents.map((event) => (
-                <li key={event.id} className="text-gray-600">
-                  <span className="font-semibold">{event.title}</span> -{" "}
-                  {format(event.start, is24HourFormat ? "HH:mm" : "h:mm a")} -{" "}
-                  {format(event.end, is24HourFormat ? "HH:mm" : "h:mm a")}
-                </li>
-              ))
-            ) : (
-              <li className="text-gray-400">No events</li>
-            )}
-          </ul>
+                {date.getDate()}
+              </button>
+            ))}
+          </div>
+          {showButtonBar && (
+            <div className="flex justify-between p-2">
+              <button onClick={handleToday} className="text-sm">
+                Today
+              </button>
+              <button onClick={handleClear} className="text-sm">
+                Clear
+              </button>
+            </div>
+          )}
+          {showTime && (
+            <div className="flex items-center p-2">
+              <input
+                type="number"
+                name="hours"
+                value={time.hours}
+                onChange={handleTimeChange}
+                min={0}
+                max={hourFormat === "24" ? 23 : 12}
+                className="w-12 text-center border mx-1"
+              />
+              <span>:</span>
+              <input
+                type="number"
+                name="minutes"
+                value={time.minutes}
+                onChange={handleTimeChange}
+                min={0}
+                max={59}
+                className="w-12 text-center border mx-1"
+              />
+              {hourFormat === "12" && (
+                <button onClick={handleToggleAMPM} className="ml-2">
+                  {time.ampm}
+                </button>
+              )}
+            </div>
+          )}
         </div>
-      );
-      day = addDays(day, 1);
-    }
-
-    return <div>{days}</div>;
-  };
-
-  return (
-    <div className="p-4">
-      {renderHeader()}
-
-      {viewType === "year" && renderYearView()}
-      {viewType === "month" && renderMonthView()}
-      {viewType === "week" && renderWeekView()}
-      {viewType === "day" && renderDayView()}
-      {viewType === "agenda" && renderAgendaView()}
+      )}
     </div>
   );
 };
 
-export default MegaCalendar;
+export default CalendarInput;
 
 
 
 
 
-import React, { useState, useEffect } from "react";
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
-import InputSelect from "@/components/form/inputs/InputSelect";
-import SelectButton from "@/components/form/buttons/SelectButton";
-import ButtonAction from "@/components/form/buttons/ActionButton";
-import SwitchButton from "@/components/form/buttons/SwitchButton";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-interface CalendarHeaderProps {
-  currentDate: Date;
-  viewType: "month" | "week" | "day" | "agenda" | "year";
-  onViewChange: (view: "month" | "week" | "day" | "agenda" | "year") => void;
-  onTodayClick: () => void;
-  onNavigateToEvent?: (date: Date) => void;
-  toggleTimeFormat: () => void;
-  is24HourFormat: boolean;
-  prevPeriod: () => void;
-  nextPeriod: () => void;
-  events?: { date: Date; title: string }[];
-  locale?: "en" | "fr" | "es";
+
+
+
+
+
+
+
+
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+
+const getMonthDays = (year: number, month: number, firstDayOfWeek: number = 0) => {
+  // ... same logic as before ...
+};
+
+interface CalendarInputProps {
+  // ... existing props ...
+  showCalendarByDefault?: boolean; // New prop to control default calendar visibility
 }
 
-const CalendarHeader: React.FC<CalendarHeaderProps> = ({
-  currentDate,
-  viewType,
-  onViewChange,
-  onTodayClick,
-  toggleTimeFormat,
-  is24HourFormat,
-  prevPeriod,
-  nextPeriod,
-  onNavigateToEvent,
-  events = [],
-  locale = "en",
+const CalendarInput: React.FC<CalendarInputProps> = ({
+  // ... existing props ...
+  showCalendarByDefault = true, // Default to showing calendar by default
 }) => {
-  const [searchOptions, setSearchOptions] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDates, setSelectedDates] = useState<Date | Date[] | null>(null);
+  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+  const [showCalendar, setShowCalendar] = useState(showCalendarByDefault); // Set initial state based on prop
+  const [time, setTime] = useState({ hours: 0, minutes: 0, ampm: "AM" });
 
-  // Generate dropdown options based on the view type
+  const calendarRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const generateOptions = () => {
-      let options: string[] = [];
-      const localeOptions = { locale: localeMap[locale] };
-
-      const formatOption = (date: Date, eventTitle?: string) => 
-        `${format(date, "EEE, MMM d", localeOptions)} ${eventTitle ? ` - ${eventTitle}` : ""}`;
-      
-      const addDateRangeOptions = (start: Date, end: Date) => {
-        let date = start;
-        while (date <= end) {
-          const event = events.find((e) => e.date.toDateString() === date.toDateString());
-          options.push(formatOption(date, event?.title));
-          date = addDays(date, 1);
-        }
-      };
-
-      switch (viewType) {
-        case "day":
-          options.push(formatOption(currentDate, events.find(e => e.date.toDateString() === currentDate.toDateString())?.title));
-          break;
-        case "week":
-          addDateRangeOptions(startOfWeek(currentDate, localeOptions), endOfWeek(currentDate, localeOptions));
-          break;
-        case "month":
-          addDateRangeOptions(startOfMonth(currentDate), endOfMonth(currentDate));
-          break;
-        case "year":
-          for (let month = 0; month < 12; month++) {
-            const date = new Date(currentDate.getFullYear(), month, 1);
-            options.push(formatOption(date));
-          }
-          break;
-        default:
-          break;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setShowCalendar(false);
       }
-
-      setSearchOptions(options.slice(0, 5));  // Limit to five options initially
     };
 
-    generateOptions();
-  }, [currentDate, viewType, events, locale]);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-  const handleSelectChange = (value: string) => {
-    setSelectedDate(value);
-    const selectedEvent = events.find(event => format(event.date, "EEE, MMM d", { locale: localeMap[locale] }) === value);
-    if (selectedEvent && onNavigateToEvent) {
-      onNavigateToEvent(selectedEvent.date);
-    }
+  const handleDateClick = (date: Date) => {
+    // ... same logic as before ...
   };
 
+  const handleMonthChange = (newMonth: number) => setCurrentMonth(newMonth);
+  const handleYearChange = (newYear: number) => setCurrentYear(newYear);
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setTime({ ...time, [name]: parseInt(value) });
+  };
+
+  const handleToggleAMPM = () => {
+    setTime((prevTime) => ({
+      ...prevTime,
+      ampm: prevTime.ampm === "AM" ? "PM" : "AM",
+    }));
+  };
+
+  const handleToday = () => {
+    const today = new Date();
+    setSelectedDates(today);
+    setCurrentYear(today.getFullYear());
+    setCurrentMonth(today.getMonth());
+    setShowCalendar(false);
+  };
+
+  const handleClear = () => {
+    setSelectedDates(null);
+    setShowCalendar(false);
+  };
+
+  const formatDateTime = () => {
+    // ... same logic as before ...
+  };
+
+  const formatTime = () => {
+    // ... same logic as before ...
+  };
+
+  const sizeClass = {
+    sm: "p-1 text-sm",
+    nm: "p-2 text-base",
+    lg: "p-3 text-lg",
+  }[size];
+
   return (
-    <div className="flex items-center justify-between mb-5 min-w-[59rem] bg-primary dark:bg-shade rounded-full py-1 px-3">
-      <div className="flex items-center gap-2">
-        <SwitchButton
-          onClick={toggleTimeFormat}
-          isToggled={is24HourFormat}
-          textTrue="Switch to 12-hour"
-          textFalse="Switch to 24-hour"
-          className="flex items-center rounded-full justify-center size-8 font-semibold text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
-          showTextOnly
-        />
-        <ButtonAction
-          onClick={onTodayClick}
-          hideTextOnLoading
-          className="flex items-center rounded-full justify-center font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
-        >
-          Today
-        </ButtonAction>
-      </div>
+    <div className="relative" ref={calendarRef}>
+      {/* Input */}
+      <input
+        type="text"
+        value={timeOnly ? formatTime() : formatDateTime()}
+        placeholder={timeOnly ? "Select Time" : "Select Date"}
+        readOnly
+        disabled={disabled}
+        onClick={() => setShowCalendar(!showCalendar)} // Toggle calendar visibility on click
+        className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
+          hidePlaceholder || floatingLabel
+            ? "placeholder-transparent"
+            : "placeholder-soft dark:placeholder-pale"
+        } ${sizeClass} ${className} ${
+          disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
+        }`}
+      />
 
-      <div className="flex items-center gap-2 justify-center">
-        <button
-          type="button"
-          aria-label="Previous Date"
-          onClick={prevPeriod}
-          className="flex items-center rounded-full justify-center w-8 h-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
-        >
-          <FaChevronLeft />
-        </button>
-        <h2 className="text-xl text-deep dark:text-light bg-secondary dark:bg-dim p-1 px-3 rounded-full shadow font-bold flex-grow text-center">
-          {headerTitle}
-        </h2>
-        <button
-          type="button"
-          aria-label="Next Date"
-          onClick={nextPeriod}
-          className="flex items-center rounded-full justify-center w-8 h-8 font-light text-soft dark:text-pale hover:bg-tertiary dark:hover:bg-shadow transition-all duration-200 ease-linear cursor-pointer"
-        >
-          <FaChevronRight />
-        </button>
-      </div>
-
-      <div className="flex items-center">
-        <InputSelect
-          placeholder="Search dates/events..."
-          options={searchOptions}
-          value={selectedDate}
-          onChange={handleSelectChange}
-        />
-        <SelectButton
-          options={["day", "week", "month", "year", "agenda"]}
-          value={viewType}
-          onChange={(value) => onViewChange(value as "day" | "week" | "month" | "year" | "agenda")}
-          className="px-3 py-1 rounded-full font-semibold transition-all duration-200 ease-linear cursor-pointer capitalize"
-        />
-      </div>
+      {/* Calendar UI */}
+      {showCalendar && (
+        <div className="absolute top-full left-0 mt-2 bg-primary dark:bg-shade shadow-lg rounded p-4 z-10">
+          {/* Calendar content */}
+          {/* ... same logic as before ... */}
+        </div>
+      )}
     </div>
   );
 };
 
-export default CalendarHeader;
+export default CalendarInput;
 
 
-import React, { useState } from "react";
-import { FaCalendar } from "react-icons/fa";
-import MegaCalendar from "@/components/form/calender/MegaCalender";
 
-const Page = () => {
-  // Example event data with multiple events on the same days
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: "Meeting with Bob",
-      start: new Date("2024-10-24T06:00:00"),
-      end: new Date("2024-10-24T07:00:00"),
-      description: "Discuss project progress",
-      color: "red",
-    },
-    {
-      id: 2,
-      title: "Lunch with Sarah",
-      start: new Date("2024-10-26T12:00:00"),
-      end: new Date("2024-10-26T14:50:00"),
-      description: "Catch up over lunch",
-      color: "green",
-    },
-    {
-      id: 3,
-      title: "Conference Call",
-      start: new Date("2024-10-26T15:00:00"),
-      end: new Date("2024-10-26T16:00:00"),
-      description: "Weekly sync with the team",
-      color: "brown",
-    },
-    // Additional events on the same days to trigger "+X more" display
-    {
-      id: 4,
-      title: "Doctor Appointment",
-      start: new Date("2024-10-24T08:00:00"),
-      end: new Date("2024-10-24T09:00:00"),
-      description: "Routine check-up",
-      color: "blue",
-    },
-    {
-      id: 5,
-      title: "Project Deadline",
-      start: new Date("2024-10-24T10:00:00"),
-      end: new Date("2024-10-24T11:00:00"),
-      description: "Final project submission",
-      color: "purple",
-    },
-    {
-      id: 6,
-      title: "Team Lunch",
-      start: new Date("2024-10-26T10:00:00"),
-      end: new Date("2024-10-26T11:00:00"),
-      description: "Team bonding session",
-      color: "orange",
-    },
-    
-  ]);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewType, setViewType] = useState<
-    "month" | "week" | "day" | "agenda" | "year"
-  >("day");
 
-  const handleEventClick = (event: any) => {
-    alert(`Event clicked: ${event.title}`);
-  };
 
-  const handleDateClick = (date: Date) => {
-    alert(`Date clicked: ${date.toLocaleDateString()}`);
-  };
 
-  const handleViewChange = (
-    view: "month" | "week" | "day" | "agenda" | "year"
-  ) => {
-    setViewType(view);
-  };
+
+
+
+const MyCalendarComponent = () => {
+  const [showCalendar, setShowCalendar] = useState(false); // For toggling the calendar when using input
+  const [defaultShow, setDefaultShow] = useState(false);   // Whether calendar is shown by default
+  const calendarRef = useRef(null);
+
+  // Function to handle clicks outside the calendar when not in 'default show' mode
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!calendarRef.current || calendarRef.current.contains(event.target as Node)) {
+        return;
+      }
+
+      // Only hide the calendar if it’s NOT shown by default
+      if (!defaultShow) {
+        setShowCalendar(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [defaultShow]);
 
   return (
-    <>
-      <MegaCalendar
-        events={events}
-        onEventClick={handleEventClick}
-        onDateClick={handleDateClick}
-        selectedDate={selectedDate}
-        viewType={viewType}
-        onViewChange={handleViewChange}
-        minTime={2}
-        maxTime={16}
-        startDay={0}
-        endDay={6}
-        title="TimeTable"
-        icon={<FaCalendar />}
+    <div>
+      {/* Input field to toggle the calendar when `defaultShow` is false */}
+      <input
+        type="text"
+        value={timeOnly ? formatTime() : formatDateTime()}
+        placeholder={timeOnly ? "Select Time" : "Select Date"}
+        readOnly
+        disabled={disabled}
+        onClick={() => {
+          if (!defaultShow) {
+            setShowCalendar((prev) => !prev);  // Toggle only if not using default show
+          }
+        }}
+        className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
+          hidePlaceholder || floatingLabel
+            ? "placeholder-transparent"
+            : "placeholder-soft dark:placeholder-pale"
+        } ${sizeClass} ${className} ${
+          disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
+        }`}
       />
-    </>
+
+      {/* Calendar component */}
+      {(defaultShow || showCalendar) && (
+        <div ref={calendarRef}>
+          {/* Render the calendar here */}
+        </div>
+      )}
+    </div>
   );
 };
 
-export default Page;
+
+const handleDateClick = (date: Date) => {
+  if ((minDate && date < minDate) || (maxDate && date > maxDate)) return;
+  
+  if (selectionMode === "single") {
+    setSelectedDates(date);
+    if (onDateChange) onDateChange(date); // Call the onDateChange prop
+    if (!showCalendar) setShowCalendar(false);
+  }
+  // Handle other selection modes...
+};

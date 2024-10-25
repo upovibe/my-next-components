@@ -93,7 +93,7 @@ const SideMenu = ({ children, items = [], actions }: SideMenuProps) => {
       {/* Main content */}
       <div className="flex-1 text-deep dark:text-light relative overflow-auto h-screen">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 py-4 px-3 md:p-3 bg-white/30 dark:bg-dark/30 backdrop-blur-lg backdrop-saturate-150 border-b border-border dark:border-coal">
+        <div className="sticky top-0 z-40 py-4 px-3 md:p-3 bg-white/30 dark:bg-dark/30 backdrop-blur-lg backdrop-saturate-150 border-b border-border dark:border-coal">
           <div className="flex items-center justify-between">
             <div className="z-20 hidden lg:block">
               <Logo />

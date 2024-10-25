@@ -65,16 +65,16 @@ const Message: React.FC<MessageProps> = ({
       <div className="flex flex-col gap-2 w-full">
         <div className="flex items-center justify-between">
           <h1
-            className={`dark:text-light text-deep ${
-              bgColor ? "text-deep dark:text-deep" : ""
+            className={` ${
+              bgColor ? "text-deep dark:text-deep" : "dark:text-light text-deep"
             } font-bold text-lg`}
           >
             {truncatedTitle}
           </h1>
           {timer && (
             <span
-              className={`text-sm dark:text-muted text-faint ${
-                bgColor ? "text-faint dark:text-faint" : ""
+              className={`text-sm  ${
+                bgColor ? "text-faint dark:text-faint" : "dark:text-muted text-faint"
               }`}
             >
               {timer}
@@ -83,8 +83,8 @@ const Message: React.FC<MessageProps> = ({
         </div>
         <div>
           <p
-            className={`dark:text-light text-deep font ${
-              bgColor ? "text-deep/70 dark:text-deep/70" : ""
+            className={`${
+              bgColor ? "text-deep/70 dark:text-deep/70" : "dark:text-light text-deep font "
             }`}
           >
             {truncatedContent}

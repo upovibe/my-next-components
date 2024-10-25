@@ -120,7 +120,7 @@ const Board = ({ children }: BoardProps) => {
     { icon: <FaHome />, label: "Home", link: "/" },
     { icon: <FaChalkboardTeacher />, label: "Teacher", link: "/teacher" },
     { icon: <FaUserGraduate />, label: "Student", link: "/student" },
-    { icon: <FaUsers />, label: "Parents", link: "/parents" },
+    { icon: <FaUsers />, label: "Parent", link: "/parent" },
     { icon: <FaBook />, label: "Classes", link: "/classes" },
     { icon: <FaFileAlt />, label: "Lessons", link: "/lessons" },
     { icon: <FaPenFancy />, label: "Exams", link: "/exams" },

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import  {FaCalendar} from "react-icons/fa"
-import MegaCalendar from "@/components/form/calender/MegaCalender";
+import MegaCalender from "@/components/form/calender/MegaCalender";
 
 const Page = () => {
   // Example event data
@@ -78,13 +78,15 @@ const Page = () => {
 
   return (
     <>
-      <MegaCalendar
+      <MegaCalender
         events={events}
         onEventClick={handleEventClick}
         onDateClick={handleDateClick}
         selectedDate={selectedDate}
         viewType={viewType}
         onViewChange={handleViewChange}
+        minTime={2}
+        maxTime={16}
         startDay={0}
         endDay={6}
         title="TimeTable"

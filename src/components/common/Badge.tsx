@@ -5,18 +5,15 @@ type BadgeSize = 'xs' | 'sm' | 'md' | 'lg';
 
 // Define the props for the Badge component
 interface BadgeProps {
-  text: string; // Text to display in the badge
-  color?: string; // Background color of the badge
-  size?: BadgeSize; // Size of the badge
-  rounded?: boolean; // Whether the badge should have rounded corners
-  className?: string; // Additional custom classes
+  text: string;
+  size?: BadgeSize;
+  className?: string;
 }
 
-// Function to set the size styles based on the size prop
 const getSizeStyles = (size: BadgeSize) => {
   switch (size) {
     case 'xs':
-      return 'text-xs py-1 px-2';
+      return 'text-xs py-[2px] px-[6px]';
     case 'sm':
       return 'text-xs py-1 px-2';
     case 'md':
@@ -24,24 +21,21 @@ const getSizeStyles = (size: BadgeSize) => {
     case 'lg':
       return 'text-base py-2 px-4';
     default:
-      return 'text-sm py-1.5 px-3'; // Default to medium
+      return 'text-sm py-1.5 px-3';
   }
 };
 
 // Badge component definition
 const Badge: React.FC<BadgeProps> = ({
   text,
-  color = 'bg-blue-500',
-  size = 'medium',
-  rounded = false,
+  size = 'xs',
   className = '',
 }) => {
   const sizeStyles = getSizeStyles(size);
-  const roundedStyles = rounded ? 'rounded-full' : 'rounded-md';
 
   return (
     <span
-      className={`inline-flex items-center justify-center ${sizeStyles} ${roundedStyles} ${color} text-white ${className}`}
+      className={`inline-flex items-center justify-center ${sizeStyles} ${className}`}
     >
       {text}
     </span>
