@@ -11,7 +11,7 @@ interface SwitchButtonProps {
   showIconOnly?: boolean;
   showTextOnly?: boolean;
   iconPosition?: 'left' | 'right';
-  iconClass?: string; // This prop is already optional due to the use of ?
+  iconClass?: string;
   className?: string;
 }
 
@@ -33,9 +33,9 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
 
     if (showIconOnly) {
       return isToggled ? (
-        <IconTrue className={`${iconClass} ${animationClass}`} />
+        <IconTrue className={`mx-auto ${iconClass} ${animationClass}`} />
       ) : (
-        <IconFalse className={`${iconClass} ${animationClass}`} />
+        <IconFalse className={`mx-auto ${iconClass} ${animationClass}`} />
       );
     }
 
@@ -68,7 +68,9 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-block px-3 py-2 rounded transition-all duration-200 ease-linear w-full ${className}`}
+      className={`inline-block px-3 py-1 rounded transition-all duration-200 ease-linear ${
+        showIconOnly ? 'flex justify-center items-center' : 'whitespace-nowrap'
+      } ${className}`}
     >
       {renderContent()}
     </button>

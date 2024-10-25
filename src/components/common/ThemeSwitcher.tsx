@@ -28,11 +28,7 @@ const ThemeSwitcher = ({ className }) => {
         isToggled={theme === 'dark'}
         iconTrue={FaSun}
         iconFalse={FaMoon}
-        textTrue="Light"
-        textFalse="Dark"
-        iconPosition="left"
-        iconClass={iconClass}
-        className='flex'
+        showIconOnly
       />
     </div>
   );
