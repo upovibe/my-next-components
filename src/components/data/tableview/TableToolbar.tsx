@@ -11,7 +11,7 @@ interface TableToolbarProps {
   globalFilterFields: boolean;
   selectionMode?: "single" | "multiple";
   selectedRowsCount: number;
-  onDeleteAll?: () => void;
+  onDeleteSelected?: () => void;
   onAddRow?: () => void;
   onPrint?: () => void;
   showPrintButton: boolean;
@@ -25,7 +25,7 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
   globalFilterFields,
   selectionMode,
   selectedRowsCount,
-  onDeleteAll,
+  onDeleteSelected,
   onAddRow,
   onPrint,
   showPrintButton,
@@ -60,7 +60,7 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
         (selectionMode === "single" && selectedRowsCount === 1) ? (
           <button
             type="button"
-            onClick={() => onDeleteAll?.()}
+            onClick={() => onDeleteSelected?.()}
             className="p-2 flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all"
           >
             <Tooltip

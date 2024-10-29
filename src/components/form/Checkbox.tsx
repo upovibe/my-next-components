@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 type CheckboxProps = {
   checked?: boolean;
   onChange?: (checked: boolean) => void;
   size?: "sm" | "nm" | "lg";
   className?: string;
+  indeterminate?: boolean;
 };
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -14,15 +15,22 @@ const Checkbox: React.FC<CheckboxProps> = ({
   onChange,
   size = "sm",
   className = "",
+  indeterminate = false,
 }) => {
-  // Size-based classes
+  const checkboxRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
+
   const sizeClass = {
     sm: "h-4 w-4 text-sm",
     nm: "h-5 w-5 text-base",
     lg: "h-6 w-6 text-lg",
   }[size];
 
-  // Handler for checkbox toggle
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
       onChange(e.target.checked);
@@ -33,8 +41,9 @@ const Checkbox: React.FC<CheckboxProps> = ({
     <div className="flex items-center justify-center">
       <input
         type="checkbox"
+        ref={checkboxRef} // Attach the ref here
         checked={checked}
-        onChange={handleCheckboxChange} 
+        onChange={handleCheckboxChange}
         className={`cursor-pointer rounded border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${sizeClass} ${className}`}
         aria-label={checked ? "Checked" : "Unchecked"}
       />

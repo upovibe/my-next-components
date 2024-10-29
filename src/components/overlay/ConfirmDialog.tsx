@@ -54,12 +54,7 @@ const ConfirmDialog = ({
     }
   };
 
-  const dialogClass = classNames(
-    "fixed p-4 z-50 rounded-md shadow-lg", // Basic layout
-    getPositionClass(),
-    "bg-primary dark:bg-shade border border-border dark:border-coal", // Background and border
-    className
-  );
+  const dialogClass = `fixed p-4 z-50 rounded-md shadow-lg ${getPositionClass()} bg-primary dark:bg-shade border border-border dark:border-coal ${className || ""}`;
 
   const handleClose = () => {
     if (onHide) onHide();
@@ -97,20 +92,14 @@ const ConfirmDialog = ({
             <div className="flex justify-end gap-4">
               <button
                 type="button"
-                className={classNames(
-                  "px-4 py-2 rounded-md transition-colors duration-200 text-soft dark:text-faint bg-secondary dark:bg-dim hover:bg-tertiary dark:hover:bg-shadow",
-                  rejectClassName
-                )}
+                className={`px-4 py-2 rounded-md transition-colors duration-200 text-soft dark:text-faint bg-secondary dark:bg-dim hover:bg-tertiary dark:hover:bg-shadow ${rejectClassName || ""}`}
                 onClick={handleReject}
               >
                 {rejectLabel}
               </button>
               <button
                 type="button"
-                className={classNames(
-                  "px-4 py-2 rounded-md text-white transition-colors duration-200 bg-highlight dark:bg-ocean hover:bg-highlight/80 dark:hover:bg-ocean/80",
-                  acceptClassName
-                )}
+                className={`px-4 py-2 rounded-md text-white transition-colors duration-200 bg-highlight dark:bg-ocean hover:bg-highlight/80 dark:hover:bg-ocean/80 ${acceptClassName || ""}`}
                 onClick={handleAccept}
               >
                 {acceptLabel}

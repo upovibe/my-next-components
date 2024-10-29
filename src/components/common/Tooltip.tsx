@@ -33,11 +33,9 @@ const Tooltip: React.FC<TooltipProps> = ({
         const tooltipWidth = 150;
         const tooltipHeight = 40;
 
-        // Center the tooltip horizontally and vertically above the mouse cursor
         let left = event.clientX - tooltipWidth / 5;
         let top = event.clientY - tooltipHeight - 1;
 
-        // Adjust to keep within viewport boundaries
         if (left < 0) left = 0;
         if (left + tooltipWidth > window.innerWidth) {
           left = window.innerWidth - tooltipWidth;
@@ -60,7 +58,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   );
 
   const getPositionStyles = () => {
-    if (mouseTrack) return ''; // No position styles for mouse tracking
+    if (mouseTrack) return '';
 
     const positionStyles: { [key: string]: string } = {
       top: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
@@ -73,7 +71,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowPosition = () => {
-    if (mouseTrack) return ''; // No arrow for mouse tracking
+    if (mouseTrack) return '';
 
     const arrowPosition: { [key: string]: string } = {
       top: 'bottom-0 left-1/2 transform -translate-x-1/2',

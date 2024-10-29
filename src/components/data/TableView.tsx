@@ -10,6 +10,7 @@ import LoadingTableSkeleton from "@/components/data/tableview/LoadingTableSkelet
 import Checkbox from "@/components/form/Checkbox";
 import TableToolbar from "@/components/data/tableview/TableToolbar";
 import TableCellEditor from "@/components/data/tableview/TableCellEditor";
+import ConfirmDialog from "@/components/overlay/ConfirmDialog";
 
 interface ColumnProps<T, V = string | number | boolean> {
   field: keyof T;
@@ -50,9 +51,10 @@ interface TableViewProps<T> {
   onRowUnselect?: (row: T) => void;
   onCellSelect?: (row: T, field: keyof T) => void;
   onCellUnselect?: (row: T, field: keyof T) => void;
-  onDeleteAll?: () => void;
+  onDeleteSelected?: (rows: T[]) => void;
   onAddRow?: () => void;
   onPrint?: () => void;
+  onInlineUpdate?: (updatedRow: T) => void;
 }
 
 const TableView = function <T>({
@@ -76,9 +78,10 @@ const TableView = function <T>({
   onRowUnselect,
   onCellSelect,
   onCellUnselect,
-  onDeleteAll,
+  onDeleteSelected,
   onAddRow,
   onPrint,
+  onInlineUpdate
 }: TableViewProps<T>) {
   const sizeClass = {
     sm: "p-1 text-sm",
@@ -107,6 +110,13 @@ const TableView = function <T>({
     field: keyof T;
   } | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [pendingEdit, setPendingEdit] = useState<{
+    rowIndex: number;
+    field: keyof T;
+    originalValue: string;
+    newValue: string;
+  } | null>(null);
 
   useEffect(() => {
     if (isLoading) {
@@ -274,16 +284,50 @@ const TableView = function <T>({
     );
   };
 
+  const handleDeleteSelected = () => {
+    const selectedArray = Array.from(selectedRows); // convert Set to Array
+    if (selectedArray.length === 1) {
+      console.log("Single row deleted");
+    } else if (selectedArray.length > 1) {
+      console.log("Multiple rows deleted");
+    }
+    onDeleteSelected?.(selectedArray);
+  };
+
   const applyEditValue = (
     rowIndex: number,
     field: keyof T,
     newValue: string
   ) => {
-    setSortedData((prevData) => {
-      const updatedData = [...prevData];
-      updatedData[rowIndex] = { ...updatedData[rowIndex], [field]: newValue };
-      return updatedData;
-    });
+    const originalValue = String(sortedData[rowIndex][field]);
+    if (originalValue !== newValue) {
+      setPendingEdit({ rowIndex, field, originalValue, newValue });
+      setIsDialogVisible(true);
+    }
+  };
+
+  const handleAccept = () => {
+    if (pendingEdit) {
+      setSortedData((prevData) => {
+        const updatedData = [...prevData];
+        updatedData[pendingEdit.rowIndex] = {
+          ...updatedData[pendingEdit.rowIndex],
+          [pendingEdit.field]: pendingEdit.newValue,
+        };
+        // Trigger onInlineUpdate with the updated row
+        const updatedRow = updatedData[pendingEdit.rowIndex];
+        onInlineUpdate?.(updatedRow); // Calls database update function
+        console.log("Row updated:", updatedRow); // Logs update to console
+        return updatedData;
+      });
+      setPendingEdit(null);
+    }
+    setIsDialogVisible(false);
+  };
+
+  const handleReject = () => {
+    setPendingEdit(null);
+    setIsDialogVisible(false);
   };
 
   const renderEditor = (col: ColumnProps<T>, item: T, rowIndex: number) => {
@@ -295,11 +339,8 @@ const TableView = function <T>({
           rowIndex={rowIndex}
           editValue={editValue}
           editingCell={editingCell}
-          onEditComplete={() => {
-            applyEditValue(rowIndex, col.field, editValue);
-            setEditingCell(null);
-          }}
-          onValueChange={(value) => setEditValue(value)}
+          onEditComplete={() => applyEditValue(rowIndex, col.field, editValue)}
+          onValueChange={(value) => setEditValue(Array.isArray(value) ? value.join(", ") : value)}
           setEditingCell={setEditingCell}
         />
       );
@@ -309,7 +350,7 @@ const TableView = function <T>({
 
   return (
     <div
-      className={`${className} bg-primary dark:bg-shade p-3 rounded-xl border border-border dark:border-coal`}
+      className={`${className} bg-primary dark:bg-shade p-3 rounded-3xl border border-border dark:border-coal`}
     >
       <TableToolbar
         icon={icon}
@@ -319,7 +360,7 @@ const TableView = function <T>({
         globalFilterFields={globalFilterFields.length > 0}
         selectionMode={selectionMode}
         selectedRowsCount={selectedRows.size}
-        onDeleteAll={onDeleteAll}
+        onDeleteSelected={handleDeleteSelected}
         onAddRow={onAddRow}
         onPrint={onPrint}
         showPrintButton={showPrintButton}
@@ -473,6 +514,16 @@ const TableView = function <T>({
           </div>
         </div>
       )}
+      <ConfirmDialog
+        visible={isDialogVisible}
+        onHide={() => setIsDialogVisible(false)}
+        header="Confirm Changes"
+        message="Are you sure you want to save these changes?"
+        acceptLabel="Yes"
+        rejectLabel="No"
+        onAccept={handleAccept}
+        onReject={handleReject}
+      />
       <Paginator
         rowsPerPage={rowsPerPage}
         totalRecords={totalRecords}

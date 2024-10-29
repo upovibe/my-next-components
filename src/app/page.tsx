@@ -29,6 +29,13 @@ const products = [
     quantity: 30,
     imageUrl: photo1,
   },
+  {
+    code: "P363",
+    name: "Product y",
+    category: "Category z",
+    quantity: 389,
+    imageUrl: photo1,
+  },
 ];
 
 // Define category options for the select dropdown
@@ -44,7 +51,7 @@ const Page = () => {
       <h1 className="text-xl font-bold mb-4">Product List</h1>
       <TableView
         value={products}
-        rowsPerPageOptions={[3]}
+        rowsPerPageOptions={[3, 5]}
         size="lg"
         //   showGridlines
           stripedRows
@@ -58,7 +65,10 @@ const Page = () => {
         selectionMode="multiple"
         hoverEffect="row"
         showPrintButton
-        columnOptions 
+        onInlineUpdate={(updatedRow) => {
+            // Simulated API call for update - replace this with actual database update logic
+            console.log("Database updated with row:", updatedRow);
+          }}
       >
         <TableCol
           field="code"

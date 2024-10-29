@@ -36,20 +36,27 @@ const TableCellEditor = function <T>({
   setEditingCell,
 }: TableCellEditorProps<T>) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const initialEditValue = useRef<string | string[]>(
+    Array.isArray(editValue) ? editValue.map(String) : String(editValue)
+  );
 
   const handleChange = (value: string | string[]) => {
     onValueChange(value);
   };
 
   const handleBlur = () => {
-    onEditComplete();
+    if (editValue !== initialEditValue.current) {
+      onEditComplete();
+    } else {
+      setEditingCell(null);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      onEditComplete();
+      handleBlur();
     } else if (e.key === "Escape") {
-      onValueChange("");
+      onValueChange(initialEditValue.current);
       setEditingCell(null);
     }
   };
@@ -62,15 +69,15 @@ const TableCellEditor = function <T>({
 
   if (col.editable && editingCell?.row === rowIndex && editingCell.field === col.field) {
     if (col.editorType === "select" && col.options) {
-      const filteredOptions = col.options.filter(option => 
-        typeof option.value === 'string' || typeof option.value === 'number'
+      const filteredOptions = col.options.filter(
+        (option) => typeof option.value === "string" || typeof option.value === "number"
       );
 
       const valueToPass: string | string[] | undefined = Array.isArray(editValue)
-        ? (editValue as string[])
-        : typeof editValue === 'string'
+        ? (editValue as string[]).map(String)
+        : typeof editValue === "string"
         ? editValue
-        : undefined;
+        : String(editValue);
 
       return (
         <SelectDropdown
@@ -87,7 +94,7 @@ const TableCellEditor = function <T>({
           aria-label="Edit Cell"
           ref={inputRef}
           type="text"
-          value={editValue as string}
+          value={String(editValue)}
           onChange={(e) => handleChange(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
