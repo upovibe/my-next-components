@@ -66,7 +66,6 @@ const Page = () => {
         hoverEffect="row"
         showPrintButton
         onInlineUpdate={(updatedRow) => {
-            // Simulated API call for update - replace this with actual database update logic
             console.log("Database updated with row:", updatedRow);
           }}
       >
