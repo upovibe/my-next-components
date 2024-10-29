@@ -350,7 +350,7 @@ const TableView = function <T>({
 
   return (
     <div
-      className={`${className} bg-primary dark:bg-shade p-3 rounded-3xl border border-border dark:border-coal`}
+      className={`${className} bg-primary dark:bg-shade p-5 rounded-3xl border border-border dark:border-coal`}
     >
       <TableToolbar
         icon={icon}
