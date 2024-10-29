@@ -1,21 +1,14 @@
-"use client";
+"use client"; 
 
 import { React } from "react";
 import Link from "next/link";
-import {
-  FaHome,
-  FaGithub,
-  FaSignInAlt,
-  FaPhone,
-  FaUserAlt,
-  FaInfo,
-} from "react-icons/fa";
+import {FaHome, FaGithub, FaSignInAlt, FaPhone, FaUserAlt, FaInfo } from "react-icons/fa";
 import Logo from "@/components/common/Logo";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import NavMenu from "@/components/navigations/NavMenu";
 import SearchInput from "@/components/form/inputs/SearchInput";
 import Divider from "@/components/common/Divider";
-import LinkButton from "@/components/form/buttons/LinkButton";
+import ButtonLink from "@/components/form/buttons/ButtonLink";
 
 const Nav: React.FC = () => {
   const menuItems = [
@@ -42,27 +35,22 @@ const Nav: React.FC = () => {
 
   const actionElements = (
     <div className="flex items-center">
-      <Divider layout="vertical" type="solid" className="h-5 mx-2" />
+      <Divider layout="vertical" type="solid" className="mx-2" />
       <ThemeSwitcher className="flex items-center justify-center size-8 bg-secondary dark:bg-dim border border-border dark:border-coal rounded-md" />
-      <Divider layout="vertical" type="solid" className="h-5 mx-2" />
+      <Divider layout="vertical" type="solid" className="mx-2"/>
       <Link
         href="https://github.com/upovibe/my-next-components.git"
         target="_blank"
         rel="noopener noreferrer"
         className="size-8 bg-secondary dark:bg-dim border border-border dark:border-coal rounded-md flex items-center justify-center"
       >
-        <FaGithub />
+        <FaGithub
+        />
       </Link>
-
-      <Divider layout="vertical" type="solid" className="h-5 mx-2" />
-      <LinkButton
-        href="/signin"
-        icon={FaSignInAlt}
-        iconPosition="right"
-        className="px-3 py-1 rounded-full"
-      >
+      <Divider layout="vertical" type="solid" className="mx-2" />
+      <ButtonLink href="/signin" icon={FaSignInAlt} iconPosition="right" className="">
         Sign Up
-      </LinkButton>
+      </ButtonLink>
     </div>
   );
 
@@ -70,7 +58,7 @@ const Nav: React.FC = () => {
     <NavMenu
       logo={<Logo />}
       items={menuItems}
-      input={<SearchInput placeholder="search" showButton />}
+      input={<SearchInput placeholder="search" showButton/>}
       actionElement={actionElements}
       className="mx-auto"
       displayType="sidebar"

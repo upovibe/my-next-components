@@ -1,35 +1,39 @@
 import React from 'react';
 import Link from 'next/link';
-import { IconType } from 'react-icons';
 
 interface LinkButtonProps {
   href: string;
-  children: React.ReactNode;
-  icon?: IconType;
-  iconPosition?: 'left' | 'right';
+  children?: React.ReactNode;
+  icon?: React.ReactNode;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const LinkButton: React.FC<LinkButtonProps> = ({
   href,
   children,
-  icon: Icon,
-  iconPosition = 'right',
+  icon,
   className = '',
+  onClick,
 }) => {
+  const iconOnly = !children;
+
   return (
     <Link
       href={href}
-      className={`inline-block bg-highlight hover:bg-highlight/80 dark:bg-ocean dark:hover:bg-ocean/80  text-light font-semibold transition focus:ring-4 focus:ring-highlight/50 dark:focus:ring-ocean/50 ${className}`}
+      className={`inline-block text-light font-semibold transition-all duration-300 ease-linear ${className} ${
+        iconOnly ? 'flex justify-center items-center' : ''
+      }`}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (onClick) onClick(e);
+      }}
     >
-      <span className="flex items-center justify-center gap-2">
-        {Icon && iconPosition === 'left' && (
-          <Icon className="inline-block" />
-        )}
-        <span>{children}</span>
-        {Icon && iconPosition === 'right' && (
-          <Icon className="inline-block" />
-        )}
+      <span
+        className={`flex ${iconOnly ? 'justify-center items-center w-full h-full' : 'items-center gap-2'}`}
+      >
+        {icon && <span>{icon}</span>}
+        {children && <span>{children}</span>}
       </span>
     </Link>
   );

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { IconType } from 'react-icons';
+import React from 'react';
 import Lottie from "lottie-react";
 import uploadingAnimation from "@/assets/animations/Loading.json";
 
 interface ActionButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
-  icon?: IconType;
+  onClick: (e: React.MouseEvent) => void;
+  children?: React.ReactNode;
+  icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   className?: string;
   isLoading?: boolean; 
@@ -17,27 +16,36 @@ interface ActionButtonProps {
 const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,
   children,
-  icon: Icon,
+  icon,
   iconPosition = 'right',
   className = '',
-  isLoading,
+  isLoading = false,
   hideTextOnLoading,
   loadingPosition = 'right'
 }) => {
+  const iconOnly = !children;
+
   return (
     <button
       type="button"
-      onClick={onClick}
-      className={`inline-block px-5 py-1 rounded text-light font-semibold transition-all duration-300 ease-linear ${className}`}
-      disabled={isLoading} // Disable button during loading
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e);
+      }}
+      className={`inline-block px-5 py-1 rounded text-light font-semibold transition-all duration-300 ease-linear ${className} ${
+        iconOnly ? 'flex justify-center items-center' : ''
+      }`}
+      disabled={isLoading}
     >
-      <span className="flex items-center justify-center gap-2">
-        {/* Conditionally render the icon on the left or right */}
-        {!isLoading && Icon && iconPosition === 'left' && (
-          <Icon className="mr-2 text-lg" />
+      <span
+        className={`flex ${iconOnly ? 'justify-center items-center w-full h-full' : 'items-center gap-2'}`}
+      >
+        {/* Render the icon conditionally on the left */}
+        {!isLoading && icon && iconPosition === 'left' && !iconOnly && (
+          <span className="text-lg">{icon}</span>
         )}
 
-        {/* Conditionally render loading animation on the left */}
+        {/* Loading animation on the left */}
         {isLoading && loadingPosition === 'left' && (
           <Lottie
             className="size-full max-h-6 max-w-6"
@@ -46,12 +54,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           />
         )}
 
-        {/* Conditionally show or hide the button text based on loading state */}
-        {!hideTextOnLoading || !isLoading ? (
+        {/* Show or hide children based on loading and text visibility */}
+        {(!hideTextOnLoading || !isLoading) && children ? (
           <span>{children}</span>
         ) : null}
 
-        {/* Conditionally render loading animation on the right */}
+        {/* Loading animation on the right */}
         {isLoading && loadingPosition === 'right' && (
           <Lottie
             className="size-full max-h-6 max-w-6"
@@ -60,8 +68,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           />
         )}
 
-        {!isLoading && Icon && iconPosition === 'right' && (
-          <Icon className="ml-2 text-lg" />
+        {/* Render the icon conditionally on the right */}
+        {!isLoading && icon && iconPosition === 'right' && !iconOnly && (
+          <span className="text-lg">{icon}</span>
+        )}
+
+        {/* Center the icon when it’s icon-only mode */}
+        {!isLoading && icon && iconOnly && (
+          <span className="text-lg">{icon}</span>
         )}
       </span>
     </button>

@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { truncateText } from "@/utils/truncateText";
+import { truncateText } from "@/utils/formatTexts";
 import { getRandomColor, getRandomLightColor } from "@/utils/colorUtils";
 
 interface MessageProps {

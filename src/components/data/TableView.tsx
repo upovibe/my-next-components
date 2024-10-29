@@ -13,6 +13,7 @@ import Checkbox from "@/components/form/Checkbox";
 import TableToolbar from "@/components/data/tableview/TableToolbar";
 import TableCellEditor from "@/components/data/tableview/TableCellEditor";
 import ConfirmDialog from "@/components/overlay/ConfirmDialog";
+import { separateWords } from "@/utils//formatTexts";
 
 interface ColumnProps<T, V = string | number | boolean> {
   field: keyof T;
@@ -83,7 +84,7 @@ const TableView = function <T>({
   onDeleteSelected,
   onAddRow,
   onPrint,
-  onInlineUpdate
+  onInlineUpdate,
 }: TableViewProps<T>) {
   const sizeClass = {
     sm: "p-1 text-sm",
@@ -287,7 +288,7 @@ const TableView = function <T>({
   };
 
   const handleDeleteSelected = () => {
-    const selectedArray = Array.from(selectedRows); // convert Set to Array
+    const selectedArray = Array.from(selectedRows);
     if (selectedArray.length === 1) {
       console.log("Single row deleted");
     } else if (selectedArray.length > 1) {
@@ -316,10 +317,9 @@ const TableView = function <T>({
           ...updatedData[pendingEdit.rowIndex],
           [pendingEdit.field]: pendingEdit.newValue,
         };
-        // Trigger onInlineUpdate with the updated row
         const updatedRow = updatedData[pendingEdit.rowIndex];
-        onInlineUpdate?.(updatedRow); // Calls database update function
-        console.log("Row updated:", updatedRow); // Logs update to console
+        onInlineUpdate?.(updatedRow);
+        console.log("Row updated:", updatedRow);
         return updatedData;
       });
       setPendingEdit(null);
@@ -342,7 +342,9 @@ const TableView = function <T>({
           editValue={editValue}
           editingCell={editingCell}
           onEditComplete={() => applyEditValue(rowIndex, col.field, editValue)}
-          onValueChange={(value) => setEditValue(Array.isArray(value) ? value.join(", ") : value)}
+          onValueChange={(value) =>
+            setEditValue(Array.isArray(value) ? value.join(", ") : value)
+          }
           setEditingCell={setEditingCell}
         />
       );
@@ -506,7 +508,9 @@ const TableView = function <T>({
                           ? renderEditor(col, row, rowIndex)
                           : col.template
                           ? col.template(row)
-                          : String(row[col.field as keyof T])}
+                          : separateWords(
+                              String(row[col.field as keyof T])
+                            )}{" "}
                       </td>
                     ))}
                   </tr>
