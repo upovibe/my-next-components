@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaTimes } from "react-icons/fa";
-import classNames from 'classnames';
 
 // Define the prop types for the DialogDisplay component
 interface DialogDisplayProps {

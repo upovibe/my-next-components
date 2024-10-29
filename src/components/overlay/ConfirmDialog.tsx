@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { FaTimes } from "react-icons/fa";
-import classNames from "classnames";
 
 // ConfirmDialog Props
 type ConfirmDialogProps = {

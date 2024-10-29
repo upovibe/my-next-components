@@ -17,7 +17,7 @@ type SelectDropdownProps = {
   className?: string;
   value?: string[] | string;
   onChange?: (selected: string[] | string) => void;
-  onBlur?: () => void; // Added onBlur prop
+  onBlur?: () => void;
 };
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -31,21 +31,33 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   className = "",
   value,
   onChange,
-  onBlur, // Added onBlur destructuring
+  onBlur,
 }) => {
   const [internalValue, setInternalValue] = useState<string[] | string>(
-    multiple ? (Array.isArray(value) ? value : []) : typeof value === "string" ? value : ""
+    multiple
+      ? Array.isArray(value)
+        ? value
+        : []
+      : typeof value === "string"
+      ? value
+      : ""
   );
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); // To reference the dropdown
+  const dropdownRef = useRef<HTMLUListElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
-  // Memoize handleClickOutside using useCallback
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
-      if (onBlur) onBlur(); // Call onBlur when clicked outside
-    }
-  }, [onBlur]);
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+        if (onBlur) onBlur();
+      }
+    },
+    [onBlur]
+  );
 
   const handleSelect = (optionValue: string) => {
     if (multiple) {
@@ -64,22 +76,17 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   };
 
   const handleToggleDropdown = () => {
-    if (!disabled) {
-      setIsOpen((prev) => !prev);
-    }
+    if (!disabled) setIsOpen((prev) => !prev);
   };
 
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    else document.removeEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, handleClickOutside]); // Added handleClickOutside to dependencies
+  }, [isOpen, handleClickOutside]);
 
   const isSelected = (optionValue: string) =>
     multiple
@@ -93,12 +100,12 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   }[size];
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+    <div className={`relative ${className}`} ref={buttonRef}>
       {floatingLabel && (
         <label
-          className={`absolute left-2 transition-all duration-200 text-soft dark:text-pale cursor-text ${
+          className={`absolute left-2 transition-all duration-200 text-gray-500 cursor-text ${
             internalValue
-              ? "-top-2 text-xs bg-primary dark:bg-shade px-2 rounded"
+              ? "-top-2 text-xs bg-white px-2 rounded"
               : "top-2 text-base"
           }`}
         >
@@ -106,42 +113,59 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
         </label>
       )}
 
-      <div
-        onClick={handleToggleDropdown}
-        className={`w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus:border-highlight dark:focus:border-ocean ${sizeClass} ${
-          disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
-        }`}
-      >
-        <span className={`block truncate ${internalValue ? "" : "text-soft dark:text-pale"}`}>
-          {multiple
-            ? Array.isArray(internalValue) && internalValue.length > 0
-              ? internalValue
-                  .map((v) => options.find((o) => o.value === v)?.label)
-                  .join(", ")
-              : placeholder
-            : options.find((o) => o.value === internalValue)?.label || placeholder}
-        </span>
-        <span className={`absolute right-2 top-1/2 transform -translate-y-1/2 transition-transform duration-200`}>
-          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
-        </span>
+<div
+  onClick={handleToggleDropdown}
+  tabIndex={0} // Makes the div focusable with the keyboard
+  className={`whitespace-nowrap flex flex-col w-full border-2 space-x-2 relative border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
+    disabled ? "bg-gray-100 cursor-not-allowed" : ""
+  }`}
+>
+
+        <div className="flex items-center">
+          <span
+            className={`flex-grow truncate ${
+              internalValue ? "" : "text-gray-500"
+            }`}
+          >
+            {multiple
+              ? Array.isArray(internalValue) && internalValue.length > 0
+                ? internalValue
+                    .map((v) => options.find((o) => o.value === v)?.label)
+                    .join(", ")
+                : placeholder
+              : options.find((o) => o.value === internalValue)?.label ||
+                placeholder}
+          </span>
+          <span className="ml-4">
+            {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+          </span>
+        </div>
       </div>
 
       {isOpen && (
         <ul
-          className={`absolute w-full max-h-60 overflow-y-auto mt-2 bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg z-10`}
+          className="fixed z-50 max-h-60 overflow-y-auto mt-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
+          style={{
+            left: buttonRef.current?.getBoundingClientRect().left,
+            top: buttonRef.current?.getBoundingClientRect().bottom,
+            minWidth: buttonRef.current?.getBoundingClientRect().width,
+          }}
+          ref={dropdownRef}
         >
           {options.map((option) => (
             <li
               key={option.value}
               onClick={() => handleSelect(option.value as string)}
-              className={`cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
+              className={` whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
                 isSelected(option.value as string)
                   ? "bg-highlight dark:bg-ocean text-white"
                   : "text-deep dark:text-light"
               }`}
             >
-              <span>{option.label}</span>
-              {isSelected(option.value as string) && <FaCheck />}
+              <span className="truncate text-md">{option.label}</span>
+              {isSelected(option.value as string) && (
+                <FaCheck className="text-sm" />
+              )}
             </li>
           ))}
         </ul>
