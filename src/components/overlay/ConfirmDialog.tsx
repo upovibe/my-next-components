@@ -78,7 +78,7 @@ const ConfirmDialog = ({
       <div className={dialogClass}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-deep dark:text-light">{header}</h3>
-          <button type="button" onClick={handleClose}>
+          <button aria-label="close" type="button" onClick={handleClose}>
             <FaTimes className="text-soft dark:text-pale" />
           </button>
         </div>
