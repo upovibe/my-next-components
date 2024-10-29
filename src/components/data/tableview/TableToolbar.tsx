@@ -31,7 +31,7 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
   showPrintButton,
 }) => {
   return (
-    <div className="flex items-center justify-between gap-5 mb-5 min-w-full overflow-auto p-3 bg-tertiary dark:bg-shadow rounded-xl shadow-md backdrop-blur-lg bg-opacity-50 border border-border dark:border-coal">
+    <div className="flex items-center justify-between gap-5 mb-5 min-w-full overflow-auto p-3 bg-tertiary dark:bg-shadow rounded-xl backdrop-blur-lg bg-opacity-50 border border-border dark:border-coal">
       <div className="flex items-center justify-between">
         <div className="flex whitespace-nowrap items-center text-lg md:text-xl font-semibold text-deep dark:text-light">
           <div className="flex items-center gap-2">
