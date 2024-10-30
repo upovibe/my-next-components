@@ -22,17 +22,13 @@ const ThemeSwitcher = ({ className }) => {
   const iconClass = "hover:scale-110 transition-all duration-200 ease-linear";
 
   return (
-    <div className={className}>
+    <div className={`mx-auto ${className}`}>
       <SwitchButton
         onClick={toggleTheme}
         isToggled={theme === 'dark'}
-        iconTrue={<FaSun/>}
-        iconFalse={<FaMoon/>}
-        textTrue="Light"
-        textFalse="Dark"
-        iconPosition="left"
-        iconClass={iconClass}
-        className='flex w-full'
+        iconTrue={<FaSun />}
+        iconFalse={<FaMoon />}
+        showIconOnly
       />
     </div>
   );

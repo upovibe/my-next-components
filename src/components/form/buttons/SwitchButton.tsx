@@ -10,7 +10,6 @@ interface SwitchButtonProps {
   showIconOnly?: boolean;
   showTextOnly?: boolean;
   iconPosition?: 'left' | 'right';
-  iconClass?: string;
   className?: string;
 }
 
@@ -24,7 +23,6 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
   textFalse,
   showIconOnly,
   showTextOnly,
-  iconClass = '',
   className = '',
 }) => {
   const renderContent = () => {
@@ -32,11 +30,11 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
 
     if (showIconOnly) {
       return isToggled ? (
-        <span className={`mx-auto ${iconClass} ${animationClass}`}>
+        <span className={`flex justify-center items-center mx-auto ${animationClass}`}>
           {iconTrue}
         </span>
       ) : (
-        <span className={`mx-auto ${iconClass} ${animationClass}`}>
+        <span className={`flex justify-center items-center mx-auto ${animationClass}`}>
           {iconFalse}
         </span>
       );
@@ -49,12 +47,12 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
     return (
       <span className="flex items-center justify-center gap-2">
         {iconPosition === 'left' && isToggled && iconTrue && (
-          <span className={`mr-1 ${iconClass} ${animationClass}`}>
+          <span className={`mr-1 ${animationClass}`}>
             {iconTrue}
           </span>
         )}
         {iconPosition === 'left' && !isToggled && iconFalse && (
-          <span className={`mr-1 ${iconClass} ${animationClass}`}>
+          <span className={`mr-1 ${animationClass}`}>
             {iconFalse}
           </span>
         )}
@@ -62,12 +60,12 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({
         <span>{isToggled ? textTrue : textFalse}</span>
 
         {iconPosition === 'right' && isToggled && iconTrue && (
-          <span className={`ml-1 ${iconClass} ${animationClass}`}>
+          <span className={`ml-1 ${animationClass}`}>
             {iconTrue}
           </span>
         )}
         {iconPosition === 'right' && !isToggled && iconFalse && (
-          <span className={`ml-1 ${iconClass} ${animationClass}`}>
+          <span className={`ml-1 ${animationClass}`}>
             {iconFalse}
           </span>
         )}
