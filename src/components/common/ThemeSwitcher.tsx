@@ -26,9 +26,13 @@ const ThemeSwitcher = ({ className }) => {
       <SwitchButton
         onClick={toggleTheme}
         isToggled={theme === 'dark'}
-        iconTrue={FaSun}
-        iconFalse={FaMoon}
-        showIconOnly
+        iconTrue={<FaSun/>}
+        iconFalse={<FaMoon/>}
+        textTrue="Light"
+        textFalse="Dark"
+        iconPosition="left"
+        iconClass={iconClass}
+        className='flex w-full'
       />
     </div>
   );
