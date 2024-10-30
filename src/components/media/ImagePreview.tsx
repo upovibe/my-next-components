@@ -5,16 +5,20 @@ type ImagePreviewProps = {
   src: string;
   alt: string;
   zoomSrc?: string;
-  className?: string;
   indicatorIcon?: JSX.Element;
+  className?: string;
+  width?: number;
+  height?: number;
 };
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({
   src,
   alt,
   zoomSrc,
-  className = '',
   indicatorIcon,
+  className = '',
+  width = 500,
+  height = 300,
 }) => {
   const [isPreview, setIsPreview] = useState(false);
 
@@ -25,14 +29,13 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   return (
     <div className={`relative ${className}`}>
       <div className="relative cursor-pointer" onClick={togglePreview}>
-        {/* Image component */}
         <Image
           src={src}
           alt={alt}
-          className="object-cover"
-          layout="responsive"
-          width={500}
-          height={300}
+          className={`object-cover ${className}`}
+          layout="fixed"
+          width={width}
+          height={height}
         />
 
         {/* Eye icon on hover */}
@@ -49,15 +52,12 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center"
           onClick={togglePreview}
         >
-          <div className="relative">
-            {/* Zoomed Image */}
+          <div className="relative size-10/12 md:size-8/12 lg:size-6/12 transition-all duration-200 ease-linear">
             <Image
               src={zoomSrc || src}
               alt={alt}
-              className="object-contain max-h-screen max-w-screen cursor-pointer"
-              layout="intrinsic"
-              width={600}
-              height={600}
+              className="object-contain max-h-full max-w-full cursor-pointer"
+              layout="fill"
             />
           </div>
         </div>
