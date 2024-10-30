@@ -6,6 +6,7 @@ import { TableView, TableCol } from "@/components/data/TableView";
 import photo1 from "@/assets/images/photo1.jpeg";
 import { FaTable } from "react-icons/fa";
 import Modal from "@/components/overlay/Modal";
+import { FaPlus } from "react-icons/fa";
 
 // Sample product data with image URLs
 const products = [
@@ -144,8 +145,10 @@ const Page = () => {
 
       <Modal 
         isOpen={isModalOpen} 
+        icon={<FaPlus />}
         title="Add Product" 
         onClose={() => setIsModalOpen(false)}
+        position="top"
         footer={
           <div className="flex justify-end space-x-2">
             <button 
