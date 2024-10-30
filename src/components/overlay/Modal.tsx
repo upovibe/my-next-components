@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
 interface ModalProps {
@@ -9,7 +9,7 @@ interface ModalProps {
   onClose: () => void;
   className?: string;
   icon?: ReactNode;
-  position?: "center" | "top" | "bottom" | "left" | "right"; // Position prop
+  position?: "center" | "top" | "bottom" | "left" | "right";
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -22,8 +22,6 @@ const Modal: React.FC<ModalProps> = ({
   icon,
   position = "center",
 }) => {
-  const [isAnimating, setIsAnimating] = useState(false);
-
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) onClose();
@@ -32,17 +30,7 @@ const Modal: React.FC<ModalProps> = ({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
-  // Start animation when isOpen changes to true
-  useEffect(() => {
-    if (isOpen) setIsAnimating(true);
-    else {
-      // Delay the modal closure for smooth fade-out
-      const timer = setTimeout(() => setIsAnimating(false), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
-
-  if (!isAnimating) return null;
+  if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -50,7 +38,6 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
-  // Position styles based on the position prop
   const positionClasses = {
     center: "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
     top: "md:top-8 top-0 left-1/2 transform -translate-x-1/2",
@@ -61,17 +48,15 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center
-        transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       onClick={handleOverlayClick}
     >
       <div
         className={`absolute bg-primary dark:bg-dim ${className} 
-          ${positionClasses[position]} 
-          w-full h-full size-full md:size-8/12 lg:w-6/12 xl:w-5/12 
-          md:rounded-lg shadow-lg p-6 flex flex-col 
-          border-0 md:border border-border dark:border-coal 
-          transform transition-all duration-300 ${isOpen ? "scale-100" : "scale-95"}`}
+        ${positionClasses[position]} 
+        w-full h-full size-full md:size-8/12 lg:w-6/12 xl:w-5/12 
+        md:rounded-lg shadow-lg p-6 flex flex-col 
+        border-0 md:border border-border dark:border-coal`}
       >
         <button
           type="button"
