@@ -46,10 +46,24 @@ const MonthView: React.FC<MonthViewProps> = ({
   let days = [];
   let day = startDate;
 
+  const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
   const handleDateClick = (date: Date) => {
     onDateClick(date);
   };
 
+  // Weekday names header
+  const weekdaysHeader = (
+    <div className="grid grid-cols-7 w-full min-w-[59rem] text-center font-semibold">
+      {weekdayNames.map((dayName) => (
+        <div className="p-2" key={dayName}>
+          {dayName}
+        </div>
+      ))}
+    </div>
+  );
+
+  // Calendar days
   while (day <= endDate) {
     for (let i = 0; i < 7; i++) {
       const dayEvents = events.filter(event => isSameDay(event.start, day));
@@ -62,7 +76,7 @@ const MonthView: React.FC<MonthViewProps> = ({
             !isSameMonth(day, monthStart) ? "bg-secondary dark:bg-dim" : ""
           } ${isSameDay(day, new Date()) ? "bg-highlight/50 dark:bg-ocean/50" : ""}`}
           key={day.toString()}
-          onClick={() => handleDateClick(day)} // Pass the day directly
+          onClick={() => handleDateClick(day)}
         >
           <span>{format(day, "d")}</span>
           <div className="mt-2">
@@ -89,7 +103,7 @@ const MonthView: React.FC<MonthViewProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onExtraEventClick) {
-                    onExtraEventClick(day); // Pass the day directly
+                    onExtraEventClick(day);
                   }
                 }}
               >
@@ -109,7 +123,12 @@ const MonthView: React.FC<MonthViewProps> = ({
     days = [];
   }
 
-  return <div>{rows}</div>;
+  return (
+    <div>
+      {weekdaysHeader}
+      {rows}
+    </div>
+  );
 };
 
 export default MonthView;

@@ -88,7 +88,7 @@ const DayView: React.FC<DayViewProps> = ({
               <div
                 key={event.id}
                 className={`absolute inset-x-0 flex flex-col items-center justify-center text-sm mb-2 shadow-2xl text-center z-10 text-light hover:text-white transition-all duration-200 ease-linear ${
-                  isFirstSlot ? "bg-blue-100 text-sm p-1" : "bg-blue-100"
+                  isFirstSlot ? "bg-highlight dark:bg-ocean text-sm p-1" : "bg-blue-100"
                 }`}
                 style={{
                   height: `${height}px`,

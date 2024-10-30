@@ -13,7 +13,7 @@ import Checkbox from "@/components/form/Checkbox";
 import TableToolbar from "@/components/data/tableview/TableToolbar";
 import TableCellEditor from "@/components/data/tableview/TableCellEditor";
 import ConfirmDialog from "@/components/overlay/ConfirmDialog";
-import { separateWords } from "@/utils//formatTexts";
+import { separateWords } from "@/utils/textFormat";
 
 interface ColumnProps<T, V = string | number | boolean> {
   field: keyof T;
