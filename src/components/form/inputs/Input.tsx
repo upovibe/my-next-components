@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 
 type InputProps = {
@@ -12,6 +10,7 @@ type InputProps = {
   size?: "sm" | "nm" | "lg";
   className?: string;
   value?: string;
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -25,6 +24,7 @@ const Input: React.FC<InputProps> = ({
   size = "nm",
   className = "",
   value,
+  name,
   onChange,
 }) => {
   const [internalValue, setInternalValue] = useState("");
@@ -44,7 +44,7 @@ const Input: React.FC<InputProps> = ({
   }[size];
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {/* If a label is provided and floating label is disabled, show a regular label */}
       {!floatingLabel && label && (
         <label className="block mb-1 text-deep dark:text-light text-left">
@@ -55,6 +55,7 @@ const Input: React.FC<InputProps> = ({
       <input
         type={type}
         value={inputValue}
+        name={name}
         onChange={handleChange}
         placeholder={hidePlaceholder ? "" : placeholder}
         disabled={disabled}

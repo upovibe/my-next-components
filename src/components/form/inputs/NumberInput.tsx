@@ -1,23 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa"; // Importing arrow icons
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 type NumberInputProps = {
-  placeholder: string; // Placeholder text
-  label?: string; // Label for non-floating label mode
-  floatingLabel?: boolean; // Flag to enable floating label
-  hidePlaceholder?: boolean; // Option to hide the placeholder
-  disabled?: boolean; // Option to disable the input
-  size?: "sm" | "nm" | "lg"; // Size of the input (small, normal, large)
-  className?: string; // Additional classes for customization
-  min?: number; // Minimum value
-  max?: number; // Maximum value
-  step?: number; // Step increment
-  symbol?: string; // Optional symbol like $ or %
-  showArrows?: boolean; // Show up and down arrows inside the input
-  showSideButtons?: boolean; // Show left and right increment/decrement buttons
-  decimalPlaces?: number; // Number of decimal places to allow
+  placeholder: string;
+  label?: string;
+  floatingLabel?: boolean;
+  hidePlaceholder?: boolean;
+  disabled?: boolean;
+  size?: "sm" | "nm" | "lg";
+  className?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  symbol?: string;
+  showArrows?: boolean;
+  showSideButtons?: boolean;
+  decimalPlaces?: number;
+  onChange?: (value: number | string) => void;
 };
 
 const NumberInput: React.FC<NumberInputProps> = ({
@@ -35,11 +36,11 @@ const NumberInput: React.FC<NumberInputProps> = ({
   showArrows = false,
   showSideButtons = false,
   decimalPlaces = 2,
+  onChange,
 }) => {
   const [value, setValue] = useState<number | string>(0);
-  const [isInvalid, setIsInvalid] = useState(false); // Track if input is invalid
+  const [isInvalid, setIsInvalid] = useState(false);
 
-  // Class for size-based styling
   const sizeClass = {
     sm: "p-1 text-sm",
     nm: "p-2 text-base",
@@ -57,6 +58,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
     if (newValue >= min && newValue <= max) {
       setValue(newValue.toFixed(decimalPlaces));
       setIsInvalid(false);
+      if (onChange) {
+        onChange(newValue);
+      }
     }
   };
 
@@ -79,8 +83,11 @@ const NumberInput: React.FC<NumberInputProps> = ({
     if (validateInput(input) || input === "") {
       setValue(input);
       setIsInvalid(false);
+      if (input) {
+        onChange?.(Number(input));
+      }
     } else {
-      setIsInvalid(true); // Invalid input, show red border
+      setIsInvalid(true);
     }
   };
 
@@ -89,91 +96,101 @@ const NumberInput: React.FC<NumberInputProps> = ({
   const decrement = () => handleValueChange((Number(value) || 0) - step);
 
   return (
-    <div className="relative flex items-center">
-      {/* Left decrement button (if showSideButtons is true) */}
-      {showSideButtons && (
-        <button
-          type="button" // Set button type to button
-          onClick={decrement}
-          disabled={disabled}
-          className={`border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-l-md ${buttonSizeClass} ${
-            disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
-          }`}
-        >
-          -
-        </button>
-      )}
-
-      {/* Input Field */}
-      <div className="relative w-full">
-        <input
-          type="text" // Allow symbols and decimals
-          value={symbol ? `${symbol}${value}` : value}
-          onChange={handleInputChange}
-          placeholder={hidePlaceholder ? "" : placeholder}
-          disabled={disabled}
-          className={`w-full border-2 ${
-            isInvalid ? "border-red-500" : "border-border"
-          } dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
-            hidePlaceholder || floatingLabel
-              ? "placeholder-transparent"
-              : "placeholder-soft dark:placeholder-pale"
-          } ${sizeClass} ${className} ${
-            disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
-          }`}
-        />
-
-        {/* Up/Down arrows inside the input (if showArrows is true) */}
-        {showArrows && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex flex-col text-gray-400">
-            <button
-              type="button"
-              onClick={increment}
-              disabled={disabled}
-              className="focus:outline-none"
-              aria-label="Increase value" // Add this line
-            >
-              <FaArrowUp />
-            </button>
-            <button
-              type="button"
-              onClick={decrement}
-              disabled={disabled}
-              className="focus:outline-none"
-              aria-label="Decrease value" // Add this line
-            >
-              <FaArrowDown />
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Right increment button (if showSideButtons is true) */}
-      {showSideButtons && (
-        <button
-          type="button" // Set button type to button
-          onClick={increment}
-          disabled={disabled}
-          className={`border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-r-md ${buttonSizeClass} ${
-            disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
-          }`}
-        >
-          +
-        </button>
-      )}
-
-      {/* Floating label */}
-      {floatingLabel && (
-        <label
-          className={`absolute left-12 transition-all duration-200 text-soft dark:text-pale cursor-text ${
-            value
-              ? "-top-2 text-xs bg-primary dark:bg-shade px-2 rounded"
-              : "top-1/2 transform -translate-y-1/2 text-base"
-          }`}
-        >
-          {placeholder}
+    <div className="relative w-full flex flex-col items-start mb-4">
+      {/* Regular label */}
+      {label && !floatingLabel && (
+        <label className="block mb-1 text-deep dark:text-light text-left">
+          {label}
         </label>
       )}
+
+      <div className="relative flex items-center w-full">
+        {showSideButtons && (
+          <button
+            type="button"
+            onClick={decrement}
+            disabled={disabled}
+            className={`border-2 w-10 flex items-center justify-center border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-l-md ${buttonSizeClass} ${
+              disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
+            }`}
+          >
+            -
+          </button>
+        )}
+
+        {/* Input Field */}
+        <div className="relative w-full">
+        <input
+            type="text"
+            value={symbol ? `${symbol}${value}` : value}
+            onChange={handleInputChange}
+            placeholder={hidePlaceholder ? "" : placeholder}
+            disabled={disabled}
+            className={`w-full border-2 ${
+              isInvalid ? "border-red-500" : "border-border"
+            } dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-text focus:outline-none focus:border-highlight dark:focus:border-ocean ${
+              hidePlaceholder || floatingLabel
+                ? "placeholder-transparent"
+                : "placeholder-soft dark:placeholder-pale"
+            } ${sizeClass} ${className} ${
+              disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
+            }`}
+          />
+
+          {/* Up/Down arrows inside the input (if showArrows is true) */}
+          {showArrows && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex flex-col text-gray-400">
+              <button
+                type="button"
+                onClick={increment}
+                disabled={disabled}
+                className="focus:outline-none text-xs mb-2"
+                aria-label="Increase value"
+              >
+                <FaArrowUp />
+              </button>
+              <button
+                type="button"
+                onClick={decrement}
+                disabled={disabled}
+                className="focus:outline-none text-xs"
+                aria-label="Decrease value"
+              >
+                <FaArrowDown />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Right increment button (if showSideButtons is true) */}
+        {showSideButtons && (
+          <button
+            type="button"
+            onClick={increment}
+            disabled={disabled}
+            className={`border-2 w-10 flex items-center justify-center border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-r-md ${buttonSizeClass} ${
+              disabled ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" : ""
+            }`}
+          >
+            +
+          </button>
+        )}
+
+        {/* Floating label */}
+        {floatingLabel && (
+          <label
+            className={`absolute transition-all duration-200 text-soft dark:text-pale cursor-text ${
+              showSideButtons ? "left-[3rem]" : "left-[1rem]"
+            } ${
+              value
+                ? "-top-2 text-xs bg-primary dark:bg-shade px-2 rounded"
+                : "top-1/2 transform -translate-y-1/2 text-base"
+            }`}
+          >
+            {placeholder}
+          </label>
+        )}
+      </div>
     </div>
   );
 };
