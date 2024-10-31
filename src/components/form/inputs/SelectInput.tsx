@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-type InputSelectProps = {
+type SelectInputProps = {
   placeholder: string;
   options: string[];
   label?: string;
@@ -16,7 +16,7 @@ type InputSelectProps = {
   onChange?: (value: string) => void;
 };
 
-const InputSelect: React.FC<InputSelectProps> = ({
+const SelectInput: React.FC<SelectInputProps> = ({
   placeholder,
   options,
   label,
@@ -125,4 +125,4 @@ const InputSelect: React.FC<InputSelectProps> = ({
   );
 };
 
-export default InputSelect;
+export default SelectInput;

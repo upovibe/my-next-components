@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format, startOfWeek, endOfWeek, addDays, isSameDay } from "date-fns";
-import InputSelect from "@/components/form/inputs/InputSelect";
+import SelectInput from "@/components/form/inputs/SelectInput";
 
 interface Event {
   id: number;
@@ -82,7 +82,7 @@ const AgendaView: React.FC<AgendaViewProps> = ({
 
   return (
     <div className="w-full min-w-[59rem]">
-      <InputSelect
+      <SelectInput
         placeholder="Search events"
         floatingLabel
         options={options}
