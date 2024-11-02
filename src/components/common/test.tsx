@@ -1208,3 +1208,32 @@ const Page = () => {
 };
 
 export default Page;
+
+
+{isOpen && (
+  <ul
+    className="absolute z-50 max-h-60 overflow-y-auto mt-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
+    style={{
+      top: '100%', // This will place it directly below the input
+      minWidth: buttonRef.current?.getBoundingClientRect().width,
+    }}
+    ref={dropdownRef}
+  >
+    {options.map((option) => (
+      <li
+        key={option.value}
+        onClick={() => handleSelect(option.value as string)}
+        className={`whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
+          isSelected(option.value as string)
+            ? "bg-highlight dark:bg-ocean text-white"
+            : "text-deep dark:text-light"
+        }`}
+      >
+        <span className="truncate text-md">{option.label}</span>
+        {isSelected(option.value as string) && (
+          <FaCheck className="text-sm" />
+        )}
+      </li>
+    ))}
+  </ul>
+)}

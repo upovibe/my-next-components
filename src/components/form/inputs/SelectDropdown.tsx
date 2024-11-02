@@ -113,14 +113,13 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
         </label>
       )}
 
-<div
-  onClick={handleToggleDropdown}
-  tabIndex={0} // Makes the div focusable with the keyboard
-  className={`whitespace-nowrap flex flex-col w-full border-2 space-x-2 relative border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
-    disabled ? "bg-gray-100 cursor-not-allowed" : ""
-  }`}
->
-
+      <div
+        onClick={handleToggleDropdown}
+        tabIndex={0}
+        className={`whitespace-nowrap flex flex-col w-full border-2 space-x-2 relative border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
+          disabled ? "bg-gray-100 cursor-not-allowed" : ""
+        }`}
+      >
         <div className="flex items-center">
           <span
             className={`flex-grow truncate ${
@@ -144,10 +143,11 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 
       {isOpen && (
         <ul
-          className="fixed z-50 max-h-60 overflow-y-auto mt-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
+          className="fixed z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
           style={{
-            left: buttonRef.current?.getBoundingClientRect().left,
-            top: buttonRef.current?.getBoundingClientRect().bottom,
+            // left: buttonRef.current?.getBoundingClientRect().left,
+            // top: buttonRef.current?.getBoundingClientRect().bottom,
+            // top: '100%',
             minWidth: buttonRef.current?.getBoundingClientRect().width,
           }}
           ref={dropdownRef}
