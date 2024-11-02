@@ -143,13 +143,8 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 
       {isOpen && (
         <ul
-          className="fixed z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
-          style={{
-            // left: buttonRef.current?.getBoundingClientRect().left,
-            // top: buttonRef.current?.getBoundingClientRect().bottom,
-            // top: '100%',
-            minWidth: buttonRef.current?.getBoundingClientRect().width,
-          }}
+          className="fixed mt-1 z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
+          style={{minWidth: buttonRef.current?.getBoundingClientRect().width,}}
           ref={dropdownRef}
         >
           {options.map((option) => (

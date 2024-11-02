@@ -1237,3 +1237,74 @@ export default Page;
     ))}
   </ul>
 )}
+
+
+return (
+  <div className={`relative ${className}`} ref={buttonRef}>
+    {floatingLabel && (
+      <label
+        className={`absolute left-2 transition-all duration-200 text-gray-500 cursor-text ${
+          internalValue
+            ? "-top-2 text-xs bg-white px-2 rounded"
+            : "top-2 text-base"
+        }`}
+      >
+        {label}
+      </label>
+    )}
+
+    <div
+      onClick={handleToggleDropdown}
+      tabIndex={0}
+      className={`whitespace-nowrap flex flex-col w-full border-2 space-x-2 relative border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
+        disabled ? "bg-gray-100 cursor-not-allowed" : ""
+      }`}
+      style={{ marginTop: '1rem' }} // Ensuring a fixed margin-top for the dropdown
+    >
+      <div className="flex items-center">
+        <span
+          className={`flex-grow truncate ${internalValue ? "" : "text-gray-500"}`}
+        >
+          {multiple
+            ? Array.isArray(internalValue) && internalValue.length > 0
+              ? internalValue
+                  .map((v) => options.find((o) => o.value === v)?.label)
+                  .join(", ")
+              : placeholder
+            : options.find((o) => o.value === internalValue)?.label || placeholder}
+        </span>
+        <span className="ml-4">
+          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        </span>
+      </div>
+    </div>
+
+    {isOpen && (
+      <ul
+        className="fixed z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
+        style={{
+          minWidth: buttonRef.current?.getBoundingClientRect().width,
+          marginTop: '1rem' // Maintain fixed spacing for dropdown
+        }}
+        ref={dropdownRef}
+      >
+        {options.map((option) => (
+          <li
+            key={option.value}
+            onClick={() => handleSelect(option.value as string)}
+            className={`whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
+              isSelected(option.value as string)
+                ? "bg-highlight dark:bg-ocean text-white"
+                : "text-deep dark:text-light"
+            }`}
+          >
+            <span className="truncate text-md">{option.label}</span>
+            {isSelected(option.value as string) && (
+              <FaCheck className="text-sm" />
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+);
