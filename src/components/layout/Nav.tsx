@@ -2,7 +2,7 @@
 
 import { React } from "react";
 import Link from "next/link";
-import {FaHome, FaGithub, FaSignInAlt, FaPhone, FaUserAlt, FaInfo } from "react-icons/fa";
+import {FaHome, FaGithub, FaSignInAlt, FaUserAlt, FaInfo } from "react-icons/fa";
 import Logo from "@/components/common/Logo";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import NavMenu from "@/components/navigations/NavMenu";
@@ -48,7 +48,7 @@ const Nav: React.FC = () => {
         />
       </Link>
       <Divider layout="vertical" type="solid" className="mx-2" />
-      <LinkButton href="/signin" icon={FaSignInAlt} iconPosition="right" className="">
+      <LinkButton href="/signin" icon={<FaSignInAlt/>} iconPosition="right" className="bg-highlight px-2 py-1 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-highlight/50">
         Sign Up
       </LinkButton>
     </div>
