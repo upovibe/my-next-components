@@ -60,22 +60,22 @@ const Modal: React.FC<ModalProps> = ({
       >
         <button
           type="button"
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-light dark:text-deep bg-black/30 dark:bg-white/30 hover:bg-black/50 dark:hover:bg-white/50 p-1 rounded-full transition-all duration-200 ease-linear"
           onClick={onClose}
           aria-label="Close modal"
         >
           <FaTimes size={18} />
         </button>
 
-        <div className="flex items-center mb-4">
+        <div className="flex items-center border-b border-border dark:border-coal pb-4">
           {icon && <span className="mr-2">{icon}</span>}
           {title && <h2 className="text-2xl font-semibold">{title}</h2>}
         </div>
 
-        <div className="flex-grow overflow-y-auto mb-4">{children}</div>
+        <div className="flex-grow overflow-y-auto ">{children}</div>
 
         {footer && (
-          <div className="border-t border-border dark:border-coal pt-4">
+          <div className="border-t border-border dark:border-coal pt-4 w-full">
             {footer}
           </div>
         )}
