@@ -50,7 +50,8 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     (event: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(event.target as Node) &&
+        !buttonRef.current?.contains(event.target as Node)
       ) {
         setIsOpen(false);
         if (onBlur) onBlur();
@@ -116,7 +117,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
       <div
         onClick={handleToggleDropdown}
         tabIndex={0}
-        className={`whitespace-nowrap flex flex-col w-full border-2 space-x-2 relative border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
+        className={`whitespace-nowrap flex flex-col w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
           disabled ? "bg-gray-100 cursor-not-allowed" : ""
         }`}
       >
@@ -143,15 +144,14 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 
       {isOpen && (
         <ul
-          className="fixed mt-1 z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
-          style={{minWidth: buttonRef.current?.getBoundingClientRect().width,}}
+          className="absolute z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg mt-1 w-full animate-bounceInDown"
           ref={dropdownRef}
         >
           {options.map((option) => (
             <li
               key={option.value}
               onClick={() => handleSelect(option.value as string)}
-              className={` whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
+              className={`whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
                 isSelected(option.value as string)
                   ? "bg-highlight dark:bg-ocean text-white"
                   : "text-deep dark:text-light"
