@@ -22,10 +22,10 @@ import {
 } from "react-icons/fa";
 import SideMenu from "@/components/navigations/SideMenu";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
-import Avatar from "@/components/common/Avatar";
-import Badge from "@/components/common/Badge";
-import SearchInput from "@/components/form/inputs/SearchInput";
-import Divider from "@/components/common/Divider";
+import Avatar from "@/components/avatar/Avatar";
+import Badge from "@/components/badges/Badge";
+import SearchInput from "@/components/inputs/SearchInput";
+import Divider from "@/components/basics/Divider";
 import Menu from "@/components/navigations/Menu";
 
 type BoardProps = {

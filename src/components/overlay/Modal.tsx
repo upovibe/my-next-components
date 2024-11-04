@@ -72,7 +72,7 @@ const Modal: React.FC<ModalProps> = ({
           {title && <h2 className="text-2xl font-semibold">{title}</h2>}
         </div>
 
-        <div className="flex-grow overflow-y-auto ">{children}</div>
+        <div className="flex-grow overflow-y-auto py-4">{children}</div>
 
         {footer && (
           <div className="border-t border-border dark:border-coal pt-4 w-full">

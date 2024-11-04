@@ -21,7 +21,7 @@ const LinkButton: React.FC<LinkButtonProps> = ({
   return (
     <Link
       href={href}
-      className={`inline-block text-light font-semibold transition-all duration-300 ease-linear ${className} ${
+      className={`inline-block font-semibold transition-all duration-300 ease-linear ${className} ${
         iconOnly ? 'flex justify-center items-center' : ''
       }`}
       onClick={(e) => {

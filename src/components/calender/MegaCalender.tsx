@@ -11,12 +11,12 @@ import {
   addDays,
   subDays,
 } from "date-fns";
-import CalendarHeader from "@/components/form/calender/megacalendar/CalendarHeader";
-import YearView from "@/components/form/calender/megacalendar/YearView";
-import MonthView from "@/components/form/calender/megacalendar/MonthView";
-import WeekView from "@/components/form/calender/megacalendar/WeekView";
-import DayView from "@/components/form/calender/megacalendar/DayView";
-import AgendaView from "@/components/form/calender/megacalendar/AgendaView";
+import CalendarHeader from "@/components/calender/megacalender/CalendarHeader";
+import YearView from "@/components/calender/megacalender/YearView";
+import MonthView from "@/components/calender/megacalender/MonthView";
+import WeekView from "@/components/calender/megacalender/WeekView";
+import DayView from "@/components/calender/megacalender/DayView";
+import AgendaView from "@/components/calender/megacalender/AgendaView";
 
 // Export the Event interface
 export interface Event {

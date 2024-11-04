@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format, startOfWeek, endOfWeek, addDays, isSameDay } from "date-fns";
-import SelectInput from "@/components/form/inputs/SelectInput";
+import SelectInput from "@/components/inputs/SelectInput";
 
 interface Event {
   id: number;

@@ -1,9 +1,9 @@
 import React from "react";
 import { format, startOfWeek, endOfWeek } from "date-fns";
 import { enUS, fr, es } from "date-fns/locale";
-import SelectButton from "@/components/form/buttons/SelectButton";
-import ButtonAction from "@/components/form/buttons/ActionButton";
-import SwitchButton from "@/components/form/buttons/SwitchButton";
+import SelectButton from "@/components/buttons/SelectButton";
+import ButtonAction from "@/components/buttons/ActionButton";
+import SwitchButton from "@/components/buttons/SwitchButton";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface CalendarHeaderProps {

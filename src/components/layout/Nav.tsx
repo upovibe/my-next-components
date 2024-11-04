@@ -6,9 +6,9 @@ import {FaHome, FaGithub, FaSignInAlt, FaUserAlt, FaInfo } from "react-icons/fa"
 import Logo from "@/components/common/Logo";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import NavMenu from "@/components/navigations/NavMenu";
-import SearchInput from "@/components/form/inputs/SearchInput";
-import Divider from "@/components/common/Divider";
-import LinkButton from "@/components/form/buttons/LinkButton";
+import SearchInput from "@/components/inputs/SearchInput";
+import Divider from "@/components/basics/Divider";
+import LinkButton from "@/components//buttons/LinkButton";
 
 const Nav: React.FC = () => {
   const menuItems = [

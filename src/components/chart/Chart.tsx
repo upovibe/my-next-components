@@ -73,7 +73,7 @@ const Chart = <TType extends ChartType>({
     }
   }, [type, data, options]);
 
-  return <div className={`relative w-full h-full ${className}`}>{renderChart}</div>;
+  return <div className={`relative w-full h-full mx-auto ${className}`}>{renderChart}</div>;
 };
 
 export default Chart;

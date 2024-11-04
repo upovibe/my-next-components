@@ -2,7 +2,7 @@
 
 import { ReactNode, useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import Tooltip from "@/components/common/Tooltip";
+import Tooltip from "@/components/basics/Tooltip";
 import Logo from "@/components/common/Logo";
 
 type MenuItem = { icon: JSX.Element; label: string; link?: string };

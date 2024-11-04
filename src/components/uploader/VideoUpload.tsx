@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { FaCloudUploadAlt, FaTimes, FaFileUpload } from "react-icons/fa";
 import Lottie from "lottie-react";
 import uploadingAnimation from "@/assets/animations/Loading.json";
-import Tooltip from "@/components/common/Tooltip";
+import Tooltip from "@/components/basics/Tooltip";
 
 interface VideoUploadProps {
   onFileUpload: (files: File[]) => void;
@@ -138,6 +138,8 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
               )}
               {showSubmit && (
                 <button
+                  title="Submit All Files"
+                  aria-label="submit"
                   type="button"
                   className="text-blue-600 border-2 border-border dark:border-coal rounded-full p-2 bg-primary dark:bg-shade hover:text-white hover:bg-blue-600 transition-all ease-linear duration-200"
                   onClick={uploadAllFiles}
@@ -155,9 +157,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
                 style={{ width: `${totalProgress}%` }}
               />
             </div>
-            <p className=" text-sm">
-              {formatFileSize(totalSize)}
-            </p>
+            <p className=" text-sm">{formatFileSize(totalSize)}</p>
           </div>
         </div>
       </div>
@@ -166,7 +166,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
       <div className="w-full p-4 border-2 border-dashed border-border dark:border-coal text-center relative border-t-0 rounded-b-md">
         <div className="border-t-2 border-solid border-border dark:border-coal absolute top-0 left-0 w-full" />
         <input
-        aria-label="video"
+          aria-label="video"
           type="file"
           accept="video/*"
           onChange={(e) => handleFiles(e.target.files)}
@@ -211,7 +211,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
                     content={
                       <>
                         <p className="text-sm ">{item.file.name}</p>
-                        <p className="text-sm ">{formatFileSize(item.file.size)}</p>
+                        <p className="text-sm ">
+                          {formatFileSize(item.file.size)}
+                        </p>
                         <p className="text-sm ">Uploaded on: {item.date}</p>
                       </>
                     }
@@ -229,6 +231,8 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
                     </div>
                   </Tooltip>
                   <button
+                    title="Cancel"
+                    aria-label="cancel"
                     type="button"
                     className="text-deep absolute top-0 right-0 p-1 rounded-full border-border dark:border-coal border-2 bg-black/10 dark:bg-white/50 backdrop-blur-sm"
                     onClick={(e) => cancelFile(index, e)}

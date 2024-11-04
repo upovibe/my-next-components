@@ -7,7 +7,7 @@ import {
   FaClock,
   FaCalendarAlt,
 } from "react-icons/fa";
-import SelectInput from "@/components/form/inputs/SelectInput";
+import SelectInput from "@/components/inputs/SelectInput";
 
 const getMonthDays = (
   year: number,

@@ -3,39 +3,67 @@
 import React, { useRef, useState, useEffect } from "react";
 import {
   FaCloudUploadAlt,
-  FaFilePdf,
   FaTimes,
-  FaFileAlt,
   FaFileUpload,
+  FaFileAlt,
 } from "react-icons/fa";
 import Lottie from "lottie-react";
 import uploadingAnimation from "@/assets/animations/Loading.json";
-import Tooltip from "@/components/common/Tooltip";
+import Tooltip from "@/components/basics/Tooltip";
+import Image from "next/image";
 
-interface DocUploadProps {
+interface FileUploadProps {
   onFileUpload: (files: File[]) => void;
   maxFiles?: number;
+  fileType?: "image" | "video" | "doc" | "all";
   showSubmit?: boolean;
   showClear?: boolean;
   showUpload?: boolean;
 }
 
-const DocUpload: React.FC<DocUploadProps> = ({
+const FileUpload: React.FC<FileUploadProps> = ({
   onFileUpload,
   maxFiles = 10,
+  fileType = "image",
   showSubmit = false,
   showClear = true,
   showUpload = true,
 }) => {
   const [uploading, setUploading] = useState(false);
-  const [files, setFiles] = useState<{ file: File; date: string }[]>([]);
+  const [files, setFiles] = useState<
+    {
+      file: File;
+      date: string;
+      preview?: string;
+    }[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const [totalSize, setTotalSize] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const getAcceptedFileTypes = () => {
+    switch (fileType) {
+      case "image":
+        return "image/*";
+      case "video":
+        return "video/*";
+      case "doc":
+        return ".pdf,.doc,.docx,.txt";
+      case "all":
+        return "image/*,video/*,.pdf,.doc,.docx,.txt"; // Allow all file types
+      default:
+        return "";
+    }
+  };
+
   useEffect(() => {
     const size = files.reduce((acc, { file }) => acc + file.size, 0);
     setTotalSize(size);
+
+    // Revoke object URLs when component unmounts to prevent memory leaks
+    return () => {
+      files.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
+    };
   }, [files]);
 
   const handleClick = () => {
@@ -47,14 +75,18 @@ const DocUpload: React.FC<DocUploadProps> = ({
   const handleFiles = (fileList: FileList | null) => {
     if (fileList) {
       const fileArray = Array.from(fileList);
-      const validFiles = fileArray.filter(
-        (file) =>
+      const validFiles = fileArray.filter((file) => {
+        if (fileType === "all") return true;
+        if (fileType === "image") return file.type.startsWith("image/");
+        if (fileType === "video") return file.type.startsWith("video/");
+        return (
           file.type === "application/pdf" ||
           file.type === "application/msword" ||
           file.type ===
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
           file.type === "text/plain"
-      );
+        );
+      });
 
       if (validFiles.length + files.length > maxFiles) {
         setError(`You can only upload up to ${maxFiles} files.`);
@@ -69,16 +101,17 @@ const DocUpload: React.FC<DocUploadProps> = ({
           const newFiles = validFiles.map((file) => ({
             file,
             date: new Date().toLocaleDateString(),
+            preview:
+              fileType === "image" || fileType === "video"
+                ? URL.createObjectURL(file)
+                : undefined,
           }));
           setFiles((prevFiles) => [...prevFiles, ...newFiles]);
           onFileUpload([...files.map((f) => f.file), ...validFiles]);
           setUploading(false);
         }, 2000);
       } else {
-        // Show error only if files are invalid
-        if (fileArray.length > 0) {
-          setError("Only PDF, Word, and text documents are allowed.");
-        }
+        setError(`Invalid file type. Only ${fileType} files are allowed.`);
       }
     }
   };
@@ -86,12 +119,14 @@ const DocUpload: React.FC<DocUploadProps> = ({
   const cancelFile = (index: number, event: React.MouseEvent) => {
     event.stopPropagation();
     const newFiles = [...files];
+    if (newFiles[index].preview) URL.revokeObjectURL(newFiles[index].preview!);
     newFiles.splice(index, 1);
     setFiles(newFiles);
     onFileUpload(newFiles.map((f) => f.file));
   };
 
   const clearAllFiles = () => {
+    files.forEach((file) => file.preview && URL.revokeObjectURL(file.preview));
     setFiles([]);
     onFileUpload([]);
   };
@@ -117,10 +152,8 @@ const DocUpload: React.FC<DocUploadProps> = ({
       <div className="w-full">
         <div className="flex items-center justify-between gap-2 border-2 rounded-t-md border-b-0 border-border dark:border-coal p-2">
           <div className="flex items-start flex-col gap-1 md:gap-2 md:flex-row-reverse md:items-center">
-            <p className="text-soft dark:text-pale text-sm">
-              {files.length > 0
-                ? `${files.length} document(s) uploaded`
-                : "No documents uploaded"}
+            <p className="text-sm">
+              {files.length > 0 ? `${files.length} file(s) uploaded` : ""}
             </p>
             <div className="flex items-center gap-1">
               {showUpload && (
@@ -128,9 +161,9 @@ const DocUpload: React.FC<DocUploadProps> = ({
                   type="button"
                   className="text-gray-600 border-2 border-border dark:border-coal rounded-full p-2 bg-primary dark:bg-shade hover:text-white hover:bg-highlight dark:hover:bg-ocean transition-all duration-200"
                   onClick={handleClick}
-                  title="Upload All Files"
+                  title="Upload Files"
                 >
-                  <FaCloudUploadAlt />
+                  <FaCloudUploadAlt aria-label="Upload Files" />
                 </button>
               )}
               {showClear && (
@@ -140,7 +173,7 @@ const DocUpload: React.FC<DocUploadProps> = ({
                   onClick={clearAllFiles}
                   title="Clear All Files"
                 >
-                  <FaTimes />
+                  <FaTimes aria-label="Clear All Files" />
                 </button>
               )}
               {showSubmit && (
@@ -148,8 +181,9 @@ const DocUpload: React.FC<DocUploadProps> = ({
                   type="button"
                   className="text-blue-600 border-2 border-border dark:border-coal rounded-full p-2 bg-primary dark:bg-shade hover:text-white hover:bg-blue-600 transition-all ease-linear duration-200"
                   onClick={uploadAllFiles}
+                  title="Submit Files"
                 >
-                  <FaFileUpload />
+                  <FaFileUpload aria-label="Submit Files" />
                 </button>
               )}
             </div>
@@ -161,29 +195,28 @@ const DocUpload: React.FC<DocUploadProps> = ({
                 style={{ width: `${totalProgress}%` }}
               />
             </div>
-            <p className="text-soft dark:text-pale text-sm">{formatFileSize(totalSize)}</p>
+            <p className=" text-sm">{formatFileSize(totalSize)}</p>
           </div>
         </div>
       </div>
 
       <div className="w-full p-4 border-2 border-dashed border-border dark:border-coal text-center relative border-t-0 rounded-b-md">
         <div className="border-t-2 border-solid border-border dark:border-coal absolute top-0 left-0 w-full" />
-
         <input
+          aria-label="file"
           type="file"
-          accept=".pdf,.doc,.docx,.txt"
+          accept={getAcceptedFileTypes()}
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
           ref={fileInputRef}
           multiple={maxFiles > 1}
         />
-
         <div
-          className="flex flex-col items-center justify-center gap-2 cursor-pointer mb-2"
+          className="flex flex-col items-center gap-2 cursor-pointer"
           onClick={handleClick}
         >
-          <FaCloudUploadAlt className="text-soft dark:text-pale" />
-          <p className="text-gray-500">
+          <FaCloudUploadAlt className="text-soft dark:text-faint" />
+          <p className="text-soft dark:text-faint">
             {uploading ? (
               <Lottie
                 className="size-full max-h-20 max-w-20"
@@ -191,42 +224,55 @@ const DocUpload: React.FC<DocUploadProps> = ({
                 loop
               />
             ) : error ? (
-              <span className="text-red-500 text-sm">{error}</span>
+              <span className="text-alert dark:text-crimson text-sm">
+                {error}
+              </span>
             ) : (
-              "Drag and drop files or browse your computer"
+              <span className="text-sm leading-tight">
+                Drag and drop ${fileType} files or browse your computer
+              </span>
             )}
           </p>
         </div>
 
         {files.length > 0 && (
-          <div
-            onClick={handleClick}
-            className="w-full flex items-start flex-wrap gap-3 cursor-pointer"
-          >
+          <div className="w-full flex items-start flex-wrap gap-3 cursor-pointer mt-2">
             {files.map((item, index) => (
               <div
                 key={index}
-                className="relative z-50 p-2 border border-border dark:border-coal rounded-md flex justify-between items-center bg-tertiary dark:bg-dim cursor-default"
+                className="relative p-2 border border-border dark:border-coal rounded-md flex justify-between items-center bg-tertiary dark:bg-dim cursor-default"
               >
                 <div className="flex items-center flex-col gap-2">
                   <Tooltip
-                    mouseTrack
+                    position="bottom"
                     content={
                       <>
-                      <p className="text-sm">
-                        {item.file.name}
-                      </p>
-                      <p className="text-sm">
-                        {formatFileSize(item.file.size)}
-                      </p>
-                      <p className="text-sm">
-                        Uploaded on: {item.date}
-                      </p>
-                    </>
+                        <p className="text-sm">{item.file.name}</p>
+                        <p className="text-sm">
+                          {formatFileSize(item.file.size)}
+                        </p>
+                        <p className="text-sm">Uploaded on: {item.date}</p>
+                      </>
                     }
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <FaFileAlt className="text-gray-500 text-6xl" />
+                      {fileType === "image" ? (
+                        <Image
+                          src={item.preview!}
+                          alt={item.file.name}
+                          className="size-20 object-cover rounded-md"
+                          width={80} // Set a fixed width
+                          height={80} // Set a fixed height
+                        />
+                      ) : fileType === "video" ? (
+                        <video
+                          src={item.preview}
+                          className="size-20 object-cover rounded-md"
+                          controls
+                        />
+                      ) : (
+                        <FaFileAlt className="text-gray-500 text-6xl" />
+                      )}
                       <p className="text-xs max-w-20 text-ellipsis overflow-hidden whitespace-nowrap">
                         {item.file.name}
                       </p>
@@ -234,8 +280,9 @@ const DocUpload: React.FC<DocUploadProps> = ({
                   </Tooltip>
                   <button
                     type="button"
-                    className="text-red-500 hover:text-red-600 absolute top-0 right-0"
+                    className="bg-black/50 hover:bg-red-500 transition-all cursor-pointer duration-200 ease-linear text-white border-border dark:border-coal border-2 p-1 rounded-full backdrop-blur-lg absolute top-0 right-0"
                     onClick={(e) => cancelFile(index, e)}
+                    title="Remove File"
                   >
                     <FaTimes />
                   </button>
@@ -249,4 +296,4 @@ const DocUpload: React.FC<DocUploadProps> = ({
   );
 };
 
-export default DocUpload;
+export default FileUpload;

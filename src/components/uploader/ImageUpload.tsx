@@ -1,60 +1,34 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import {
-  FaCloudUploadAlt,
-  FaTimes,
-  FaFileUpload,
-  FaFileAlt,
-} from "react-icons/fa";
+import { FaCloudUploadAlt, FaTimes, FaFileUpload } from "react-icons/fa";
 import Lottie from "lottie-react";
-import uploadingAnimation from "@/assets/animations/Loading.json";
-import Tooltip from "@/components/common/Tooltip";
 import Image from "next/image";
+import uploadingAnimation from "@/assets/animations/Loading.json";
+import Tooltip from "@/components/basics/Tooltip";
 
-interface FileUploadProps {
+interface ImageUploadProps {
   onFileUpload: (files: File[]) => void;
   maxFiles?: number;
-  fileType?: "image" | "video" | "doc" | "all";
   showSubmit?: boolean;
   showClear?: boolean;
   showUpload?: boolean;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({
+const ImageUpload: React.FC<ImageUploadProps> = ({
   onFileUpload,
   maxFiles = 10,
-  fileType = "image",
   showSubmit = false,
   showClear = true,
   showUpload = true,
 }) => {
   const [uploading, setUploading] = useState(false);
   const [files, setFiles] = useState<
-    {
-      file: File;
-      date: string;
-      preview?: string;
-    }[]
+    { file: File; date: string; preview: string }[]
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [totalSize, setTotalSize] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const getAcceptedFileTypes = () => {
-    switch (fileType) {
-      case "image":
-        return "image/*";
-      case "video":
-        return "video/*";
-      case "doc":
-        return ".pdf,.doc,.docx,.txt";
-      case "all":
-        return "image/*,video/*,.pdf,.doc,.docx,.txt"; // Allow all file types
-      default:
-        return "";
-    }
-  };
 
   useEffect(() => {
     const size = files.reduce((acc, { file }) => acc + file.size, 0);
@@ -62,7 +36,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
     // Revoke object URLs when component unmounts to prevent memory leaks
     return () => {
-      files.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
+      files.forEach((f) => URL.revokeObjectURL(f.preview));
     };
   }, [files]);
 
@@ -75,21 +49,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const handleFiles = (fileList: FileList | null) => {
     if (fileList) {
       const fileArray = Array.from(fileList);
-      const validFiles = fileArray.filter((file) => {
-        if (fileType === "all") return true;
-        if (fileType === "image") return file.type.startsWith("image/");
-        if (fileType === "video") return file.type.startsWith("video/");
-        return (
-          file.type === "application/pdf" ||
-          file.type === "application/msword" ||
-          file.type ===
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-          file.type === "text/plain"
-        );
-      });
+      // Accepting all image types
+      const validFiles = fileArray.filter((file) =>
+        file.type.startsWith("image/")
+      );
 
       if (validFiles.length + files.length > maxFiles) {
-        setError(`You can only upload up to ${maxFiles} files.`);
+        setError(`You can only upload up to ${maxFiles} images.`);
         return;
       }
 
@@ -101,17 +67,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
           const newFiles = validFiles.map((file) => ({
             file,
             date: new Date().toLocaleDateString(),
-            preview:
-              fileType === "image" || fileType === "video"
-                ? URL.createObjectURL(file)
-                : undefined,
+            preview: URL.createObjectURL(file), // Create object URL for image preview
           }));
           setFiles((prevFiles) => [...prevFiles, ...newFiles]);
           onFileUpload([...files.map((f) => f.file), ...validFiles]);
           setUploading(false);
         }, 2000);
       } else {
-        setError(`Invalid file type. Only ${fileType} files are allowed.`);
+        setError("Only image files are allowed.");
       }
     }
   };
@@ -119,14 +82,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const cancelFile = (index: number, event: React.MouseEvent) => {
     event.stopPropagation();
     const newFiles = [...files];
-    if (newFiles[index].preview) URL.revokeObjectURL(newFiles[index].preview!);
+    // Revoke object URL for canceled file
+    URL.revokeObjectURL(newFiles[index].preview);
     newFiles.splice(index, 1);
     setFiles(newFiles);
     onFileUpload(newFiles.map((f) => f.file));
   };
 
   const clearAllFiles = () => {
-    files.forEach((file) => file.preview && URL.revokeObjectURL(file.preview));
+    // Revoke all object URLs before clearing
+    files.forEach((file) => URL.revokeObjectURL(file.preview));
     setFiles([]);
     onFileUpload([]);
   };
@@ -152,8 +117,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
       <div className="w-full">
         <div className="flex items-center justify-between gap-2 border-2 rounded-t-md border-b-0 border-border dark:border-coal p-2">
           <div className="flex items-start flex-col gap-1 md:gap-2 md:flex-row-reverse md:items-center">
-            <p className="text-sm">
-              {files.length > 0 ? `${files.length} file(s) uploaded` : ""}
+            <p className=" text-sm">
+              {files.length > 0 ? `${files.length} image(s) uploaded` : ""}
             </p>
             <div className="flex items-center gap-1">
               {showUpload && (
@@ -161,9 +126,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   type="button"
                   className="text-gray-600 border-2 border-border dark:border-coal rounded-full p-2 bg-primary dark:bg-shade hover:text-white hover:bg-highlight dark:hover:bg-ocean transition-all duration-200"
                   onClick={handleClick}
-                  title="Upload Files"
+                  title="Upload All Files"
                 >
-                  <FaCloudUploadAlt aria-label="Upload Files" />
+                  <FaCloudUploadAlt />
                 </button>
               )}
               {showClear && (
@@ -173,21 +138,23 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   onClick={clearAllFiles}
                   title="Clear All Files"
                 >
-                  <FaTimes aria-label="Clear All Files" />
+                  <FaTimes />
                 </button>
               )}
               {showSubmit && (
                 <button
+                aria-label="Submit"
+                title="Submit"
                   type="button"
                   className="text-blue-600 border-2 border-border dark:border-coal rounded-full p-2 bg-primary dark:bg-shade hover:text-white hover:bg-blue-600 transition-all ease-linear duration-200"
                   onClick={uploadAllFiles}
-                  title="Submit Files"
                 >
-                  <FaFileUpload aria-label="Submit Files" />
+                  <FaFileUpload />
                 </button>
               )}
             </div>
           </div>
+
           <div className="flex items-end flex-col gap-1 md:flex-row-reverse md:gap-2 md:items-center">
             <div className="w-24 bg-tertiary dark:bg-shadow rounded h-2 relative flex-grow overflow-hidden">
               <div
@@ -195,21 +162,25 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 style={{ width: `${totalProgress}%` }}
               />
             </div>
-            <p className=" text-sm">{formatFileSize(totalSize)}</p>
+            <p className=" text-sm">
+              {formatFileSize(totalSize)}
+            </p>
           </div>
         </div>
       </div>
 
+      {/* Upload Section */}
       <div className="w-full p-4 border-2 border-dashed border-border dark:border-coal text-center relative border-t-0 rounded-b-md">
         <div className="border-t-2 border-solid border-border dark:border-coal absolute top-0 left-0 w-full" />
         <input
-          aria-label="file"
           type="file"
-          accept={getAcceptedFileTypes()}
+          accept="image/*"
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
           ref={fileInputRef}
           multiple={maxFiles > 1}
+          aria-label="Upload Images"
+          title="Upload Images"
         />
         <div
           className="flex flex-col items-center gap-2 cursor-pointer"
@@ -224,19 +195,18 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 loop
               />
             ) : error ? (
-              <span className="text-alert dark:text-crimson text-sm">
-                {error}
-              </span>
+              <span className="text-alert dark:text-crimson">{error}</span>
             ) : (
-              <span className="text-sm leading-tight">
-                Drag and drop ${fileType} files or browse your computer
-              </span>
+              "Drag and drop images or browse your computer"
             )}
           </p>
         </div>
-
+        {/* Uploaded Files with Previews */}
         {files.length > 0 && (
-          <div className="w-full flex items-start flex-wrap gap-3 cursor-pointer mt-2">
+          <div
+            onClick={handleClick}
+            className="w-full flex items-start flex-wrap gap-3 cursor-pointer"
+          >
             {files.map((item, index) => (
               <div
                 key={index}
@@ -247,42 +217,37 @@ const FileUpload: React.FC<FileUploadProps> = ({
                     position="bottom"
                     content={
                       <>
-                        <p className="text-sm">{item.file.name}</p>
-                        <p className="text-sm">
+                        <p className="text-sm ">
+                          {item.file.name}
+                        </p>
+                        <p className="text-sm ">
                           {formatFileSize(item.file.size)}
                         </p>
-                        <p className="text-sm">Uploaded on: {item.date}</p>
+                        <p className="text-sm ">
+                          Uploaded on: {item.date}
+                        </p>
                       </>
                     }
                   >
                     <div className="flex flex-col items-center gap-2">
-                      {fileType === "image" ? (
-                        <Image
-                          src={item.preview!}
-                          alt={item.file.name}
-                          className="size-20 object-cover rounded-md"
-                          width={80} // Set a fixed width
-                          height={80} // Set a fixed height
-                        />
-                      ) : fileType === "video" ? (
-                        <video
-                          src={item.preview}
-                          className="size-20 object-cover rounded-md"
-                          controls
-                        />
-                      ) : (
-                        <FaFileAlt className="text-gray-500 text-6xl" />
-                      )}
-                      <p className="text-xs max-w-20 text-ellipsis overflow-hidden whitespace-nowrap">
+                      {/* Image preview using Next.js Image component */}
+                      <Image
+                        src={item.preview}
+                        alt={item.file.name}
+                        width={96} // Replace with desired width
+                        height={96} // Replace with desired height
+                        className="size-24 object-cover rounded-md"
+                      />
+                      <p className="text-xs text-deep dark:text-light truncate max-w-[80px]">
                         {item.file.name}
                       </p>
                     </div>
                   </Tooltip>
                   <button
+                  aria-label="Cancel"
                     type="button"
-                    className="bg-black/50 hover:bg-red-500 transition-all cursor-pointer duration-200 ease-linear text-white border-border dark:border-coal border-2 p-1 rounded-full backdrop-blur-lg absolute top-0 right-0"
+                    className="flex items-center justify-center text-deep absolute top-0 right-0 p-1 rounded-full border-border dark:border-coal border-2 bg-black/10 dark:bg-white/50 backdrop-blur-sm"
                     onClick={(e) => cancelFile(index, e)}
-                    title="Remove File"
                   >
                     <FaTimes />
                   </button>
@@ -296,4 +261,4 @@ const FileUpload: React.FC<FileUploadProps> = ({
   );
 };
 
-export default FileUpload;
+export default ImageUpload;

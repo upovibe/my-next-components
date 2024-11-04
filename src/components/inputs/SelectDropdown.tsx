@@ -50,8 +50,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     (event: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        !buttonRef.current?.contains(event.target as Node)
+        !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
         if (onBlur) onBlur();
@@ -114,13 +113,14 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
         </label>
       )}
 
-      <div
-        onClick={handleToggleDropdown}
-        tabIndex={0}
-        className={`whitespace-nowrap flex flex-col w-full border-2 border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
-          disabled ? "bg-gray-100 cursor-not-allowed" : ""
-        }`}
-      >
+<div
+  onClick={handleToggleDropdown}
+  tabIndex={0} // Makes the div focusable with the keyboard
+  className={`whitespace-nowrap flex flex-col w-full border-2 space-x-2 relative border-border dark:border-coal bg-primary dark:bg-shade text-deep dark:text-light rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${sizeClass} ${
+    disabled ? "bg-gray-100 cursor-not-allowed" : ""
+  }`}
+>
+
         <div className="flex items-center">
           <span
             className={`flex-grow truncate ${
@@ -144,14 +144,19 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 
       {isOpen && (
         <ul
-          className="absolute z-50 max-h-60 overflow-y-auto bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg mt-1 w-full animate-bounceInDown"
+          className="fixed z-50 max-h-60 overflow-y-auto mt-1 bg-primary dark:bg-shade border border-border dark:border-coal rounded-md shadow-lg"
+          style={{
+            left: buttonRef.current?.getBoundingClientRect().left,
+            top: buttonRef.current?.getBoundingClientRect().bottom,
+            minWidth: buttonRef.current?.getBoundingClientRect().width,
+          }}
           ref={dropdownRef}
         >
           {options.map((option) => (
             <li
               key={option.value}
               onClick={() => handleSelect(option.value as string)}
-              className={`whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
+              className={` whitespace-nowrap cursor-pointer p-2 flex justify-between items-center hover:bg-highlight/50 dark:hover:bg-ocean/50 ${
                 isSelected(option.value as string)
                   ? "bg-highlight dark:bg-ocean text-white"
                   : "text-deep dark:text-light"

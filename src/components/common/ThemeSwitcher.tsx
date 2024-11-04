@@ -3,7 +3,7 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
-import SwitchButton from '@/components/form/buttons/SwitchButton';
+import SwitchButton from '@/components/buttons/SwitchButton';
 
 const ThemeSwitcher = ({ className }) => {
   const { theme, setTheme } = useTheme();
