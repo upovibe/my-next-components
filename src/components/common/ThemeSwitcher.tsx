@@ -19,15 +19,13 @@ const ThemeSwitcher = ({ className }) => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const iconClass = "hover:scale-110 transition-all duration-200 ease-linear";
-
   return (
     <div className={`mx-auto ${className}`}>
       <SwitchButton
         onClick={toggleTheme}
         isToggled={theme === 'dark'}
-        iconTrue={<FaSun />}
-        iconFalse={<FaMoon />}
+        iconTrue={<FaSun className='hover:scale-110 transition-all duration-200 ease-linear'/>}
+        iconFalse={<FaMoon className='hover:scale-110 transition-all duration-200 ease-linear'/>}
         showIconOnly
       />
     </div>
